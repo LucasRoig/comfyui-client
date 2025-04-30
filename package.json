@@ -2,10 +2,13 @@
   "name": "comfyui-client",
   "private": true,
   "scripts": {
-    "build": "turbo run build",
-    "dev": "turbo run dev",
-    "lint": "turbo run lint",
-    "check-types": "turbo run check-types"
+    "build": "turbo run build --filter=!./design-system/*",
+    "dev": "turbo run dev --filter=!./design-system/*",
+    "lint": "pnpm biome ci",
+    "fix": "pnpm biome check --write",
+    "check-types": "turbo run check-types",
+    "test": "turbo run test",
+    "coverage": "turbo run coverage"
   },
   "devDependencies": {
     "turbo": "^2.5.2",

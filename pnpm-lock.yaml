@@ -43,6 +43,34 @@ importers:
         specifier: 5.8.2
         version: 5.8.2
 
+  design-system/components/button:
+    dependencies:
+      '@lro-ui/utils':
+        specifier: workspace:*
+        version: link:../../utils
+      '@radix-ui/react-slot':
+        specifier: ^1.2.0
+        version: 1.2.0(@types/react@19.0.10)(react@19.1.0)
+      react:
+        specifier: ^19.1.0
+        version: 19.1.0
+      tailwind-variants:
+        specifier: ^1.0.0
+        version: 1.0.0(tailwindcss@4.1.4)
+    devDependencies:
+      '@lro-ui/typescript-config':
+        specifier: workspace:*
+        version: link:../../ds-typescript-config
+      '@types/react':
+        specifier: 19.0.10
+        version: 19.0.10
+      '@types/react-dom':
+        specifier: 19.0.4
+        version: 19.0.4(@types/react@19.0.10)
+      typescript:
+        specifier: ^5.8.2
+        version: 5.8.2
+
   design-system/docs:
     dependencies:
       '@content-collections/mdx':
