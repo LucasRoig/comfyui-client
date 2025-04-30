@@ -9,7 +9,7 @@ importers:
   .:
     devDependencies:
       '@biomejs/biome':
-        specifier: ^1.9.4
+        specifier: 1.9.4
         version: 1.9.4
       turbo:
         specifier: ^2.5.2
@@ -23,15 +23,24 @@ importers:
       '@lro-ui/button':
         specifier: workspace:*
         version: link:../../design-system/components/button
+      '@tailwindcss/postcss':
+        specifier: ^4.0.14
+        version: 4.1.4
       next:
         specifier: ^15.3.0
         version: 15.3.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      postcss:
+        specifier: ^8.5.3
+        version: 8.5.3
       react:
         specifier: ^19.1.0
         version: 19.1.0
       react-dom:
         specifier: ^19.1.0
         version: 19.1.0(react@19.1.0)
+      tailwindcss:
+        specifier: ^4.0.14
+        version: 4.1.4
     devDependencies:
       '@repo/typescript-config':
         specifier: workspace:*
