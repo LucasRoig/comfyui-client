@@ -12,13 +12,17 @@
   },
   "dependencies": {
     "@lro-ui/button": "workspace:*",
+    "@repo/comfy-ui-api-client": "workspace:*",
     "@tailwindcss/postcss": "^4.0.14",
+    "neverthrow": "^8.2.0",
     "next": "^15.3.0",
+    "next-safe-action": "^7.10.8",
     "postcss": "^8.5.3",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "tailwindcss": "^4.0.14",
-    "tw-animate-css": "^1.2.4"
+    "tw-animate-css": "^1.2.4",
+    "zod": "4.0.0-beta.20250424T163858"
   },
   "devDependencies": {
     "@repo/typescript-config": "workspace:*",
