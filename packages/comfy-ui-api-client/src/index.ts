@@ -1,6 +1,6 @@
 import ky from "ky";
 import { err, ok } from "neverthrow";
-import z from "zod";
+import z, { set } from "zod";
 import { simpleWorkflow } from "./simple-workflow";
 
 const statusMessageSchema = z.object({
@@ -19,7 +19,9 @@ export type WebSocketStatusMessage = z.infer<typeof statusMessageSchema>;
 
 type ComfyUIWebSocketListener = {
   onStatusMessage?: (statusMessage: WebSocketStatusMessage) => void;
+  onClose?: () => void;
 };
+
 export class ComfyUIWebSocket {
   private socket: WebSocket | undefined;
   private sessionId: string | undefined;
@@ -38,11 +40,37 @@ export class ComfyUIWebSocket {
   }
 
   private connect() {
-    this.socket = new WebSocket(`${this.url}/ws`);
+    console.log("Try to connect to websocket");
+    let existingSession = this.sessionId
+    if (existingSession) {
+      existingSession = `?clientId=${existingSession}`
+    } else {
+      existingSession = ""
+    }
+
+    this.socket = new WebSocket(`${this.url}/ws${existingSession}`);
+
     this.socket.binaryType = "arraybuffer";
 
     this.socket.addEventListener("open", () => {
       console.log("WebSocket is open");
+    });
+
+    this.socket.addEventListener("error", (event) => {
+      console.log("WebSocket error", event);
+    });
+
+    this.socket.addEventListener("close", () => {
+      this.listeners.forEach((listener) => {
+        if (listener.onClose) {
+          listener.onClose();
+        }
+      })
+      this.socket = undefined;
+      setTimeout(() => {
+        this.connect();
+      }, 1000);
+      console.log("WebSocket is closed");
     });
 
     this.socket.addEventListener("message", (event) => {

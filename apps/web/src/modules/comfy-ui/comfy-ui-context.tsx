@@ -13,6 +13,7 @@ type State = typeof initialState;
 
 type Actions = {
   onStatusMessage: (statusMessage: WebSocketStatusMessage) => void;
+  onWebSocketClosed: () => void;
 };
 
 type StoreState = State & {
@@ -38,6 +39,12 @@ const createComfyUiStore = (_args: {} = {}) => {
               { type: "onStatusMessage", message },
             );
           },
+          onWebSocketClosed: () => {
+            set(() => ({
+              socketConnected: false,
+              queueLength: 0,
+            }), undefined, { type: "onWebsocketClosed" });
+          }
         },
       }),
       {
@@ -60,6 +67,7 @@ export function ComfyUiContextProvider({ children }: Readonly<{ children: React.
       url: "ws://172.22.80.1:8000",
       eventHandlers: {
         onStatusMessage: storeActions.onStatusMessage,
+        onClose: storeActions.onWebSocketClosed,
       },
     });
   }
