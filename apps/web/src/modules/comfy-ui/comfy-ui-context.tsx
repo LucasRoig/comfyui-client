@@ -1,10 +1,11 @@
 "use client";
-import { ComfyUIWebSocket, type WebSocketStatusMessage } from "@repo/comfy-ui-api-client";
+import { ComfyUIWebSocket, type ComfyUIWebSocketLog, type WebSocketStatusMessage } from "@repo/comfy-ui-api-client";
 import { createContext, useContext, useRef } from "react";
 import { create, useStore } from "zustand";
 import { devtools } from "zustand/middleware";
 
 const initialState = {
+  webSocketLogs: [] as ComfyUIWebSocketLog[],
   sessionId: undefined as string | undefined,
   queueLength: 0,
   socketConnected: false,
@@ -14,6 +15,7 @@ type State = typeof initialState;
 type Actions = {
   onStatusMessage: (statusMessage: WebSocketStatusMessage) => void;
   onWebSocketClosed: () => void;
+  onWebSocketLog: (log: ComfyUIWebSocketLog) => void;
 };
 
 type StoreState = State & {
@@ -44,6 +46,17 @@ const createComfyUiStore = (_args: {} = {}) => {
               socketConnected: false,
               queueLength: 0,
             }), undefined, { type: "onWebsocketClosed" });
+          },
+          onWebSocketLog: (log) => {
+            set((currentState) => {
+              const newLogs = [log, ...currentState.webSocketLogs];
+              if (newLogs.length > 1000) {
+                newLogs.splice(newLogs.length - 250, 250);
+              }
+              return {
+                webSocketLogs: newLogs,
+              }
+            }, undefined, { type: "onWebSocketLog", log });
           }
         },
       }),
@@ -68,6 +81,7 @@ export function ComfyUiContextProvider({ children }: Readonly<{ children: React.
       eventHandlers: {
         onStatusMessage: storeActions.onStatusMessage,
         onClose: storeActions.onWebSocketClosed,
+        onLog: storeActions.onWebSocketLog,
       },
     });
   }

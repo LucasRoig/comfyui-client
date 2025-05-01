@@ -1,6 +1,6 @@
 import ky from "ky";
 import { err, ok } from "neverthrow";
-import z, { set } from "zod";
+import z from "zod";
 import { simpleWorkflow } from "./simple-workflow";
 
 const statusMessageSchema = z.object({
@@ -20,7 +20,14 @@ export type WebSocketStatusMessage = z.infer<typeof statusMessageSchema>;
 type ComfyUIWebSocketListener = {
   onStatusMessage?: (statusMessage: WebSocketStatusMessage) => void;
   onClose?: () => void;
+  onLog?: (log: ComfyUIWebSocketLog) => void;
 };
+
+export type ComfyUIWebSocketLog = {
+  type: string;
+  date: Date;
+  message?: string;
+}
 
 export class ComfyUIWebSocket {
   private socket: WebSocket | undefined;
@@ -39,8 +46,18 @@ export class ComfyUIWebSocket {
     this.connect();
   }
 
+  private sendLog(type: string, message?: string) {
+    const date = new Date();
+    this.listeners.forEach((l) => {
+      if (l.onLog) {
+        l.onLog({ type, date, message });
+      }
+    })
+  }
+
   private connect() {
-    console.log("Try to connect to websocket");
+    console.debug("Try to connect to websocket");
+    this.sendLog("INIT_CONNECTION");
     let existingSession = this.sessionId
     if (existingSession) {
       existingSession = `?clientId=${existingSession}`
@@ -53,14 +70,12 @@ export class ComfyUIWebSocket {
     this.socket.binaryType = "arraybuffer";
 
     this.socket.addEventListener("open", () => {
-      console.log("WebSocket is open");
-    });
-
-    this.socket.addEventListener("error", (event) => {
-      console.log("WebSocket error", event);
+      this.sendLog("SOCKET_CONNECTED");
+      console.debug("WS: WebSocket is open");
     });
 
     this.socket.addEventListener("close", () => {
+      this.sendLog("SOCKET_CLOSED");
       this.listeners.forEach((listener) => {
         if (listener.onClose) {
           listener.onClose();
@@ -70,14 +85,16 @@ export class ComfyUIWebSocket {
       setTimeout(() => {
         this.connect();
       }, 1000);
-      console.log("WebSocket is closed");
+      console.debug("WS: WebSocket is closed");
     });
 
     this.socket.addEventListener("message", (event) => {
       if (event.data instanceof ArrayBuffer) {
-        console.log("WS: Array Buffer received from server ", event.data);
+        this.sendLog("SOCKET_BINARY_MESSAGE_RECEIVED");
+        console.debug("WS: Array Buffer received from server ", event.data);
       } else {
         const asJson = JSON.parse(event.data);
+        this.sendLog("SOCKET_MESSAGE_RECEIVED", asJson);
         const statusMessage = statusMessageSchema.safeParse(asJson);
         if (statusMessage.success) {
           if (statusMessage.data.data.sid) {
@@ -108,7 +125,7 @@ export function createClient(url: string) {
         const response = await api.post("prompt", {
           json: simpleWorkflow,
         });
-        console.log(response.status);
+        console.debug(response.status);
         const jsonResponse = await response.json();
         return ok(jsonResponse);
       } catch (error) {
