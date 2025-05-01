@@ -6,7 +6,7 @@ import { simpleWorkflow } from "./simple-workflow";
 const statusMessageSchema = z.object({
   type: z.literal("status"),
   data: z.object({
-    sid: z.string(),
+    sid: z.string().optional(),
     status: z.object({
       exec_info: z.object({
         queue_remaining: z.number(),

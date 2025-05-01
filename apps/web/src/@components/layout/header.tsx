@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { SocketConnectedIndicator } from "../../modules/comfy-ui/socket-connected-indicator";
+import { QueueLengthIndicator } from "../../modules/comfy-ui/queue-length-indicator";
 
 export function Header() {
   return (
@@ -7,11 +9,10 @@ export function Header() {
         <Link href="/">
           <span className="font-bold">ComfyUI Client</span>
         </Link>
-        <nav className="flex gap-2 text-sm">
-          <Link href="/components">Components</Link>
-          <Link href="/datagrid">Datagrid</Link>
-          <Link href="/forms">Forms</Link>
-        </nav>
+        <div>
+          <SocketConnectedIndicator />
+          <QueueLengthIndicator />
+        </div>
       </div>
     </div>
   );

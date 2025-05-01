@@ -3,7 +3,7 @@ export const simpleWorkflow = {
   prompt: {
     "3": {
       inputs: {
-        seed: 156680208700286,
+        seed: 156680208700287,
         steps: 20,
         cfg: 8,
         sampler_name: "euler",
