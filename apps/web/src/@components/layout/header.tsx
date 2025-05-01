@@ -1,6 +1,6 @@
 import Link from "next/link";
-import { SocketConnectedIndicator } from "../../modules/comfy-ui/socket-connected-indicator";
 import { QueueLengthIndicator } from "../../modules/comfy-ui/queue-length-indicator";
+import { SocketConnectedIndicator } from "../../modules/comfy-ui/socket-connected-indicator";
 
 export function Header() {
   return (

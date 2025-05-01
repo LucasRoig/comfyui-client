@@ -19,7 +19,7 @@ export type WebSocketStatusMessage = z.infer<typeof statusMessageSchema>;
 
 type ComfyUIWebSocketListener = {
   onStatusMessage?: (statusMessage: WebSocketStatusMessage) => void;
-}
+};
 export class ComfyUIWebSocket {
   private socket: WebSocket | undefined;
   private sessionId: string | undefined;

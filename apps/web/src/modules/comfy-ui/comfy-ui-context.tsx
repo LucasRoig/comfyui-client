@@ -8,7 +8,7 @@ const initialState = {
   sessionId: undefined as string | undefined,
   queueLength: 0,
   socketConnected: false,
-}
+};
 type State = typeof initialState;
 
 type Actions = {
@@ -28,12 +28,16 @@ const createComfyUiStore = (_args: {} = {}) => {
         ...initialState,
         actions: {
           onStatusMessage: (message) => {
-            set((currentState) => ({
-              sessionId: message.data.sid ?? currentState.sessionId,
-              socketConnected: true,
-              queueLength: message.data.status.exec_info.queue_remaining,
-            }), undefined, { type: "onStatusMessage", message });
-          }
+            set(
+              (currentState) => ({
+                sessionId: message.data.sid ?? currentState.sessionId,
+                socketConnected: true,
+                queueLength: message.data.status.exec_info.queue_remaining,
+              }),
+              undefined,
+              { type: "onStatusMessage", message },
+            );
+          },
         },
       }),
       {
@@ -56,7 +60,7 @@ export function ComfyUiContextProvider({ children }: Readonly<{ children: React.
       url: "ws://172.22.80.1:8000",
       eventHandlers: {
         onStatusMessage: storeActions.onStatusMessage,
-      }
+      },
     });
   }
 
@@ -72,9 +76,9 @@ function useComfyUiStore<T>(selector: (state: StoreState) => T): T {
 }
 
 export const useIsSocketConnected = () => {
-  return useComfyUiStore((state) => state.socketConnected)
-}
+  return useComfyUiStore((state) => state.socketConnected);
+};
 
 export const useQueueLength = () => {
-  return useComfyUiStore((state) => state.queueLength)
-}
+  return useComfyUiStore((state) => state.queueLength);
+};
