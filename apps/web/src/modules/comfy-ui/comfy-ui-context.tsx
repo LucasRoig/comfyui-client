@@ -1,5 +1,5 @@
 "use client";
-import { createWebsocket, type WebSocketStatusMessage } from "@repo/comfy-ui-api-client";
+import { ComfyUIWebSocket, type WebSocketStatusMessage } from "@repo/comfy-ui-api-client";
 import { createContext, useContext, useRef } from "react";
 import { create, useStore } from "zustand";
 import { devtools } from "zustand/middleware";
@@ -50,10 +50,13 @@ const ComfyUiContext = createContext<ComfyUiStore | undefined>(undefined);
 export function ComfyUiContextProvider({ children }: Readonly<{ children: React.ReactNode }>) {
   const store = useRef(createComfyUiStore());
   const storeActions = useStore(store.current, (state) => state.actions);
-  const websocketRef = useRef<ReturnType<typeof createWebsocket> | null>(null);
+  const websocketRef = useRef<ComfyUIWebSocket | null>(null);
   if (websocketRef.current === null) {
-    websocketRef.current = createWebsocket("ws://172.22.80.1:8000", {
-      onStatusMessage: storeActions.onStatusMessage,
+    websocketRef.current = new ComfyUIWebSocket({
+      url: "ws://172.22.80.1:8000",
+      eventHandlers: {
+        onStatusMessage: storeActions.onStatusMessage,
+      }
     });
   }
 

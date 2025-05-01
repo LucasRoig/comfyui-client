@@ -17,37 +17,56 @@ const statusMessageSchema = z.object({
 
 export type WebSocketStatusMessage = z.infer<typeof statusMessageSchema>;
 
-export function createWebsocket(
-  url: string,
-  eventHandlers: {
-    onStatusMessage?: (statusMessage: WebSocketStatusMessage) => void;
-  } = {},
-) {
-  const socket = new WebSocket(`${url}/ws`);
-  socket.binaryType = "arraybuffer";
+type ComfyUIWebSocketListener = {
+  onStatusMessage?: (statusMessage: WebSocketStatusMessage) => void;
+}
+export class ComfyUIWebSocket {
+  private socket: WebSocket | undefined;
+  private sessionId: string | undefined;
+  private url: string;
+  private listeners: ComfyUIWebSocketListener[] = [];
 
-  socket.addEventListener("open", () => {
-    console.log("WebSocket is open");
-  });
+  public constructor(args: {
+    url: string;
+    sessionId?: string;
+    eventHandlers: ComfyUIWebSocketListener;
+  }) {
+    this.listeners.push(args.eventHandlers);
+    this.sessionId = args.sessionId;
+    this.url = args.url;
+    this.connect();
+  }
 
-  socket.addEventListener("message", (event) => {
-    if (event.data instanceof ArrayBuffer) {
-      console.log("WS: Array Buffer received from server ", event.data);
-    } else {
-      const asJson = JSON.parse(event.data);
-      const statusMessage = statusMessageSchema.safeParse(asJson);
-      if (statusMessage.success) {
-        console.log("WS: Reveived status message", statusMessage.data);
-        if (eventHandlers.onStatusMessage) {
-          eventHandlers.onStatusMessage(statusMessage.data);
-        }
+  private connect() {
+    this.socket = new WebSocket(`${this.url}/ws`);
+    this.socket.binaryType = "arraybuffer";
+
+    this.socket.addEventListener("open", () => {
+      console.log("WebSocket is open");
+    });
+
+    this.socket.addEventListener("message", (event) => {
+      if (event.data instanceof ArrayBuffer) {
+        console.log("WS: Array Buffer received from server ", event.data);
       } else {
-        console.log("WS: Failed to parse message", asJson);
+        const asJson = JSON.parse(event.data);
+        const statusMessage = statusMessageSchema.safeParse(asJson);
+        if (statusMessage.success) {
+          if (statusMessage.data.data.sid) {
+            this.sessionId = statusMessage.data.data.sid;
+          }
+          console.log("WS: Reveived status message", statusMessage.data);
+          this.listeners.forEach((listener) => {
+            if (listener.onStatusMessage) {
+              listener.onStatusMessage(statusMessage.data);
+            }
+          });
+        } else {
+          console.log("WS: Failed to parse message", asJson);
+        }
       }
-    }
-  });
-
-  return socket;
+    });
+  }
 }
 
 export function createClient(url: string) {
