@@ -1,4 +1,5 @@
 "use client";
+import { toast } from "@lro-ui/sonner";
 import { ComfyUIWebSocket, type ComfyUIWebSocketLog, type WebSocketStatusMessage } from "@repo/comfy-ui-api-client";
 import { createContext, useContext, useRef } from "react";
 import { create, useStore } from "zustand";
@@ -32,32 +33,50 @@ const createComfyUiStore = (_args: {} = {}) => {
         actions: {
           onStatusMessage: (message) => {
             set(
-              (currentState) => ({
-                sessionId: message.data.sid ?? currentState.sessionId,
-                socketConnected: true,
-                queueLength: message.data.status.exec_info.queue_remaining,
-              }),
+              (currentState) => {
+                if (!currentState.socketConnected) {
+                  toast.info("WebSocket connected");
+                }
+                return {
+                  sessionId: message.data.sid ?? currentState.sessionId,
+                  socketConnected: true,
+                  queueLength: message.data.status.exec_info.queue_remaining,
+                };
+              },
               undefined,
               { type: "onStatusMessage", message },
             );
           },
           onWebSocketClosed: () => {
-            set(() => ({
-              socketConnected: false,
-              queueLength: 0,
-            }), undefined, { type: "onWebsocketClosed" });
+            set(
+              (currentState) => {
+                if (currentState.socketConnected) {
+                  toast.error("WebSocket disconnected");
+                }
+                return {
+                  socketConnected: false,
+                  queueLength: 0,
+                };
+              },
+              undefined,
+              { type: "onWebsocketClosed" },
+            );
           },
           onWebSocketLog: (log) => {
-            set((currentState) => {
-              const newLogs = [log, ...currentState.webSocketLogs];
-              if (newLogs.length > 1000) {
-                newLogs.splice(newLogs.length - 250, 250);
-              }
-              return {
-                webSocketLogs: newLogs,
-              }
-            }, undefined, { type: "onWebSocketLog", log });
-          }
+            set(
+              (currentState) => {
+                const newLogs = [log, ...currentState.webSocketLogs];
+                if (newLogs.length > 1000) {
+                  newLogs.splice(newLogs.length - 250, 250);
+                }
+                return {
+                  webSocketLogs: newLogs,
+                };
+              },
+              undefined,
+              { type: "onWebSocketLog", log },
+            );
+          },
         },
       }),
       {
@@ -80,7 +99,9 @@ export function ComfyUiContextProvider({ children }: Readonly<{ children: React.
       url: "ws://172.22.80.1:8000",
       eventHandlers: {
         onStatusMessage: storeActions.onStatusMessage,
-        onClose: storeActions.onWebSocketClosed,
+        onClose: () => {
+          storeActions.onWebSocketClosed();
+        },
         onLog: storeActions.onWebSocketLog,
       },
     });

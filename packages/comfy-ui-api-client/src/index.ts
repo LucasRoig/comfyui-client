@@ -27,7 +27,7 @@ export type ComfyUIWebSocketLog = {
   type: string;
   date: Date;
   message?: string;
-}
+};
 
 export class ComfyUIWebSocket {
   private socket: WebSocket | undefined;
@@ -52,17 +52,17 @@ export class ComfyUIWebSocket {
       if (l.onLog) {
         l.onLog({ type, date, message });
       }
-    })
+    });
   }
 
   private connect() {
     console.debug("Try to connect to websocket");
     this.sendLog("INIT_CONNECTION");
-    let existingSession = this.sessionId
+    let existingSession = this.sessionId;
     if (existingSession) {
-      existingSession = `?clientId=${existingSession}`
+      existingSession = `?clientId=${existingSession}`;
     } else {
-      existingSession = ""
+      existingSession = "";
     }
 
     this.socket = new WebSocket(`${this.url}/ws${existingSession}`);
@@ -80,7 +80,7 @@ export class ComfyUIWebSocket {
         if (listener.onClose) {
           listener.onClose();
         }
-      })
+      });
       this.socket = undefined;
       setTimeout(() => {
         this.connect();
