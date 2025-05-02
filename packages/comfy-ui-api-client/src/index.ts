@@ -2,6 +2,8 @@ import ky from "ky";
 import { err, ok } from "neverthrow";
 import z from "zod";
 import { simpleWorkflow } from "./simple-workflow";
+import { postPrompt } from "./api-routes/post-prompt";
+import { getQueue } from "./api-routes/get-queue";
 
 const statusMessageSchema = z.object({
   type: z.literal("status"),
@@ -120,17 +122,7 @@ export function createClient(url: string) {
     // throwHttpErrors: false
   });
   return {
-    queueWorkflow: async () => {
-      try {
-        const response = await api.post("prompt", {
-          json: simpleWorkflow,
-        });
-        console.debug(response.status);
-        const jsonResponse = await response.json();
-        return ok(jsonResponse);
-      } catch (error) {
-        return err(error);
-      }
-    },
-  };
+    queueWorkflow: postPrompt(api),
+    getQueue: getQueue(api),
+  }
 }
