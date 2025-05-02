@@ -1,7 +1,7 @@
 "use client";
 import { Button } from "@lro-ui/button";
-import { useIsSocketConnected } from "./comfy-ui-context";
 import { useState } from "react";
+import { useIsSocketConnected } from "./comfy-ui-context";
 import { SocketStatusModal } from "./socket-status-modal";
 
 export function SocketConnectedIndicator() {

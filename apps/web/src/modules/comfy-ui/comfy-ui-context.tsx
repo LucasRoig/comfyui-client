@@ -125,3 +125,7 @@ export const useIsSocketConnected = () => {
 export const useQueueLength = () => {
   return useComfyUiStore((state) => state.queueLength);
 };
+
+export const useWebsocketLogs = () => {
+  return useComfyUiStore((state) => state.webSocketLogs);
+};
