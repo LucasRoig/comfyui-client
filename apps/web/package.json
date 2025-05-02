@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@lro-ui/button": "workspace:*",
+    "@lro-ui/modal": "workspace:*",
     "@lro-ui/sonner": "workspace:*",
     "@redux-devtools/extension": "^3.3.0",
     "@repo/comfy-ui-api-client": "workspace:*",
