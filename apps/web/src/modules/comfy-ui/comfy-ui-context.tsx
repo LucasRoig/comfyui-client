@@ -4,11 +4,11 @@ import { ComfyUIWebSocket, type ComfyUIWebSocketLog, type WebSocketStatusMessage
 import { createContext, useContext, useRef } from "react";
 import { create, useStore } from "zustand";
 import { devtools } from "zustand/middleware";
+import { useInvalidateQueueState } from "./useQueueState";
 
 const initialState = {
   webSocketLogs: [] as ComfyUIWebSocketLog[],
   sessionId: undefined as string | undefined,
-  queueLength: 0,
   socketConnected: false,
 };
 type State = typeof initialState;
@@ -40,7 +40,6 @@ const createComfyUiStore = (_args: {} = {}) => {
                 return {
                   sessionId: message.data.sid ?? currentState.sessionId,
                   socketConnected: true,
-                  queueLength: message.data.status.exec_info.queue_remaining,
                 };
               },
               undefined,
@@ -94,11 +93,15 @@ export function ComfyUiContextProvider({ children }: Readonly<{ children: React.
   const store = useRef(createComfyUiStore());
   const storeActions = useStore(store.current, (state) => state.actions);
   const websocketRef = useRef<ComfyUIWebSocket | null>(null);
+  const invalidateQueueState = useInvalidateQueueState();
   if (websocketRef.current === null) {
     websocketRef.current = new ComfyUIWebSocket({
       url: "ws://172.22.80.1:8000",
       eventHandlers: {
-        onStatusMessage: storeActions.onStatusMessage,
+        onStatusMessage: (msg) => {
+          invalidateQueueState();
+          storeActions.onStatusMessage(msg);
+        },
         onClose: () => {
           storeActions.onWebSocketClosed();
         },
@@ -120,10 +123,6 @@ function useComfyUiStore<T>(selector: (state: StoreState) => T): T {
 
 export const useIsSocketConnected = () => {
   return useComfyUiStore((state) => state.socketConnected);
-};
-
-export const useQueueLength = () => {
-  return useComfyUiStore((state) => state.queueLength);
 };
 
 export const useWebsocketLogs = () => {

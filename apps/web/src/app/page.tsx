@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@lro-ui/button";
+import { QueueState } from "../modules/comfy-ui/queue-state";
 import { queueWorkflowAction } from "../modules/comfy-ui/server-actions/queue-workflow-action";
 
 export default function Home() {
@@ -15,6 +16,7 @@ export default function Home() {
       >
         Queue Workflow
       </Button>
+      <QueueState />
     </div>
   );
 }

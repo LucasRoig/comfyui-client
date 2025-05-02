@@ -1,6 +1,6 @@
+import type { KyInstance } from "ky";
 import { err, ok } from "neverthrow";
 import { simpleWorkflow } from "../simple-workflow";
-import type { KyInstance } from "ky";
 
 export const postPrompt = (api: KyInstance) => async () => {
   try {
@@ -13,4 +13,4 @@ export const postPrompt = (api: KyInstance) => async () => {
   } catch (error) {
     return err(error);
   }
-}
+};

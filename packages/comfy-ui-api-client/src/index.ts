@@ -1,9 +1,7 @@
 import ky from "ky";
-import { err, ok } from "neverthrow";
 import z from "zod";
-import { simpleWorkflow } from "./simple-workflow";
-import { postPrompt } from "./api-routes/post-prompt";
 import { getQueue } from "./api-routes/get-queue";
+import { postPrompt } from "./api-routes/post-prompt";
 
 const statusMessageSchema = z.object({
   type: z.literal("status"),
@@ -31,6 +29,7 @@ export type ComfyUIWebSocketLog = {
   message?: string;
 };
 
+const debugWWebsocket = false;
 export class ComfyUIWebSocket {
   private socket: WebSocket | undefined;
   private sessionId: string | undefined;
@@ -58,7 +57,9 @@ export class ComfyUIWebSocket {
   }
 
   private connect() {
-    console.debug("Try to connect to websocket");
+    if (debugWWebsocket) {
+      console.debug("Try to connect to websocket");
+    }
     this.sendLog("INIT_CONNECTION");
     let existingSession = this.sessionId;
     if (existingSession) {
@@ -73,7 +74,9 @@ export class ComfyUIWebSocket {
 
     this.socket.addEventListener("open", () => {
       this.sendLog("SOCKET_CONNECTED");
-      console.debug("WS: WebSocket is open");
+      if (debugWWebsocket) {
+        console.debug("WS: WebSocket is open");
+      }
     });
 
     this.socket.addEventListener("close", () => {
@@ -87,13 +90,17 @@ export class ComfyUIWebSocket {
       setTimeout(() => {
         this.connect();
       }, 1000);
-      console.debug("WS: WebSocket is closed");
+      if (debugWWebsocket) {
+        console.debug("WS: WebSocket is closed");
+      }
     });
 
     this.socket.addEventListener("message", (event) => {
       if (event.data instanceof ArrayBuffer) {
         this.sendLog("SOCKET_BINARY_MESSAGE_RECEIVED");
-        console.debug("WS: Array Buffer received from server ", event.data);
+        if (debugWWebsocket) {
+          console.debug("WS: Array Buffer received from server ", event.data);
+        }
       } else {
         const asJson = JSON.parse(event.data);
         this.sendLog("SOCKET_MESSAGE_RECEIVED", asJson);
@@ -102,14 +109,18 @@ export class ComfyUIWebSocket {
           if (statusMessage.data.data.sid) {
             this.sessionId = statusMessage.data.data.sid;
           }
-          console.log("WS: Reveived status message", statusMessage.data);
+          if (debugWWebsocket) {
+            console.log("WS: Reveived status message", statusMessage.data);
+          }
           this.listeners.forEach((listener) => {
             if (listener.onStatusMessage) {
               listener.onStatusMessage(statusMessage.data);
             }
           });
         } else {
-          console.log("WS: Failed to parse message", asJson);
+          if (debugWWebsocket) {
+            console.log("WS: Failed to parse message", asJson);
+          }
         }
       }
     });
@@ -124,5 +135,5 @@ export function createClient(url: string) {
   return {
     queueWorkflow: postPrompt(api),
     getQueue: getQueue(api),
-  }
+  };
 }
