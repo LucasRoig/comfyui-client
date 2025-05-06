@@ -1,6 +1,11 @@
 "use client";
 import { toast } from "@lro-ui/sonner";
-import { ComfyUIWebSocket, type ComfyUIWebSocketLog, type WebSocketStatusMessage } from "@repo/comfy-ui-api-client";
+import {
+  ComfyUIWebSocket,
+  type ComfyUIWebSocketLog,
+  type WebSocketProgressMessage,
+  type WebSocketStatusMessage,
+} from "@repo/comfy-ui-api-client";
 import { createContext, useContext, useRef } from "react";
 import { create, useStore } from "zustand";
 import { devtools } from "zustand/middleware";
@@ -10,11 +15,13 @@ const initialState = {
   webSocketLogs: [] as ComfyUIWebSocketLog[],
   sessionId: undefined as string | undefined,
   socketConnected: false,
+  progressMap: {} as Record<string, WebSocketProgressMessage["data"]>,
 };
 type State = typeof initialState;
 
 type Actions = {
   onStatusMessage: (statusMessage: WebSocketStatusMessage) => void;
+  onProgressMessage: (progressMessage: WebSocketProgressMessage) => void;
   onWebSocketClosed: () => void;
   onWebSocketLog: (log: ComfyUIWebSocketLog) => void;
 };
@@ -61,6 +68,20 @@ const createComfyUiStore = (_args: {} = {}) => {
               { type: "onWebsocketClosed" },
             );
           },
+          onProgressMessage: (message) => {
+            set(
+              (currentState) => {
+                return {
+                  progressMap: {
+                    ...currentState.progressMap,
+                    [message.data.prompt_id]: message.data,
+                  },
+                };
+              },
+              undefined,
+              { type: "onProgressMessage", message },
+            );
+          },
           onWebSocketLog: (log) => {
             set(
               (currentState) => {
@@ -102,6 +123,9 @@ export function ComfyUiContextProvider({ children }: Readonly<{ children: React.
           invalidateQueueState();
           storeActions.onStatusMessage(msg);
         },
+        onProgressMessage: (msg) => {
+          storeActions.onProgressMessage(msg);
+        },
         onClose: () => {
           storeActions.onWebSocketClosed();
         },
@@ -127,4 +151,8 @@ export const useIsSocketConnected = () => {
 
 export const useWebsocketLogs = () => {
   return useComfyUiStore((state) => state.webSocketLogs);
+};
+
+export const useProgressMap = () => {
+  return useComfyUiStore((state) => state.progressMap);
 };

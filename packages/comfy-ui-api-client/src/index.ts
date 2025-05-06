@@ -15,10 +15,22 @@ const statusMessageSchema = z.object({
   }),
 });
 
+const progressMessageSchema = z.object({
+  type: z.literal("progress"),
+  data: z.object({
+    value: z.number(),
+    max: z.number(),
+    prompt_id: z.string(),
+    node: z.string().nullable(),
+  }),
+});
+
 export type WebSocketStatusMessage = z.infer<typeof statusMessageSchema>;
+export type WebSocketProgressMessage = z.infer<typeof progressMessageSchema>;
 
 type ComfyUIWebSocketListener = {
   onStatusMessage?: (statusMessage: WebSocketStatusMessage) => void;
+  onProgressMessage?: (progressMessage: WebSocketProgressMessage) => void;
   onClose?: () => void;
   onLog?: (log: ComfyUIWebSocketLog) => void;
 };
@@ -115,6 +127,17 @@ export class ComfyUIWebSocket {
           this.listeners.forEach((listener) => {
             if (listener.onStatusMessage) {
               listener.onStatusMessage(statusMessage.data);
+            }
+          });
+        }
+        const progressMessage = progressMessageSchema.safeParse(asJson);
+        if (progressMessage.success) {
+          if (debugWWebsocket) {
+            console.log("WS: Reveived progress message", progressMessage.data);
+          }
+          this.listeners.forEach((listener) => {
+            if (listener.onProgressMessage) {
+              listener.onProgressMessage(progressMessage.data);
             }
           });
         } else {
