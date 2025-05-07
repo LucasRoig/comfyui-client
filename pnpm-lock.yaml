@@ -342,6 +342,28 @@ importers:
         specifier: ^5.8.2
         version: 5.8.2
 
+  packages/civit-api-client:
+    dependencies:
+      ky:
+        specifier: ^1.8.1
+        version: 1.8.1
+      neverthrow:
+        specifier: ^8.2.0
+        version: 8.2.0
+      zod:
+        specifier: 4.0.0-beta.20250424T163858
+        version: 4.0.0-beta.20250424T163858
+    devDependencies:
+      '@repo/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
+      tsup:
+        specifier: ^8.4.0
+        version: 8.4.0(jiti@2.4.2)(postcss@8.5.3)(typescript@5.8.2)(yaml@2.7.1)
+      typescript:
+        specifier: 5.8.2
+        version: 5.8.2
+
   packages/comfy-ui-api-client:
     dependencies:
       ky:

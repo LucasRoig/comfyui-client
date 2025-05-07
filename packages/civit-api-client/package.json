@@ -1,0 +1,22 @@
+{
+  "name": "@repo/civit-api-client",
+  "version": "1.0.0",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "source": "./src/index.ts",
+  "type": "module",
+  "scripts": {
+    "build": "tsc --noEmit && tsup src/index.ts --format cjs",
+    "check-types": "tsc --noEmit"
+  },
+  "dependencies": {
+    "ky": "^1.8.1",
+    "neverthrow": "^8.2.0",
+    "zod": "4.0.0-beta.20250424T163858"
+  },
+  "devDependencies": {
+    "@repo/typescript-config": "workspace:*",
+    "tsup": "^8.4.0",
+    "typescript": "5.8.2"
+  }
+}
