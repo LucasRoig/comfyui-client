@@ -17,6 +17,7 @@ const getImagesResponseSchema = z.object({
       nsfwLevel: nsfwEnum,
       createdAt: z.coerce.date(),
       postId: z.number(),
+      baseModel: z.string().nullable(),
       stats: z.object({
         cryCount: z.number(),
         laughCount: z.number(),
@@ -24,7 +25,7 @@ const getImagesResponseSchema = z.object({
         heartCount: z.number(),
         commentCount: z.number(),
       }),
-      meta: z.object({}).nullable(),
+      meta: z.unknown().nullable(),
       username: z.string(),
     }),
   ),
