@@ -1,5 +1,4 @@
 import type { KyInstance } from "ky";
-import { err, ok } from "neverthrow";
 import z from "zod";
 
 const endpoint = "api/v1/images";
@@ -15,7 +14,7 @@ const getImagesResponseSchema = z.object({
       width: z.number(),
       height: z.number(),
       nsfw: z.boolean(),
-      nsfLevel: nsfwEnum,
+      nsfwLevel: nsfwEnum,
       createdAt: z.coerce.date(),
       postId: z.number(),
       stats: z.object({
@@ -25,14 +24,12 @@ const getImagesResponseSchema = z.object({
         heartCount: z.number(),
         commentCount: z.number(),
       }),
-      meta: z.object({}),
-      userName: z.string(),
+      meta: z.object({}).nullable(),
+      username: z.string(),
     }),
   ),
   metadata: z.object({
-    nextCursor: z.number(),
-    currentPage: z.number(),
-    pageSize: z.number(),
+    nextCursor: z.string(),
     nextPage: z.string(),
   }),
 });
@@ -51,24 +48,15 @@ const getImagesRequestSchema = z.object({
   page: z.number().optional(),
 });
 export type GetImagesRequest = z.infer<typeof getImagesRequestSchema>;
+export type GetImagesResponse = z.infer<typeof getImagesResponseSchema>;
 
 export const getImages =
   (api: KyInstance) =>
   async (request: GetImagesRequest = {}) => {
-    try {
-      const response = await api
-        .get(endpoint, {
-          searchParams: request,
-        })
-        .json();
-      const validResponse = getImagesResponseSchema.safeParse(response);
-      if (validResponse.success) {
-        return ok(validResponse.data);
-      } else {
-        console.error(response);
-        return err(validResponse.error);
-      }
-    } catch (error) {
-      return err(error);
-    }
+    const response = await api
+      .get(endpoint, {
+        searchParams: request,
+      })
+      .json();
+    return getImagesResponseSchema.parse(response);
   };

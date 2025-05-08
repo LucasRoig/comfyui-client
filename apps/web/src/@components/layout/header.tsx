@@ -13,6 +13,9 @@ export function Header() {
           <SocketConnectedIndicator />
           <QueueLengthIndicator />
         </div>
+        <div>
+          <Link href="/explore/civit">Explore Civit</Link>
+        </div>
       </div>
     </div>
   );

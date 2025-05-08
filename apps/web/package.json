@@ -12,11 +12,13 @@
   },
   "dependencies": {
     "@lro-ui/button": "workspace:*",
+    "@lro-ui/input": "workspace:*",
     "@lro-ui/modal": "workspace:*",
     "@lro-ui/sonner": "workspace:*",
     "@lro-ui/table": "workspace:*",
     "@redux-devtools/extension": "^3.3.0",
     "@repo/comfy-ui-api-client": "workspace:*",
+    "@repo/civit-api-client": "workspace:*",
     "@tailwindcss/postcss": "^4.0.14",
     "@tanstack/react-query": "^5.75.1",
     "@tanstack/react-query-devtools": "^5.75.1",
