@@ -458,6 +458,9 @@ importers:
       neverthrow:
         specifier: ^8.2.0
         version: 8.2.0
+      ts-pattern:
+        specifier: ^5.7.0
+        version: 5.7.0
       zod:
         specifier: 4.0.0-beta.20250424T163858
         version: 4.0.0-beta.20250424T163858
