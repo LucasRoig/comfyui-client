@@ -13,7 +13,8 @@ export function Header() {
           <SocketConnectedIndicator />
           <QueueLengthIndicator />
         </div>
-        <div>
+        <div className="flex items-center gap-2">
+          <Link href="/workflow">Workflow</Link>
           <Link href="/explore/civit">Explore Civit</Link>
         </div>
       </div>

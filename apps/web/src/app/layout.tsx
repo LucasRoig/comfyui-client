@@ -31,7 +31,7 @@ export default function RootLayout({
         <Providers>
           <ComfyUiContextProvider>
             <Toaster />
-            <div className="flex flex-col min-h-dvh">
+            <div className="flex flex-col min-h-dvh h-dvh">
               <header className="w-full sticky top-0 z-10 bg-background h-[var(--header-height)] ">
                 <Header />
               </header>
