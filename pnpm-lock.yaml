@@ -23,6 +23,9 @@ importers:
       '@lro-ui/button':
         specifier: workspace:*
         version: link:../../design-system/components/button
+      '@lro-ui/command':
+        specifier: workspace:*
+        version: link:../../design-system/components/command
       '@lro-ui/input':
         specifier: workspace:*
         version: link:../../design-system/components/input

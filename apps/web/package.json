@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@lro-ui/button": "workspace:*",
+    "@lro-ui/command": "workspace:*",
     "@lro-ui/input": "workspace:*",
     "@lro-ui/modal": "workspace:*",
     "@lro-ui/sonner": "workspace:*",
