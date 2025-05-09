@@ -156,3 +156,7 @@ export const useWebsocketLogs = () => {
 export const useProgressMap = () => {
   return useComfyUiStore((state) => state.progressMap);
 };
+
+export const useSessionId = () => {
+  return useComfyUiStore((state) => state.sessionId);
+};
