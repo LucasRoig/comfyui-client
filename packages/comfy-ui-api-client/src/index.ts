@@ -3,6 +3,7 @@ import z from "zod";
 import { getNodes } from "./api-routes/get-nodes";
 import { getQueue } from "./api-routes/get-queue";
 import { postPrompt } from "./api-routes/post-prompt";
+export type { ComfyNodeDefinition } from "./api-routes/get-nodes";
 
 const statusMessageSchema = z.object({
   type: z.literal("status"),
