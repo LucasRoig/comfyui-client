@@ -1,5 +1,6 @@
 import ky from "ky";
 import z from "zod";
+import { getNodes } from "./api-routes/get-nodes";
 import { getQueue } from "./api-routes/get-queue";
 import { postPrompt } from "./api-routes/post-prompt";
 
@@ -158,5 +159,6 @@ export function createClient(url: string) {
   return {
     queueWorkflow: postPrompt(api),
     getQueue: getQueue(api),
+    getNodes: getNodes(api),
   };
 }
