@@ -1,5 +1,6 @@
 "use client";
 import { CommandDialog, CommandEmpty, CommandInput, CommandItem, CommandList } from "@lro-ui/command";
+import { Popover, PopoverContent, PopoverTrigger } from "@lro-ui/popover";
 import type { ComfyNodeDefinition } from "@repo/comfy-ui-api-client";
 import { type NodeProps, useReactFlow, useUpdateNodeInternals } from "@xyflow/react";
 import { useMemo, useState } from "react";
@@ -88,6 +89,25 @@ function CommandPicker(props: {
   );
 }
 
+function PopoverInput(props: { trigger: React.ReactNode; onClose: (value: string) => void }) {
+  const [value, setValue] = useState("");
+  const [isOpen, setIsOpen] = useState(false);
+  const handleOpenChange = (isOpen: boolean) => {
+    setIsOpen(isOpen);
+    if (!isOpen) {
+      props.onClose(value);
+    }
+  };
+  return (
+    <Popover open={isOpen} onOpenChange={handleOpenChange}>
+      <PopoverTrigger asChild>{props.trigger}</PopoverTrigger>
+      <PopoverContent>
+        <input value={value} onChange={(e) => setValue(e.target.value)} />
+      </PopoverContent>
+    </Popover>
+  );
+}
+
 function Input(props: { input: ComfyInputDefinition; state: string; onStateChange: (state: string) => void }) {
   const component = match(props.input)
     .with({ kind: "STRING_ARRAY" }, (i) => {
@@ -123,13 +143,42 @@ function Input(props: { input: ComfyInputDefinition; state: string; onStateChang
             .exhaustive(),
         )
         .exhaustive();
+      const roundPrecision = match(i.config.round)
+        .with(P.number, (i) => i.toString().replace(".", "").length - 1)
+        .with(true, () => 3)
+        .otherwise(() => undefined);
+
+      const updateValue = (value: string) => {
+        let parsedValue = Number.parseFloat(value.replace(",", "."));
+        if (Number.isNaN(parsedValue)) {
+          return;
+        }
+        if (!Number.isFinite(parsedValue)) {
+          return;
+        }
+        if (i.config.min && parsedValue < i.config.min) {
+          parsedValue = i.config.min;
+        }
+        if (i.config.max && parsedValue > i.config.max) {
+          parsedValue = i.config.max;
+        }
+        if (roundPrecision !== undefined) {
+          parsedValue = Number.parseFloat(parsedValue.toFixed(roundPrecision));
+        }
+        props.onStateChange(parsedValue.toString());
+      };
 
       return (
         <div className="pl-1 pr-1 flex items-center gap-2 py-0.5 text-xs">
           <div className="h-2 w-2 rounded-full" style={{ backgroundColor: getInputColor(props.input.kind) }} />
-          <div className="text-muted-foreground hover:text-foreground cursor-default">
-            {props.input.name} : {Number.parseFloat(props.state).toFixed(displayPrecision)}
-          </div>
+          <PopoverInput
+            trigger={
+              <div className="text-muted-foreground hover:text-foreground cursor-default">
+                {props.input.name} : {Number.parseFloat(props.state).toFixed(displayPrecision)}
+              </div>
+            }
+            onClose={(v) => updateValue(v)}
+          />
         </div>
       );
     })

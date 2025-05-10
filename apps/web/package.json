@@ -17,6 +17,7 @@
     "@lro-ui/modal": "workspace:*",
     "@lro-ui/sonner": "workspace:*",
     "@lro-ui/table": "workspace:*",
+    "@lro-ui/popover": "workspace:*",
     "@lro-ui/utils": "workspace:*",
     "@redux-devtools/extension": "^3.3.0",
     "@repo/civit-api-client": "workspace:*",
