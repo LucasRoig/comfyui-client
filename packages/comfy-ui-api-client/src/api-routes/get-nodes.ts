@@ -191,11 +191,24 @@ const inputDefinitionSchema = z
 
 const nodeDefinitionSchema = z.object({
   input: z.object({
-    required: z.record(z.string(), inputDefinitionSchema),
-    optional: z.record(z.string(), inputDefinitionSchema).optional(),
+    required: z.record(z.string(), inputDefinitionSchema).transform((x) => {
+      return Object.fromEntries(Object.entries(x).map(([key, value]) => [key, { ...value, name: key }]));
+    }),
+    optional: z
+      .record(z.string(), inputDefinitionSchema)
+      .optional()
+      .transform((x) => {
+        if (x === undefined) {
+          return undefined;
+        }
+        return Object.fromEntries(Object.entries(x).map(([key, value]) => [key, { ...value, name: key }]));
+      }),
     hidden: z.record(z.string(), z.string()).optional(),
   }),
-  input_order: z.object(),
+  input_order: z.object({
+    required: z.array(z.string()),
+    optional: z.array(z.string()).optional(),
+  }),
   output: z.array(z.string()),
   output_is_list: z.array(z.boolean()),
   name: z.string(),
