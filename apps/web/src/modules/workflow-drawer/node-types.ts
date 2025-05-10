@@ -3,4 +3,7 @@ import type { Node } from "@xyflow/react";
 
 export type IComfyNode = Node<{
   definition: ComfyNodeDefinition;
+  state: {
+    inputs: Record<string, string>;
+  };
 }>;

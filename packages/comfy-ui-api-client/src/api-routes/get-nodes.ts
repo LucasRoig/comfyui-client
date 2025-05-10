@@ -151,7 +151,7 @@ function parseNode(node: [string | string[] | number[], unknown]) {
         config: config.data,
       };
     })
-    .with(P.array(P.string), () => {
+    .with(P.array(P.string), (options) => {
       const customConfigSchema = z
         .object({
           tooltip: z.string().optional(),
@@ -163,10 +163,11 @@ function parseNode(node: [string | string[] | number[], unknown]) {
       }
       return {
         kind: "STRING_ARRAY" as const,
+        options: options,
         config: config.data,
       };
     })
-    .with(P.array(P.number), () => {
+    .with(P.array(P.number), (options) => {
       const customConfigSchema = z
         .object({
           tooltip: z.string().optional(),
@@ -179,6 +180,7 @@ function parseNode(node: [string | string[] | number[], unknown]) {
       return {
         kind: "NUMBER_ARRAY" as const,
         config: config.data,
+        options,
       };
     })
     .exhaustive();
