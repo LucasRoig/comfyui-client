@@ -6,7 +6,7 @@ import { type NodeProps, useReactFlow, useUpdateNodeInternals } from "@xyflow/re
 import { useMemo, useState } from "react";
 import { P, match } from "ts-pattern";
 import { BaseNode } from "./base-node";
-import type { IComfyNode } from "./node-types";
+import type { IComfyNode, InputState } from "./node-types";
 
 const getInputColor = (_inputType: string) => {
   return "hsla(0, 0%, 0%, 0.2)";
@@ -89,8 +89,8 @@ function CommandPicker(props: {
   );
 }
 
-function PopoverInput(props: { trigger: React.ReactNode; onClose: (value: string) => void }) {
-  const [value, setValue] = useState("");
+function PopoverInput(props: { defaultValue: string; trigger: React.ReactNode; onClose: (value: string) => void }) {
+  const [value, setValue] = useState(props.defaultValue);
   const [isOpen, setIsOpen] = useState(false);
   const handleOpenChange = (isOpen: boolean) => {
     setIsOpen(isOpen);
@@ -108,9 +108,12 @@ function PopoverInput(props: { trigger: React.ReactNode; onClose: (value: string
   );
 }
 
-function Input(props: { input: ComfyInputDefinition; state: string; onStateChange: (state: string) => void }) {
+function Input(props: { input: ComfyInputDefinition; state: InputState; onStateChange: (state: InputState) => void }) {
   const component = match(props.input)
     .with({ kind: "STRING_ARRAY" }, (i) => {
+      if (props.state.kind !== "STRING_ARRAY") {
+        throw new Error("Expected STRING_ARRAY state");
+      }
       const [isOpen, setIsOpen] = useState(false);
       return (
         <div className="pl-1 pr-1 flex items-center gap-2 py-0.5 text-xs">
@@ -120,19 +123,64 @@ function Input(props: { input: ComfyInputDefinition; state: string; onStateChang
             isOpen={isOpen}
             setIsOpen={setIsOpen}
             onSelect={(option) => {
-              props.onStateChange(option.toString());
+              props.onStateChange({
+                ...props.state,
+                value: option.toString(),
+              } as InputState);
               setIsOpen(false);
             }}
           />
           <div className="h-2 w-2 rounded-full" style={{ backgroundColor: getInputColor(props.input.kind) }} />
           {/* biome-ignore lint/a11y/useKeyWithClickEvents: <explanation> */}
           <div className="text-muted-foreground hover:text-foreground cursor-default" onClick={() => setIsOpen(true)}>
-            {props.input.name} : {props.state}
+            {props.input.name} : {props.state.value}
           </div>
         </div>
       );
     })
+    .with({ kind: "INT" }, (i) => {
+      if (props.state.kind !== "INT") {
+        throw new Error("Expected INT state");
+      }
+      const updateValue = (value: string) => {
+        let parsedValue = Number.parseInt(value);
+        if (Number.isNaN(parsedValue)) {
+          return;
+        }
+        if (!Number.isFinite(parsedValue)) {
+          return;
+        }
+        if (i.config.min !== undefined && i.config.min !== null && i.config.min && parsedValue < i.config.min) {
+          parsedValue = i.config.min;
+        }
+        if (i.config.min !== undefined && i.config.min !== null && i.config.max && parsedValue > i.config.max) {
+          parsedValue = i.config.max;
+        }
+        props.onStateChange({
+          ...props.state,
+          value: parsedValue.toString(),
+        } as InputState);
+      };
+
+      return (
+        <div className="pl-1 pr-1 flex items-center gap-2 py-0.5 text-xs">
+          <div className="h-2 w-2 rounded-full" style={{ backgroundColor: getInputColor(props.input.kind) }} />
+          <PopoverInput
+            defaultValue={props.state.value}
+            trigger={
+              <div className="text-muted-foreground hover:text-foreground cursor-default">
+                {props.input.name} : {Number.parseInt(props.state.value)}
+              </div>
+            }
+            onClose={(v) => updateValue(v)}
+          />
+        </div>
+      );
+    })
     .with({ kind: "FLOAT" }, (i) => {
+      if (props.state.kind !== "FLOAT") {
+        throw new Error("Expected FLOAT state");
+      }
       const displayPrecision = match(i.config.round)
         .with(P.number, (i) => i.toString().replace(".", "").length - 1)
         .with(P.boolean, () => 3)
@@ -156,25 +204,29 @@ function Input(props: { input: ComfyInputDefinition; state: string; onStateChang
         if (!Number.isFinite(parsedValue)) {
           return;
         }
-        if (i.config.min && parsedValue < i.config.min) {
+        if (i.config.min !== undefined && i.config.min !== null && parsedValue < i.config.min) {
           parsedValue = i.config.min;
         }
-        if (i.config.max && parsedValue > i.config.max) {
+        if (i.config.max !== undefined && i.config.max !== null && i.config.max && parsedValue > i.config.max) {
           parsedValue = i.config.max;
         }
         if (roundPrecision !== undefined) {
           parsedValue = Number.parseFloat(parsedValue.toFixed(roundPrecision));
         }
-        props.onStateChange(parsedValue.toString());
+        props.onStateChange({
+          ...props.state,
+          value: parsedValue.toString(),
+        } as InputState);
       };
 
       return (
         <div className="pl-1 pr-1 flex items-center gap-2 py-0.5 text-xs">
           <div className="h-2 w-2 rounded-full" style={{ backgroundColor: getInputColor(props.input.kind) }} />
           <PopoverInput
+            defaultValue={props.state.value}
             trigger={
               <div className="text-muted-foreground hover:text-foreground cursor-default">
-                {props.input.name} : {Number.parseFloat(props.state).toFixed(displayPrecision)}
+                {props.input.name} : {Number.parseFloat(props.state.value).toFixed(displayPrecision)}
               </div>
             }
             onClose={(v) => updateValue(v)}
@@ -206,7 +258,7 @@ export function ComfyNode(props: NodeProps<IComfyNode>) {
     return allInputs;
   }, [nodeDefinition]);
 
-  const updateInputState = (inputName: string, inputState: string) => {
+  const updateInputState = (inputName: string, inputState: InputState) => {
     updateNodeData(props.id, {
       state: {
         ...props.data.state,
@@ -226,7 +278,7 @@ export function ComfyNode(props: NodeProps<IComfyNode>) {
         <Input
           key={input.name}
           input={input}
-          state={nodeState.inputs[input.name] ?? "NO STATE"}
+          state={nodeState.inputs[input.name]!}
           onStateChange={(state) => updateInputState(input.name, state)}
         />
       ))}

@@ -41,18 +41,54 @@ function _Flow() {
             ].map(([key, value]) => [
               key,
               match(value)
-                .with({ kind: "STRING_ARRAY" }, (i) => i.options[0] ?? "")
-                .with({ kind: "NUMBER_ARRAY" }, (i) => i.options[0]?.toString() ?? "")
-                .with({ kind: "IMAGE_UPLOAD_COMBO" }, () => "")
-                .with({ kind: "STRING" }, (i) => i.config.default ?? "")
-                .with({ kind: "INT" }, (i) => i.config.default?.toString() ?? "")
-                .with({ kind: "FLOAT" }, (i) => i.config.default?.toString() ?? "")
-                .with({ kind: "FLOATS" }, (i) => i.config.default?.toString() ?? "")
-                .with({ kind: "*" }, () => "")
-                .with({ kind: "BOOLEAN" }, (i) => (i.config.default ? "true" : "false"))
-                .with({ kind: "CUSTOM" }, () => "")
-                .with({ kind: "NUMBER_ARRAY_COMBO" }, (i) => i.config.default?.toString() ?? "")
-                .with({ kind: "STRING_ARRAY_COMBO" }, (i) => i.config.default?.toString() ?? "")
+                .with({ kind: "STRING_ARRAY" }, (i) => ({
+                  kind: i.kind,
+                  value: i.options[0] ?? "",
+                }))
+                .with({ kind: "NUMBER_ARRAY" }, (i) => ({
+                  kind: i.kind,
+                  value: i.options[0]?.toString() ?? "",
+                }))
+                .with({ kind: "IMAGE_UPLOAD_COMBO" }, (i) => ({
+                  kind: i.kind,
+                  value: "",
+                }))
+                .with({ kind: "STRING" }, (i) => ({
+                  kind: i.kind,
+                  value: i.config.default ?? "",
+                }))
+                .with({ kind: "INT" }, (i) => ({
+                  kind: i.kind,
+                  value: i.config.default?.toString() ?? "",
+                }))
+                .with({ kind: "FLOAT" }, (i) => ({
+                  kind: i.kind,
+                  value: i.config.default?.toString() ?? "",
+                }))
+                .with({ kind: "FLOATS" }, (i) => ({
+                  kind: i.kind,
+                  value: i.config.default?.toString() ?? "",
+                }))
+                .with({ kind: "*" }, (i) => ({
+                  kind: i.kind,
+                  value: "",
+                }))
+                .with({ kind: "BOOLEAN" }, (i) => ({
+                  kind: i.kind,
+                  value: i.config.default ? ("true" as const) : ("false" as const),
+                }))
+                .with({ kind: "CUSTOM" }, (i) => ({
+                  kind: i.kind,
+                  value: "",
+                }))
+                .with({ kind: "NUMBER_ARRAY_COMBO" }, (i) => ({
+                  kind: i.kind,
+                  value: i.config.default?.toString() ?? "",
+                }))
+                .with({ kind: "STRING_ARRAY_COMBO" }, (i) => ({
+                  kind: i.kind,
+                  value: i.config.default?.toString() ?? "",
+                }))
                 .exhaustive(),
             ]),
           ),
