@@ -60,6 +60,7 @@ function _Flow() {
                 .with({ kind: "INT" }, (i) => ({
                   kind: i.kind,
                   value: i.config.default?.toString() ?? "",
+                  controlAfterGenerate: i.config.control_after_generate ? ("fixed" as const) : undefined,
                 }))
                 .with({ kind: "FLOAT" }, (i) => ({
                   kind: i.kind,

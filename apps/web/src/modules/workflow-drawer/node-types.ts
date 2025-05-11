@@ -20,6 +20,7 @@ export type InputState =
     }
   | {
       kind: "INT";
+      controlAfterGenerate: "fixed" | "increment" | "decrement" | "randomize" | undefined;
       value: string;
     }
   | {

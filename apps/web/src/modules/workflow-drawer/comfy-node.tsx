@@ -139,6 +139,7 @@ function Input(props: { input: ComfyInputDefinition; state: InputState; onStateC
       );
     })
     .with({ kind: "INT" }, (i) => {
+      const [isControlAfterGenerateOpen, setIsControlAfterGenerateOpen] = useState(false);
       if (props.state.kind !== "INT") {
         throw new Error("Expected INT state");
       }
@@ -163,18 +164,45 @@ function Input(props: { input: ComfyInputDefinition; state: InputState; onStateC
       };
 
       return (
-        <div className="pl-1 pr-1 flex items-center gap-2 py-0.5 text-xs">
-          <div className="h-2 w-2 rounded-full" style={{ backgroundColor: getInputColor(props.input.kind) }} />
-          <PopoverInput
-            defaultValue={props.state.value}
-            trigger={
-              <div className="text-muted-foreground hover:text-foreground cursor-default">
-                {props.input.name} : {Number.parseInt(props.state.value)}
+        <>
+          <div className="pl-1 pr-1 flex items-center gap-2 py-0.5 text-xs">
+            <div className="h-2 w-2 rounded-full" style={{ backgroundColor: getInputColor(props.input.kind) }} />
+            <PopoverInput
+              defaultValue={props.state.value}
+              trigger={
+                <div className="text-muted-foreground hover:text-foreground cursor-default">
+                  {props.input.name} : {Number.parseInt(props.state.value)}
+                </div>
+              }
+              onClose={(v) => updateValue(v)}
+            />
+          </div>
+          {i.config.control_after_generate ? (
+            <div className="pl-1 pr-1 flex items-center gap-2 py-0.5 text-xs">
+              <CommandPicker
+                name={`${i.name}_control_after_generate`}
+                options={["fixed", "increment", "decrement", "randomize"]}
+                isOpen={isControlAfterGenerateOpen}
+                setIsOpen={setIsControlAfterGenerateOpen}
+                onSelect={(option) => {
+                  props.onStateChange({
+                    ...props.state,
+                    controlAfterGenerate: option,
+                  } as InputState);
+                  setIsControlAfterGenerateOpen(false);
+                }}
+              />
+              <div className="h-2 w-2 rounded-full" style={{ backgroundColor: getInputColor(props.input.kind) }} />
+              {/* biome-ignore lint/a11y/useKeyWithClickEvents: <explanation> */}
+              <div
+                className="text-muted-foreground hover:text-foreground cursor-default"
+                onClick={() => setIsControlAfterGenerateOpen(true)}
+              >
+                control_after_generate : {props.state.controlAfterGenerate}
               </div>
-            }
-            onClose={(v) => updateValue(v)}
-          />
-        </div>
+            </div>
+          ) : null}
+        </>
       );
     })
     .with({ kind: "FLOAT" }, (i) => {
