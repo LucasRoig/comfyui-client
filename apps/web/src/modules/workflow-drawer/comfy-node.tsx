@@ -262,12 +262,61 @@ function Input(props: { input: ComfyInputDefinition; state: InputState; onStateC
         </div>
       );
     })
-    .otherwise(() => (
+    .with({ kind: "CUSTOM" }, () => (
       <div className="pl-1 pr-1 flex items-center gap-2 py-0.5 text-xs">
         <div className="h-2 w-2 rounded-full" style={{ backgroundColor: getInputColor(props.input.kind) }} />
         <div>{props.input.name}</div>
       </div>
-    ));
+    ))
+    .with({ kind: "BOOLEAN" }, (i) => (
+      <div className="pl-1 pr-1 flex items-center gap-2 py-0.5 text-xs">
+        <div className="h-2 w-2 rounded-full" style={{ backgroundColor: getInputColor(props.input.kind) }} />
+        <div>Unhandled kind : {i.kind}</div>
+      </div>
+    ))
+    .with({ kind: "*" }, (i) => (
+      <div className="pl-1 pr-1 flex items-center gap-2 py-0.5 text-xs">
+        <div className="h-2 w-2 rounded-full" style={{ backgroundColor: getInputColor(props.input.kind) }} />
+        <div>Unhandled kind : {i.kind}</div>
+      </div>
+    ))
+    .with({ kind: "FLOATS" }, (i) => (
+      <div className="pl-1 pr-1 flex items-center gap-2 py-0.5 text-xs">
+        <div className="h-2 w-2 rounded-full" style={{ backgroundColor: getInputColor(props.input.kind) }} />
+        <div>Unhandled kind : {i.kind}</div>
+      </div>
+    ))
+    .with({ kind: "IMAGE_UPLOAD_COMBO" }, (i) => (
+      <div className="pl-1 pr-1 flex items-center gap-2 py-0.5 text-xs">
+        <div className="h-2 w-2 rounded-full" style={{ backgroundColor: getInputColor(props.input.kind) }} />
+        <div>Unhandled kind : {i.kind}</div>
+      </div>
+    ))
+    .with({ kind: "NUMBER_ARRAY" }, (i) => (
+      <div className="pl-1 pr-1 flex items-center gap-2 py-0.5 text-xs">
+        <div className="h-2 w-2 rounded-full" style={{ backgroundColor: getInputColor(props.input.kind) }} />
+        <div>Unhandled kind : {i.kind}</div>
+      </div>
+    ))
+    .with({ kind: "NUMBER_ARRAY_COMBO" }, (i) => (
+      <div className="pl-1 pr-1 flex items-center gap-2 py-0.5 text-xs">
+        <div className="h-2 w-2 rounded-full" style={{ backgroundColor: getInputColor(props.input.kind) }} />
+        <div>Unhandled kind : {i.kind}</div>
+      </div>
+    ))
+    .with({ kind: "STRING" }, (i) => (
+      <div className="pl-1 pr-1 flex items-center gap-2 py-0.5 text-xs">
+        <div className="h-2 w-2 rounded-full" style={{ backgroundColor: getInputColor(props.input.kind) }} />
+        <div>Unhandled kind : {i.kind}</div>
+      </div>
+    ))
+    .with({ kind: "STRING_ARRAY_COMBO" }, (i) => (
+      <div className="pl-1 pr-1 flex items-center gap-2 py-0.5 text-xs">
+        <div className="h-2 w-2 rounded-full" style={{ backgroundColor: getInputColor(props.input.kind) }} />
+        <div>Unhandled kind : {i.kind}</div>
+      </div>
+    ))
+    .exhaustive();
   return component;
 }
 
