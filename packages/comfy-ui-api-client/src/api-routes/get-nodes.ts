@@ -2,7 +2,7 @@ import type { KyInstance } from "ky";
 import { P, match } from "ts-pattern";
 import z from "zod";
 
-function parseNode(node: [string | string[] | number[], unknown]) {
+function parseInputDefinition(node: [string | string[] | number[], unknown]) {
   const parsed = match(node[0])
     .with("BOOLEAN", () => {
       const boolConfigSchema = z.object({
@@ -190,7 +190,7 @@ function parseNode(node: [string | string[] | number[], unknown]) {
 
 const inputDefinitionSchema = z
   .tuple([z.union([z.string(), z.number().array(), z.string().array()]), z.unknown()])
-  .transform(parseNode);
+  .transform(parseInputDefinition);
 
 const nodeDefinitionSchema = z.object({
   input: z.object({

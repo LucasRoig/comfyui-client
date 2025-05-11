@@ -3,10 +3,11 @@ import { CommandDialog, CommandEmpty, CommandInput, CommandItem, CommandList } f
 import { Checkbox, Textarea } from "@lro-ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@lro-ui/popover";
 import type { ComfyNodeDefinition } from "@repo/comfy-ui-api-client";
-import { type NodeProps, useReactFlow, useUpdateNodeInternals } from "@xyflow/react";
+import { type NodeProps, Position, useReactFlow, useUpdateNodeInternals } from "@xyflow/react";
 import { useId, useMemo, useState } from "react";
 import { P, match } from "ts-pattern";
 import { BaseNode } from "./base-node";
+import { CustomHandle } from "./custom-handle";
 import type { IComfyNode, InputState } from "./node-types";
 
 const getInputColor = (_inputType: string) => {
@@ -131,7 +132,7 @@ function Input(props: { input: ComfyInputDefinition; state: InputState; onStateC
               setIsOpen(false);
             }}
           />
-          <div className="h-2 w-2 rounded-full" style={{ backgroundColor: getInputColor(props.input.kind) }} />
+          <CustomHandle type="target" position={Position.Left} />
           {/* biome-ignore lint/a11y/useKeyWithClickEvents: <explanation> */}
           <div className="text-muted-foreground hover:text-foreground cursor-default" onClick={() => setIsOpen(true)}>
             {props.input.name} : {props.state.value}
@@ -167,7 +168,7 @@ function Input(props: { input: ComfyInputDefinition; state: InputState; onStateC
       return (
         <>
           <div className="pl-1 pr-1 flex items-center gap-2 py-0.5 text-xs">
-            <div className="h-2 w-2 rounded-full" style={{ backgroundColor: getInputColor(props.input.kind) }} />
+            <CustomHandle type="target" position={Position.Left} />
             <PopoverInput
               defaultValue={props.state.value}
               trigger={
@@ -250,7 +251,7 @@ function Input(props: { input: ComfyInputDefinition; state: InputState; onStateC
 
       return (
         <div className="pl-1 pr-1 flex items-center gap-2 py-0.5 text-xs">
-          <div className="h-2 w-2 rounded-full" style={{ backgroundColor: getInputColor(props.input.kind) }} />
+          <CustomHandle type="target" position={Position.Left} />
           <PopoverInput
             defaultValue={props.state.value}
             trigger={
@@ -265,7 +266,7 @@ function Input(props: { input: ComfyInputDefinition; state: InputState; onStateC
     })
     .with({ kind: "CUSTOM" }, () => (
       <div className="pl-1 pr-1 flex items-center gap-2 py-0.5 text-xs">
-        <div className="h-2 w-2 rounded-full" style={{ backgroundColor: getInputColor(props.input.kind) }} />
+        <CustomHandle type="target" position={Position.Left} />
         <div>{props.input.name}</div>
       </div>
     ))
@@ -276,7 +277,7 @@ function Input(props: { input: ComfyInputDefinition; state: InputState; onStateC
       }
       return (
         <div className="pl-1 pr-1 flex items-center gap-2 py-0.5 text-xs">
-          <div className="h-2 w-2 rounded-full" style={{ backgroundColor: getInputColor(props.input.kind) }} />
+          <CustomHandle type="target" position={Position.Left} />{" "}
           <div className="flex items-center gap-2">
             <label htmlFor={checkboxId}>{props.input.name}</label>
             <Checkbox
@@ -290,19 +291,19 @@ function Input(props: { input: ComfyInputDefinition; state: InputState; onStateC
     })
     .with({ kind: "*" }, (_i) => (
       <div className="pl-1 pr-1 flex items-center gap-2 py-0.5 text-xs">
-        <div className="h-2 w-2 rounded-full" style={{ backgroundColor: getInputColor(props.input.kind) }} />
+        <CustomHandle type="target" position={Position.Left} />
         <div>{props.input.name}</div>
       </div>
     ))
     .with({ kind: "FLOATS" }, (i) => (
       <div className="pl-1 pr-1 flex items-center gap-2 py-0.5 text-xs">
-        <div className="h-2 w-2 rounded-full" style={{ backgroundColor: getInputColor(props.input.kind) }} />
+        <CustomHandle type="target" position={Position.Left} />
         <div>Beta Node Unhandled kind : {i.kind}</div>
       </div>
     ))
     .with({ kind: "IMAGE_UPLOAD_COMBO" }, (i) => (
       <div className="pl-1 pr-1 flex items-center gap-2 py-0.5 text-xs">
-        <div className="h-2 w-2 rounded-full" style={{ backgroundColor: getInputColor(props.input.kind) }} />
+        <CustomHandle type="target" position={Position.Left} />
         <div>Beta Node Unhandled kind : {i.kind}</div>
       </div>
     ))
@@ -326,7 +327,7 @@ function Input(props: { input: ComfyInputDefinition; state: InputState; onStateC
               setIsOpen(false);
             }}
           />
-          <div className="h-2 w-2 rounded-full" style={{ backgroundColor: getInputColor(props.input.kind) }} />
+          <CustomHandle type="target" position={Position.Left} />
           {/* biome-ignore lint/a11y/useKeyWithClickEvents: <explanation> */}
           <div className="text-muted-foreground hover:text-foreground cursor-default" onClick={() => setIsOpen(true)}>
             {props.input.name} : {props.state.value}
@@ -354,7 +355,7 @@ function Input(props: { input: ComfyInputDefinition; state: InputState; onStateC
               setIsOpen(false);
             }}
           />
-          <div className="h-2 w-2 rounded-full" style={{ backgroundColor: getInputColor(props.input.kind) }} />
+          <CustomHandle type="target" position={Position.Left} />
           {/* biome-ignore lint/a11y/useKeyWithClickEvents: <explanation> */}
           <div className="text-muted-foreground hover:text-foreground cursor-default" onClick={() => setIsOpen(true)}>
             {props.input.name} : {props.state.value}
@@ -376,7 +377,7 @@ function Input(props: { input: ComfyInputDefinition; state: InputState; onStateC
         return (
           <>
             <div className="pl-1 pr-1 flex items-center gap-2 py-0.5 text-xs">
-              <div className="h-2 w-2 rounded-full" style={{ backgroundColor: getInputColor(props.input.kind) }} />
+              <CustomHandle type="target" position={Position.Left} />
               <div className="text-muted-foreground hover:text-foreground cursor-default">{props.input.name} :</div>
             </div>
             <div className="px-1 pb-1">
@@ -391,7 +392,7 @@ function Input(props: { input: ComfyInputDefinition; state: InputState; onStateC
       } else {
         return (
           <div className="pl-1 pr-1 flex items-center gap-2 py-0.5 text-xs">
-            <div className="h-2 w-2 rounded-full" style={{ backgroundColor: getInputColor(props.input.kind) }} />
+            <CustomHandle type="target" position={Position.Left} />
             <PopoverInput
               defaultValue={props.state.value}
               trigger={
@@ -425,7 +426,7 @@ function Input(props: { input: ComfyInputDefinition; state: InputState; onStateC
               setIsOpen(false);
             }}
           />
-          <div className="h-2 w-2 rounded-full" style={{ backgroundColor: getInputColor(props.input.kind) }} />
+          <CustomHandle type="target" position={Position.Left} />
           {/* biome-ignore lint/a11y/useKeyWithClickEvents: <explanation> */}
           <div className="text-muted-foreground hover:text-foreground cursor-default" onClick={() => setIsOpen(true)}>
             {props.input.name} : {props.state.value}
@@ -468,6 +469,14 @@ export function ComfyNode(props: NodeProps<IComfyNode>) {
   return (
     <BaseNode className="flex flex-col p-0" selected={false}>
       <div className="border-b px-5 py-2 font-medium">{nodeDefinition.display_name}</div>
+      {nodeDefinition.output.map((outputName, i) => (
+        // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
+        <div key={i} className="pl-1 pr-1 flex justify-end items-center gap-2 py-0.5 text-xs">
+          {outputName}
+          <CustomHandle type="source" position={Position.Right} />
+          {/* <div className="h-2 w-2 rounded-full" style={{ backgroundColor: getInputColor(outputName) }} /> */}
+        </div>
+      ))}
       {sortedRequiredInputs.map((input) => (
         <Input
           key={input.name}
