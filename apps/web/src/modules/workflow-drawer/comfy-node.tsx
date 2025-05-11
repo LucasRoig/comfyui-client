@@ -1,9 +1,10 @@
 "use client";
 import { CommandDialog, CommandEmpty, CommandInput, CommandItem, CommandList } from "@lro-ui/command";
+import { Checkbox } from "@lro-ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@lro-ui/popover";
 import type { ComfyNodeDefinition } from "@repo/comfy-ui-api-client";
 import { type NodeProps, useReactFlow, useUpdateNodeInternals } from "@xyflow/react";
-import { useMemo, useState } from "react";
+import { useId, useMemo, useState } from "react";
 import { P, match } from "ts-pattern";
 import { BaseNode } from "./base-node";
 import type { IComfyNode, InputState } from "./node-types";
@@ -268,12 +269,25 @@ function Input(props: { input: ComfyInputDefinition; state: InputState; onStateC
         <div>{props.input.name}</div>
       </div>
     ))
-    .with({ kind: "BOOLEAN" }, (i) => (
-      <div className="pl-1 pr-1 flex items-center gap-2 py-0.5 text-xs">
-        <div className="h-2 w-2 rounded-full" style={{ backgroundColor: getInputColor(props.input.kind) }} />
-        <div>Unhandled kind : {i.kind}</div>
-      </div>
-    ))
+    .with({ kind: "BOOLEAN" }, (_i) => {
+      const checkboxId = useId();
+      if (props.state.kind !== "BOOLEAN") {
+        throw new Error("Expected BOOLEAN state");
+      }
+      return (
+        <div className="pl-1 pr-1 flex items-center gap-2 py-0.5 text-xs">
+          <div className="h-2 w-2 rounded-full" style={{ backgroundColor: getInputColor(props.input.kind) }} />
+          <div className="flex items-center gap-2">
+            <label htmlFor={checkboxId}>{props.input.name}</label>
+            <Checkbox
+              id={checkboxId}
+              value={props.state.value}
+              onCheckedChange={(value) => props.onStateChange({ ...props.state, value: String(value) } as InputState)}
+            />
+          </div>
+        </div>
+      );
+    })
     .with({ kind: "*" }, (i) => (
       <div className="pl-1 pr-1 flex items-center gap-2 py-0.5 text-xs">
         <div className="h-2 w-2 rounded-full" style={{ backgroundColor: getInputColor(props.input.kind) }} />
