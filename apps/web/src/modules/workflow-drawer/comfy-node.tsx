@@ -1,6 +1,6 @@
 "use client";
 import { CommandDialog, CommandEmpty, CommandInput, CommandItem, CommandList } from "@lro-ui/command";
-import { Checkbox } from "@lro-ui/input";
+import { Checkbox, Textarea } from "@lro-ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@lro-ui/popover";
 import type { ComfyNodeDefinition } from "@repo/comfy-ui-api-client";
 import { type NodeProps, useReactFlow, useUpdateNodeInternals } from "@xyflow/react";
@@ -288,48 +288,151 @@ function Input(props: { input: ComfyInputDefinition; state: InputState; onStateC
         </div>
       );
     })
-    .with({ kind: "*" }, (i) => (
+    .with({ kind: "*" }, (_i) => (
       <div className="pl-1 pr-1 flex items-center gap-2 py-0.5 text-xs">
         <div className="h-2 w-2 rounded-full" style={{ backgroundColor: getInputColor(props.input.kind) }} />
-        <div>Unhandled kind : {i.kind}</div>
+        <div>{props.input.name}</div>
       </div>
     ))
     .with({ kind: "FLOATS" }, (i) => (
       <div className="pl-1 pr-1 flex items-center gap-2 py-0.5 text-xs">
         <div className="h-2 w-2 rounded-full" style={{ backgroundColor: getInputColor(props.input.kind) }} />
-        <div>Unhandled kind : {i.kind}</div>
+        <div>Beta Node Unhandled kind : {i.kind}</div>
       </div>
     ))
     .with({ kind: "IMAGE_UPLOAD_COMBO" }, (i) => (
       <div className="pl-1 pr-1 flex items-center gap-2 py-0.5 text-xs">
         <div className="h-2 w-2 rounded-full" style={{ backgroundColor: getInputColor(props.input.kind) }} />
-        <div>Unhandled kind : {i.kind}</div>
+        <div>Beta Node Unhandled kind : {i.kind}</div>
       </div>
     ))
-    .with({ kind: "NUMBER_ARRAY" }, (i) => (
-      <div className="pl-1 pr-1 flex items-center gap-2 py-0.5 text-xs">
-        <div className="h-2 w-2 rounded-full" style={{ backgroundColor: getInputColor(props.input.kind) }} />
-        <div>Unhandled kind : {i.kind}</div>
-      </div>
-    ))
-    .with({ kind: "NUMBER_ARRAY_COMBO" }, (i) => (
-      <div className="pl-1 pr-1 flex items-center gap-2 py-0.5 text-xs">
-        <div className="h-2 w-2 rounded-full" style={{ backgroundColor: getInputColor(props.input.kind) }} />
-        <div>Unhandled kind : {i.kind}</div>
-      </div>
-    ))
-    .with({ kind: "STRING" }, (i) => (
-      <div className="pl-1 pr-1 flex items-center gap-2 py-0.5 text-xs">
-        <div className="h-2 w-2 rounded-full" style={{ backgroundColor: getInputColor(props.input.kind) }} />
-        <div>Unhandled kind : {i.kind}</div>
-      </div>
-    ))
-    .with({ kind: "STRING_ARRAY_COMBO" }, (i) => (
-      <div className="pl-1 pr-1 flex items-center gap-2 py-0.5 text-xs">
-        <div className="h-2 w-2 rounded-full" style={{ backgroundColor: getInputColor(props.input.kind) }} />
-        <div>Unhandled kind : {i.kind}</div>
-      </div>
-    ))
+    .with({ kind: "NUMBER_ARRAY" }, (i) => {
+      if (props.state.kind !== "NUMBER_ARRAY") {
+        throw new Error("Expected NUMBER_ARRAY state");
+      }
+      const [isOpen, setIsOpen] = useState(false);
+      return (
+        <div className="pl-1 pr-1 flex items-center gap-2 py-0.5 text-xs">
+          <CommandPicker
+            name={i.name}
+            options={i.options}
+            isOpen={isOpen}
+            setIsOpen={setIsOpen}
+            onSelect={(option) => {
+              props.onStateChange({
+                ...props.state,
+                value: option.toString(),
+              } as InputState);
+              setIsOpen(false);
+            }}
+          />
+          <div className="h-2 w-2 rounded-full" style={{ backgroundColor: getInputColor(props.input.kind) }} />
+          {/* biome-ignore lint/a11y/useKeyWithClickEvents: <explanation> */}
+          <div className="text-muted-foreground hover:text-foreground cursor-default" onClick={() => setIsOpen(true)}>
+            {props.input.name} : {props.state.value}
+          </div>
+        </div>
+      );
+    })
+    .with({ kind: "NUMBER_ARRAY_COMBO" }, (i) => {
+      if (props.state.kind !== "NUMBER_ARRAY_COMBO") {
+        throw new Error("Expected NUMBER_ARRAY_COMBO state");
+      }
+      const [isOpen, setIsOpen] = useState(false);
+      return (
+        <div className="pl-1 pr-1 flex items-center gap-2 py-0.5 text-xs">
+          <CommandPicker
+            name={i.name}
+            options={i.config.options}
+            isOpen={isOpen}
+            setIsOpen={setIsOpen}
+            onSelect={(option) => {
+              props.onStateChange({
+                ...props.state,
+                value: option.toString(),
+              } as InputState);
+              setIsOpen(false);
+            }}
+          />
+          <div className="h-2 w-2 rounded-full" style={{ backgroundColor: getInputColor(props.input.kind) }} />
+          {/* biome-ignore lint/a11y/useKeyWithClickEvents: <explanation> */}
+          <div className="text-muted-foreground hover:text-foreground cursor-default" onClick={() => setIsOpen(true)}>
+            {props.input.name} : {props.state.value}
+          </div>
+        </div>
+      );
+    })
+    .with({ kind: "STRING" }, (i) => {
+      if (props.state.kind !== "STRING") {
+        throw new Error("Expected STRING state");
+      }
+      const updateValue = (value: string) => {
+        props.onStateChange({
+          ...props.state,
+          value: value,
+        } as InputState);
+      };
+      if (i.config.multiline) {
+        return (
+          <>
+            <div className="pl-1 pr-1 flex items-center gap-2 py-0.5 text-xs">
+              <div className="h-2 w-2 rounded-full" style={{ backgroundColor: getInputColor(props.input.kind) }} />
+              <div className="text-muted-foreground hover:text-foreground cursor-default">{props.input.name} :</div>
+            </div>
+            <div className="px-1 pb-1">
+              <Textarea
+                className="resize-none"
+                value={props.state.value}
+                onChange={(e) => updateValue(e.target.value)}
+              />
+            </div>
+          </>
+        );
+      } else {
+        return (
+          <div className="pl-1 pr-1 flex items-center gap-2 py-0.5 text-xs">
+            <div className="h-2 w-2 rounded-full" style={{ backgroundColor: getInputColor(props.input.kind) }} />
+            <PopoverInput
+              defaultValue={props.state.value}
+              trigger={
+                <div className="text-muted-foreground hover:text-foreground cursor-default">
+                  {props.input.name} : {props.state.value}
+                </div>
+              }
+              onClose={(v) => updateValue(v)}
+            />
+          </div>
+        );
+      }
+    })
+    .with({ kind: "STRING_ARRAY_COMBO" }, (i) => {
+      if (props.state.kind !== "STRING_ARRAY_COMBO") {
+        throw new Error("Expected STRING_ARRAY_COMBO state");
+      }
+      const [isOpen, setIsOpen] = useState(false);
+      return (
+        <div className="pl-1 pr-1 flex items-center gap-2 py-0.5 text-xs">
+          <CommandPicker
+            name={i.name}
+            options={i.config.options}
+            isOpen={isOpen}
+            setIsOpen={setIsOpen}
+            onSelect={(option) => {
+              props.onStateChange({
+                ...props.state,
+                value: option.toString(),
+              } as InputState);
+              setIsOpen(false);
+            }}
+          />
+          <div className="h-2 w-2 rounded-full" style={{ backgroundColor: getInputColor(props.input.kind) }} />
+          {/* biome-ignore lint/a11y/useKeyWithClickEvents: <explanation> */}
+          <div className="text-muted-foreground hover:text-foreground cursor-default" onClick={() => setIsOpen(true)}>
+            {props.input.name} : {props.state.value}
+          </div>
+        </div>
+      );
+    })
     .exhaustive();
   return component;
 }

@@ -178,9 +178,10 @@ function parseNode(node: [string | string[] | number[], unknown]) {
         throw new Error("Failed to parse custom config");
       }
       return {
+        //eg : PixverseTransitionVideoNode
         kind: "NUMBER_ARRAY" as const,
         config: config.data,
-        options,
+        options: options,
       };
     })
     .exhaustive();
