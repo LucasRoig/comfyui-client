@@ -11,7 +11,7 @@ export const queueWorkflowAction = actionClient
     }),
   )
   .action(async ({ parsedInput }) => {
-    const comfyClient = createClient("http://172.22.80.1:8000");
+    const comfyClient = createClient(process.env.COMFY_HTTP_URL!);
     const response = await comfyClient.queueWorkflow({
       client_id: parsedInput.sessionId,
     });

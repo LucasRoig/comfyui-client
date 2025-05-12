@@ -4,7 +4,7 @@ import { createClient } from "@repo/comfy-ui-api-client";
 import { actionClient } from "../../../@lib/safe-action";
 
 export const getQueueStateAction = actionClient.action(async (_input) => {
-  const comfyClient = createClient("http://172.22.80.1:8000");
+  const comfyClient = createClient(process.env.COMFY_HTTP_URL!);
   const response = await comfyClient.getQueue();
   if (response.isErr()) {
     console.error(response.error);

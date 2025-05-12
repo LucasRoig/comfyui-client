@@ -25,11 +25,12 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const wsUrl = process.env.COMFY_WS_URL!;
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} font-sans antialiased min-h-dvh text-foreground`}>
         <Providers>
-          <ComfyUiContextProvider>
+          <ComfyUiContextProvider wsUrl={wsUrl}>
             <Toaster />
             <div className="flex flex-col min-h-dvh h-dvh">
               <header className="w-full sticky top-0 z-10 bg-background h-[var(--header-height)] ">

@@ -110,14 +110,14 @@ type ComfyUiStore = ReturnType<typeof createComfyUiStore>;
 
 const ComfyUiContext = createContext<ComfyUiStore | undefined>(undefined);
 
-export function ComfyUiContextProvider({ children }: Readonly<{ children: React.ReactNode }>) {
+export function ComfyUiContextProvider({ children, wsUrl }: Readonly<{ children: React.ReactNode, wsUrl: string }>) {
   const store = useRef(createComfyUiStore());
   const storeActions = useStore(store.current, (state) => state.actions);
   const websocketRef = useRef<ComfyUIWebSocket | null>(null);
   const invalidateQueueState = useInvalidateQueueState();
   if (websocketRef.current === null) {
     websocketRef.current = new ComfyUIWebSocket({
-      url: "ws://172.22.80.1:8000",
+      url: wsUrl,
       eventHandlers: {
         onStatusMessage: (msg) => {
           invalidateQueueState();
