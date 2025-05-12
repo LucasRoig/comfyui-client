@@ -481,9 +481,9 @@ export function ComfyNode(props: NodeProps<IComfyNode>) {
           {/* <div className="h-2 w-2 rounded-full" style={{ backgroundColor: getInputColor(outputName) }} /> */}
         </div>
       ))}
-      {sortedRequiredInputs.map((input, i) => (
+      {sortedRequiredInputs.map((input, _i) => (
         <Input
-          id={`input_${i}`}
+          id={`input_${input.name}`}
           key={input.name}
           input={input}
           state={nodeState.inputs[input.name]!}

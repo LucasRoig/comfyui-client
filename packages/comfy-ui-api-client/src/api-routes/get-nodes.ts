@@ -136,7 +136,7 @@ function parseInputDefinition(node: [string | string[] | number[], unknown]) {
         kind: "*" as const,
       };
     })
-    .with(P.string, () => {
+    .with(P.string, (type) => {
       const customConfigSchema = z
         .object({
           tooltip: z.string().optional(),
@@ -149,6 +149,7 @@ function parseInputDefinition(node: [string | string[] | number[], unknown]) {
       return {
         kind: "CUSTOM" as const,
         config: config.data,
+        type: type,
       };
     })
     .with(P.array(P.string), (options) => {

@@ -1,8 +1,8 @@
 "use client";
-import { Background, ReactFlow, ReactFlowProvider } from "@xyflow/react";
+import { Background, type IsValidConnection, ReactFlow, ReactFlowProvider, useReactFlow } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import type { ComfyNodeDefinition } from "@repo/comfy-ui-api-client";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { match } from "ts-pattern";
 import { v4 as uuidv4 } from "uuid";
 import { ComfyNode } from "./comfy-node";
@@ -25,6 +25,7 @@ export function Flow() {
 function _Flow() {
   const [isNodePickerOpen, setIsNodePickerOpen] = useState(false);
   const { nodes, edges, onNodesChange, onEdgesChange, addNodes, onConnect } = useFlowState();
+  const { getNodes, getEdges } = useReactFlow();
 
   const handleInsertNode = (nodeDefinition: ComfyNodeDefinition) => {
     const node: IComfyNode = {
@@ -98,12 +99,50 @@ function _Flow() {
     };
     addNodes(node);
   };
+
+  const isValidConnection: IsValidConnection = useCallback(
+    (connection) => {
+      // we are using getNodes and getEdges helpers here
+      // to make sure we create isValidConnection function only once
+      const nodes = getNodes();
+      const _edges = getEdges();
+      const sourceNode = nodes.find((node) => node.id === connection.source) as IComfyNode;
+      const targetNode = nodes.find((node) => node.id === connection.target) as IComfyNode;
+      if (!sourceNode) {
+        throw new Error("Source node not found");
+      }
+      if (!targetNode) {
+        throw new Error("Target node not found");
+      }
+      const sourceIndex = Number.parseInt(connection.sourceHandle?.split("_")[1] ?? "");
+      const targetName = connection.targetHandle?.replace("input_", "");
+      if (Number.isNaN(sourceIndex) || !Number.isFinite(sourceIndex) || sourceIndex < 0) {
+        throw new Error("Invalid source handle");
+      }
+      if (targetName === undefined) {
+        throw new Error("Invalid target handle");
+      }
+      const sourceType = sourceNode.data.definition.output[sourceIndex];
+      const targetInput = targetNode.data.definition.input.required[targetName]
+        ?? targetNode.data.definition.input.optional?.[targetName];
+      if (targetInput === undefined) {
+        throw new Error("Target input not found");
+      }
+      const targetType = match(targetInput)
+        .with({ kind: "CUSTOM"}, (i) => i.type)
+        .otherwise(() => targetInput.kind);
+      return sourceType === targetType;
+    },
+    [getNodes, getEdges],
+  );
+
   return (
     <div className="w-full h-full">
       <NodePickerCommand isOpen={isNodePickerOpen} setIsOpen={setIsNodePickerOpen} onSelect={handleInsertNode} />
       <ReactFlow
         deleteKeyCode="Delete"
         zoomOnDoubleClick={false}
+        isValidConnection={isValidConnection}
         onDoubleClick={() => setIsNodePickerOpen(true)}
         id="reactflow"
         selectionOnDrag={true}
