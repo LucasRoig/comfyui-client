@@ -10,9 +10,9 @@ import { BaseNode } from "./base-node";
 import { CustomHandle } from "./custom-handle";
 import type { IComfyNode, InputState } from "./node-types";
 
-const getInputColor = (_inputType: string) => {
-  return "hsla(0, 0%, 0%, 0.2)";
-};
+// const getInputColor = (_inputType: string) => {
+//   return "hsla(0, 0%, 0%, 0.2)";
+// };
 
 type RecordValue<T> = T extends Record<string | number | symbol, infer TValue> ? TValue : never;
 type ComfyInputDefinition = RecordValue<ComfyNodeDefinition["input"]["required"]>;
@@ -110,7 +110,12 @@ function PopoverInput(props: { defaultValue: string; trigger: React.ReactNode; o
   );
 }
 
-function Input(props: { input: ComfyInputDefinition; state: InputState; onStateChange: (state: InputState) => void }) {
+function Input(props: {
+  id: string;
+  input: ComfyInputDefinition;
+  state: InputState;
+  onStateChange: (state: InputState) => void;
+}) {
   const component = match(props.input)
     .with({ kind: "STRING_ARRAY" }, (i) => {
       if (props.state.kind !== "STRING_ARRAY") {
@@ -118,7 +123,7 @@ function Input(props: { input: ComfyInputDefinition; state: InputState; onStateC
       }
       const [isOpen, setIsOpen] = useState(false);
       return (
-        <div className="pl-1 pr-1 flex items-center gap-2 py-0.5 text-xs">
+        <div className="pl-1 pr-1 flex items-center gap-2 py-0.5 text-xs relative">
           <CommandPicker
             name={i.name}
             options={i.options}
@@ -132,7 +137,7 @@ function Input(props: { input: ComfyInputDefinition; state: InputState; onStateC
               setIsOpen(false);
             }}
           />
-          <CustomHandle type="target" position={Position.Left} />
+          <CustomHandle type="target" position={Position.Left} id={props.id} />
           {/* biome-ignore lint/a11y/useKeyWithClickEvents: <explanation> */}
           <div className="text-muted-foreground hover:text-foreground cursor-default" onClick={() => setIsOpen(true)}>
             {props.input.name} : {props.state.value}
@@ -167,8 +172,8 @@ function Input(props: { input: ComfyInputDefinition; state: InputState; onStateC
 
       return (
         <>
-          <div className="pl-1 pr-1 flex items-center gap-2 py-0.5 text-xs">
-            <CustomHandle type="target" position={Position.Left} />
+          <div className="pl-1 pr-1 flex items-center gap-2 py-0.5 text-xs relative">
+            <CustomHandle type="target" position={Position.Left} id={props.id} />
             <PopoverInput
               defaultValue={props.state.value}
               trigger={
@@ -194,7 +199,6 @@ function Input(props: { input: ComfyInputDefinition; state: InputState; onStateC
                   setIsControlAfterGenerateOpen(false);
                 }}
               />
-              <div className="h-2 w-2 rounded-full" style={{ backgroundColor: getInputColor(props.input.kind) }} />
               {/* biome-ignore lint/a11y/useKeyWithClickEvents: <explanation> */}
               <div
                 className="text-muted-foreground hover:text-foreground cursor-default"
@@ -250,8 +254,8 @@ function Input(props: { input: ComfyInputDefinition; state: InputState; onStateC
       };
 
       return (
-        <div className="pl-1 pr-1 flex items-center gap-2 py-0.5 text-xs">
-          <CustomHandle type="target" position={Position.Left} />
+        <div className="pl-1 pr-1 flex items-center gap-2 py-0.5 text-xs relative">
+          <CustomHandle type="target" position={Position.Left} id={props.id} />
           <PopoverInput
             defaultValue={props.state.value}
             trigger={
@@ -265,8 +269,8 @@ function Input(props: { input: ComfyInputDefinition; state: InputState; onStateC
       );
     })
     .with({ kind: "CUSTOM" }, () => (
-      <div className="pl-1 pr-1 flex items-center gap-2 py-0.5 text-xs">
-        <CustomHandle type="target" position={Position.Left} />
+      <div className="pl-1 pr-1 flex items-center gap-2 py-0.5 text-xs relative">
+        <CustomHandle type="target" position={Position.Left} id={props.id} />
         <div>{props.input.name}</div>
       </div>
     ))
@@ -276,8 +280,8 @@ function Input(props: { input: ComfyInputDefinition; state: InputState; onStateC
         throw new Error("Expected BOOLEAN state");
       }
       return (
-        <div className="pl-1 pr-1 flex items-center gap-2 py-0.5 text-xs">
-          <CustomHandle type="target" position={Position.Left} />{" "}
+        <div className="pl-1 pr-1 flex items-center gap-2 py-0.5 text-xs relative">
+          <CustomHandle type="target" position={Position.Left} id={props.id} />
           <div className="flex items-center gap-2">
             <label htmlFor={checkboxId}>{props.input.name}</label>
             <Checkbox
@@ -290,20 +294,20 @@ function Input(props: { input: ComfyInputDefinition; state: InputState; onStateC
       );
     })
     .with({ kind: "*" }, (_i) => (
-      <div className="pl-1 pr-1 flex items-center gap-2 py-0.5 text-xs">
-        <CustomHandle type="target" position={Position.Left} />
+      <div className="pl-1 pr-1 flex items-center gap-2 py-0.5 text-xs relative">
+        <CustomHandle type="target" position={Position.Left} id={props.id} />
         <div>{props.input.name}</div>
       </div>
     ))
     .with({ kind: "FLOATS" }, (i) => (
-      <div className="pl-1 pr-1 flex items-center gap-2 py-0.5 text-xs">
-        <CustomHandle type="target" position={Position.Left} />
+      <div className="pl-1 pr-1 flex items-center gap-2 py-0.5 text-xs relative">
+        <CustomHandle type="target" position={Position.Left} id={props.id} />
         <div>Beta Node Unhandled kind : {i.kind}</div>
       </div>
     ))
     .with({ kind: "IMAGE_UPLOAD_COMBO" }, (i) => (
-      <div className="pl-1 pr-1 flex items-center gap-2 py-0.5 text-xs">
-        <CustomHandle type="target" position={Position.Left} />
+      <div className="pl-1 pr-1 flex items-center gap-2 py-0.5 text-xs relative">
+        <CustomHandle type="target" position={Position.Left} id={props.id} />
         <div>Beta Node Unhandled kind : {i.kind}</div>
       </div>
     ))
@@ -313,7 +317,7 @@ function Input(props: { input: ComfyInputDefinition; state: InputState; onStateC
       }
       const [isOpen, setIsOpen] = useState(false);
       return (
-        <div className="pl-1 pr-1 flex items-center gap-2 py-0.5 text-xs">
+        <div className="pl-1 pr-1 flex items-center gap-2 py-0.5 text-xs relative">
           <CommandPicker
             name={i.name}
             options={i.options}
@@ -327,7 +331,7 @@ function Input(props: { input: ComfyInputDefinition; state: InputState; onStateC
               setIsOpen(false);
             }}
           />
-          <CustomHandle type="target" position={Position.Left} />
+          <CustomHandle type="target" position={Position.Left} id={props.id} />
           {/* biome-ignore lint/a11y/useKeyWithClickEvents: <explanation> */}
           <div className="text-muted-foreground hover:text-foreground cursor-default" onClick={() => setIsOpen(true)}>
             {props.input.name} : {props.state.value}
@@ -341,7 +345,7 @@ function Input(props: { input: ComfyInputDefinition; state: InputState; onStateC
       }
       const [isOpen, setIsOpen] = useState(false);
       return (
-        <div className="pl-1 pr-1 flex items-center gap-2 py-0.5 text-xs">
+        <div className="pl-1 pr-1 flex items-center gap-2 py-0.5 text-xs relative">
           <CommandPicker
             name={i.name}
             options={i.config.options}
@@ -355,7 +359,7 @@ function Input(props: { input: ComfyInputDefinition; state: InputState; onStateC
               setIsOpen(false);
             }}
           />
-          <CustomHandle type="target" position={Position.Left} />
+          <CustomHandle type="target" position={Position.Left} id={props.id} />
           {/* biome-ignore lint/a11y/useKeyWithClickEvents: <explanation> */}
           <div className="text-muted-foreground hover:text-foreground cursor-default" onClick={() => setIsOpen(true)}>
             {props.input.name} : {props.state.value}
@@ -376,8 +380,8 @@ function Input(props: { input: ComfyInputDefinition; state: InputState; onStateC
       if (i.config.multiline) {
         return (
           <>
-            <div className="pl-1 pr-1 flex items-center gap-2 py-0.5 text-xs">
-              <CustomHandle type="target" position={Position.Left} />
+            <div className="pl-1 pr-1 flex items-center gap-2 py-0.5 text-xs relative">
+              <CustomHandle type="target" position={Position.Left} id={props.id} />
               <div className="text-muted-foreground hover:text-foreground cursor-default">{props.input.name} :</div>
             </div>
             <div className="px-1 pb-1">
@@ -391,8 +395,8 @@ function Input(props: { input: ComfyInputDefinition; state: InputState; onStateC
         );
       } else {
         return (
-          <div className="pl-1 pr-1 flex items-center gap-2 py-0.5 text-xs">
-            <CustomHandle type="target" position={Position.Left} />
+          <div className="pl-1 pr-1 flex items-center gap-2 py-0.5 text-xs relative">
+            <CustomHandle type="target" position={Position.Left} id={props.id} />
             <PopoverInput
               defaultValue={props.state.value}
               trigger={
@@ -412,7 +416,7 @@ function Input(props: { input: ComfyInputDefinition; state: InputState; onStateC
       }
       const [isOpen, setIsOpen] = useState(false);
       return (
-        <div className="pl-1 pr-1 flex items-center gap-2 py-0.5 text-xs">
+        <div className="pl-1 pr-1 flex items-center gap-2 py-0.5 text-xs relative">
           <CommandPicker
             name={i.name}
             options={i.config.options}
@@ -426,7 +430,7 @@ function Input(props: { input: ComfyInputDefinition; state: InputState; onStateC
               setIsOpen(false);
             }}
           />
-          <CustomHandle type="target" position={Position.Left} />
+          <CustomHandle type="target" position={Position.Left} id={props.id} />
           {/* biome-ignore lint/a11y/useKeyWithClickEvents: <explanation> */}
           <div className="text-muted-foreground hover:text-foreground cursor-default" onClick={() => setIsOpen(true)}>
             {props.input.name} : {props.state.value}
@@ -471,14 +475,15 @@ export function ComfyNode(props: NodeProps<IComfyNode>) {
       <div className="border-b px-5 py-2 font-medium">{nodeDefinition.display_name}</div>
       {nodeDefinition.output.map((outputName, i) => (
         // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
-        <div key={i} className="pl-1 pr-1 flex justify-end items-center gap-2 py-0.5 text-xs">
+        <div key={i} className="pl-1 pr-1 flex justify-end items-center gap-2 py-0.5 text-xs relative">
           {outputName}
-          <CustomHandle type="source" position={Position.Right} />
+          <CustomHandle type="source" position={Position.Right} id={`output_${i}`} />
           {/* <div className="h-2 w-2 rounded-full" style={{ backgroundColor: getInputColor(outputName) }} /> */}
         </div>
       ))}
-      {sortedRequiredInputs.map((input) => (
+      {sortedRequiredInputs.map((input, i) => (
         <Input
+          id={`input_${i}`}
           key={input.name}
           input={input}
           state={nodeState.inputs[input.name]!}

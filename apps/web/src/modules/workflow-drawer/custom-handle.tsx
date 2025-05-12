@@ -1,7 +1,7 @@
 import { Handle } from "@xyflow/react";
 import type { CSSProperties, ComponentProps } from "react";
 
-export function CustomHandle(props: ComponentProps<typeof Handle>) {
+export function CustomHandle(props: Omit<ComponentProps<typeof Handle>, "id"> & { id: string }) {
   let style: CSSProperties = {
     position: "relative",
     transform: "none",

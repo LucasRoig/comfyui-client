@@ -24,7 +24,7 @@ export function Flow() {
 
 function _Flow() {
   const [isNodePickerOpen, setIsNodePickerOpen] = useState(false);
-  const { nodes, edges, onNodesChange, onEdgesChange, addNodes } = useFlowState();
+  const { nodes, edges, onNodesChange, onEdgesChange, addNodes, onConnect } = useFlowState();
 
   const handleInsertNode = (nodeDefinition: ComfyNodeDefinition) => {
     const node: IComfyNode = {
@@ -114,7 +114,10 @@ function _Flow() {
         nodeTypes={nodeTypes}
         edges={edges}
         onNodesChange={onNodesChange}
-        onEdgesChange={onEdgesChange}
+        onConnect={onConnect}
+        onEdgesChange={(e) => {
+          onEdgesChange(e);
+        }}
       >
         <Background />
       </ReactFlow>

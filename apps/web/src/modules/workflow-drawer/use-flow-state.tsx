@@ -1,6 +1,7 @@
 import {
   type Edge,
   type Node,
+  type OnConnect,
   type OnEdgesChange,
   type OnNodesChange,
   applyEdgeChanges,
@@ -8,12 +9,13 @@ import {
   useReactFlow,
 } from "@xyflow/react";
 import { useCallback, useState } from "react";
+import { v4 as uuid } from "uuid";
 
 export function useFlowState() {
   const [nodes, setNodes] = useState<Node[]>([]);
   const [edges, setEdges] = useState<Edge[]>([]);
 
-  const { getNodes: _getNodes, getEdges: _getEdges, addNodes } = useReactFlow();
+  const { getNodes: _getNodes, getEdges: _getEdges, addNodes, addEdges } = useReactFlow();
 
   const onNodesChange: OnNodesChange = useCallback((changes) => {
     setNodes((nds) => {
@@ -31,11 +33,19 @@ export function useFlowState() {
     [],
   );
 
+  const onConnect: OnConnect = useCallback(
+    (params) => {
+      addEdges([{ ...params, id: uuid(), animated: true }]);
+    },
+    [addEdges],
+  );
+
   return {
     nodes,
     edges,
     addNodes,
     onNodesChange,
     onEdgesChange,
+    onConnect,
   };
 }
