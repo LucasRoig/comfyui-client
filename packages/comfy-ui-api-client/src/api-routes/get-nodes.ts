@@ -24,9 +24,10 @@ function parseInputDefinition(node: [string | string[] | number[], unknown]) {
         dynamicPrompts: z.boolean().nullish(),
         tooltip: z.string().nullish(),
         default: z.string().nullish(),
-      });
+      }).nullish();
       const config = stringConfigSchema.safeParse(node[1]);
       if (!config.success) {
+        console.error(config.error);
         throw new Error("Failed to parse string config");
       }
       return {
@@ -37,14 +38,15 @@ function parseInputDefinition(node: [string | string[] | number[], unknown]) {
     .with("INT", () => {
       const intConfigSchema = z.object({
         default: z.number().nullish(),
-        min: z.number(),
-        max: z.number(),
+        min: z.number().optional(),
+        max: z.number().optional(),
         step: z.number().optional(),
         control_after_generate: z.boolean().optional(),
         tooltip: z.string().optional(),
-      });
+      }).nullish();
       const config = intConfigSchema.safeParse(node[1]);
       if (!config.success) {
+        console.error(JSON.stringify(config.error));
         throw new Error("Failed to parse int config");
       }
       return {
@@ -55,14 +57,15 @@ function parseInputDefinition(node: [string | string[] | number[], unknown]) {
     .with("FLOAT", () => {
       const floatConfigSchema = z.object({
         default: z.number().nullish(),
-        min: z.number(),
-        max: z.number(),
+        min: z.number().optional(),
+        max: z.number().optional(),
         step: z.number().nullish(),
         round: z.union([z.number(), z.boolean()]).nullish(),
         tooltip: z.string().optional(),
       });
       const config = floatConfigSchema.safeParse(node[1]);
       if (!config.success) {
+        console.error(JSON.stringify(config.error));
         throw new Error("Failed to parse float config");
       }
       return {
@@ -193,11 +196,16 @@ const inputDefinitionSchema = z
   .tuple([z.union([z.string(), z.number().array(), z.string().array()]), z.unknown()])
   .transform(parseInputDefinition);
 
-const nodeDefinitionSchema = z.object({
+export const comfyNodeDefinitionSchema = z.object({
   input: z.object({
-    required: z.record(z.string(), inputDefinitionSchema).transform((x) => {
-      return Object.fromEntries(Object.entries(x).map(([key, value]) => [key, { ...value, name: key }]));
-    }),
+    required: z.record(z.string(), inputDefinitionSchema)
+      .optional()
+      .transform((x) => {
+        if (x === undefined) {
+          return undefined;
+        }
+        return Object.fromEntries(Object.entries(x).map(([key, value]) => [key, { ...value, name: key }]));
+      }),
     optional: z
       .record(z.string(), inputDefinitionSchema)
       .optional()
@@ -207,13 +215,13 @@ const nodeDefinitionSchema = z.object({
         }
         return Object.fromEntries(Object.entries(x).map(([key, value]) => [key, { ...value, name: key }]));
       }),
-    hidden: z.record(z.string(), z.string()).optional(),
+    hidden: z.record(z.string(), z.union([z.string(), inputDefinitionSchema])).optional(),
   }),
   input_order: z.object({
-    required: z.array(z.string()),
+    required: z.array(z.string()).optional(),
     optional: z.array(z.string()).optional(),
   }),
-  output: z.array(z.string()),
+  output: z.array(z.union([z.string(), z.string().array()])),
   output_is_list: z.array(z.boolean()),
   name: z.string(),
   display_name: z.string(),
@@ -224,9 +232,9 @@ const nodeDefinitionSchema = z.object({
   output_tooltips: z.array(z.string()).optional(),
 });
 
-export type ComfyNodeDefinition = z.infer<typeof nodeDefinitionSchema>;
+export type ComfyNodeDefinition = z.infer<typeof comfyNodeDefinitionSchema>;
 
-const getNodesResponseSchema = z.record(z.string(), nodeDefinitionSchema);
+const getNodesResponseSchema = z.record(z.string(), comfyNodeDefinitionSchema);
 
 export const getNodes = (api: KyInstance) => async () => {
   try {

@@ -9,22 +9,23 @@ import { ComfyNode } from "./comfy-node";
 import { NodePickerCommand } from "./node-picker-command";
 import type { IComfyNode } from "./node-types";
 import { useFlowState } from "./use-flow-state";
+import type { DBWorkflow } from "@repo/data-access";
 
 const nodeTypes = {
   comfy: ComfyNode,
 };
 
-export function Flow() {
+export function Flow({ workflow }: Readonly<{ workflow: DBWorkflow }>) {
   return (
     <ReactFlowProvider>
-      <_Flow />
+      <_Flow workflow={workflow} />
     </ReactFlowProvider>
   );
 }
 
-function _Flow() {
+function _Flow({ workflow }: Readonly<{ workflow: DBWorkflow }>) {
   const [isNodePickerOpen, setIsNodePickerOpen] = useState(false);
-  const { nodes, edges, onNodesChange, onEdgesChange, addNodes, onConnect } = useFlowState();
+  const { nodes, edges, onNodesChange, onEdgesChange, addNodes, onConnect, setReactFlowInstance } = useFlowState(workflow);
   const { getNodes, getEdges } = useReactFlow();
 
   const handleInsertNode = (nodeDefinition: ComfyNodeDefinition) => {
@@ -139,7 +140,7 @@ function _Flow() {
   return (
     <div className="w-full h-full">
       <NodePickerCommand isOpen={isNodePickerOpen} setIsOpen={setIsNodePickerOpen} onSelect={handleInsertNode} />
-      <ReactFlow
+      <ReactFlow<IComfyNode>
         deleteKeyCode="Delete"
         zoomOnDoubleClick={false}
         isValidConnection={isValidConnection}
@@ -156,6 +157,10 @@ function _Flow() {
         onConnect={onConnect}
         onEdgesChange={(e) => {
           onEdgesChange(e);
+        }}
+        onInit={(instance) => {
+          console.log("ON INIT", instance);
+          setReactFlowInstance(instance);
         }}
       >
         <Background />

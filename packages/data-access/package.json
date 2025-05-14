@@ -1,0 +1,26 @@
+{
+  "name": "@repo/data-access",
+  "version": "1.0.0",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "source": "./src/index.ts",
+  "type": "module",
+  "scripts": {
+    "build": "tsc --noEmit && tsup src/index.ts --format cjs",
+    "check-types": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@repo/typescript-config": "workspace:*",
+    "@repo/comfy-ui-api-client": "workspace:*",
+    "@types/node": "^22.15.17",
+    "tsup": "^8.4.0",
+    "typescript": "5.8.2"
+  },
+  "dependencies": {
+    "@repo/database": "workspace:*",
+    "@libsql/client": "^0.15.5",
+    "drizzle-orm": "^0.43.1",
+    "zod": "4.0.0-beta.20250424T163858",
+    "uuid": "^11.1.0"
+  }
+}

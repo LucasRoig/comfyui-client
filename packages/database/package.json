@@ -1,0 +1,23 @@
+{
+  "name": "@repo/database",
+  "version": "1.0.0",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "source": "./src/index.ts",
+  "type": "module",
+  "scripts": {
+    "build": "tsc --noEmit && tsup src/index.ts --format cjs",
+    "check-types": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@repo/typescript-config": "workspace:*",
+    "prisma": "^6.7.0",
+    "prisma-generator-drizzle": "^0.7.6",
+    "tsup": "^8.4.0",
+    "typescript": "5.8.2"
+  },
+  "dependencies": {
+    "drizzle-orm": "^0.43.1",
+    "@libsql/client": "^0.15.5"
+  }
+}
