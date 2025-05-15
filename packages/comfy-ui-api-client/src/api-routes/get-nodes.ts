@@ -1,15 +1,81 @@
 import type { KyInstance } from "ky";
 import { P, match } from "ts-pattern";
-import z from "zod";
+import z, { keyof } from "zod";
 
+const booleanInputDefinitionConfigSchema = z.object({
+  default: z.boolean().nullish(),
+  tooltip: z.string().optional(),
+});
+
+const stringInputDefinitionConfigSchema = z.object({
+  multiline: z.boolean().nullish(),
+  dynamicPrompts: z.boolean().nullish(),
+  tooltip: z.string().nullish(),
+  default: z.string().nullish(),
+}).nullish();
+
+const intInputDefinitionConfigSchema = z.object({
+  default: z.number().nullish(),
+  min: z.number().optional(),
+  max: z.number().optional(),
+  step: z.number().optional(),
+  control_after_generate: z.boolean().optional(),
+  tooltip: z.string().optional(),
+}).nullish();
+
+const floatInputDefinitionConfigSchema = z.object({
+  default: z.number().nullish(),
+  min: z.number().optional(),
+  max: z.number().optional(),
+  step: z.number().nullish(),
+  round: z.union([z.number(), z.boolean()]).nullish(),
+  tooltip: z.string().optional(),
+});
+
+const floatsInputDefinitionConfigSchema = z.object({
+  default: z.number().nullish(),
+  min: z.number().nullish(),
+  max: z.number().nullish(),
+  step: z.number().nullish(),
+  forceInput: z.boolean().nullish(),
+  tooltip: z.string().optional(),
+});
+
+const stringArrayComboInputDefinitionConfigSchema = z.object({
+  options: z.array(z.string()),
+  default: z.string().nullish(),
+  tooltip: z.string().nullish(),
+});
+const numberArrayComboInputDefinitionConfigSchema = z.object({
+  options: z.array(z.number()),
+  default: z.number().nullish(),
+  tooltip: z.string().nullish(),
+});
+const imageUploadComboInputDefinitionConfigSchema = z.object({
+  image_upload: z.boolean(),
+  image_folder: z.string(),
+  remote: z.object({
+    route: z.string(),
+    refresh_button: z.boolean(),
+    control_after_refresh: z.string(),
+  }),
+});
+
+const customInputDefinitionConfigSchema = z.object({
+  tooltip: z.string().optional(),
+}).nullish();
+
+const stringArrayInputDefinitionConfigSchema = z.object({
+  tooltip: z.string().optional(),
+}).nullish();
+
+const numberArrayInputDefinitionConfigSchema = z.object({
+  tooltip: z.string().optional(),
+}).nullish();
 function parseInputDefinition(node: [string | string[] | number[], unknown]) {
   const parsed = match(node[0])
     .with("BOOLEAN", () => {
-      const boolConfigSchema = z.object({
-        default: z.boolean().nullish(),
-        tooltip: z.string().optional(),
-      });
-      const config = boolConfigSchema.safeParse(node[1]);
+      const config = booleanInputDefinitionConfigSchema.safeParse(node[1]);
       if (!config.success) {
         throw new Error("Failed to parse bool config");
       }
@@ -19,13 +85,7 @@ function parseInputDefinition(node: [string | string[] | number[], unknown]) {
       };
     })
     .with("STRING", () => {
-      const stringConfigSchema = z.object({
-        multiline: z.boolean().nullish(),
-        dynamicPrompts: z.boolean().nullish(),
-        tooltip: z.string().nullish(),
-        default: z.string().nullish(),
-      }).nullish();
-      const config = stringConfigSchema.safeParse(node[1]);
+      const config = stringInputDefinitionConfigSchema.safeParse(node[1]);
       if (!config.success) {
         console.error(config.error);
         throw new Error("Failed to parse string config");
@@ -36,15 +96,7 @@ function parseInputDefinition(node: [string | string[] | number[], unknown]) {
       };
     })
     .with("INT", () => {
-      const intConfigSchema = z.object({
-        default: z.number().nullish(),
-        min: z.number().optional(),
-        max: z.number().optional(),
-        step: z.number().optional(),
-        control_after_generate: z.boolean().optional(),
-        tooltip: z.string().optional(),
-      }).nullish();
-      const config = intConfigSchema.safeParse(node[1]);
+      const config = intInputDefinitionConfigSchema.safeParse(node[1]);
       if (!config.success) {
         console.error(JSON.stringify(config.error));
         throw new Error("Failed to parse int config");
@@ -55,15 +107,7 @@ function parseInputDefinition(node: [string | string[] | number[], unknown]) {
       };
     })
     .with("FLOAT", () => {
-      const floatConfigSchema = z.object({
-        default: z.number().nullish(),
-        min: z.number().optional(),
-        max: z.number().optional(),
-        step: z.number().nullish(),
-        round: z.union([z.number(), z.boolean()]).nullish(),
-        tooltip: z.string().optional(),
-      });
-      const config = floatConfigSchema.safeParse(node[1]);
+      const config = floatInputDefinitionConfigSchema.safeParse(node[1]);
       if (!config.success) {
         console.error(JSON.stringify(config.error));
         throw new Error("Failed to parse float config");
@@ -74,15 +118,7 @@ function parseInputDefinition(node: [string | string[] | number[], unknown]) {
       };
     })
     .with("FLOATS", () => {
-      const floatsConfigSchema = z.object({
-        default: z.number().nullish(),
-        min: z.number().nullish(),
-        max: z.number().nullish(),
-        step: z.number().nullish(),
-        forceInput: z.boolean().nullish(),
-        tooltip: z.string().optional(),
-      });
-      const config = floatsConfigSchema.safeParse(node[1]);
+      const config = floatsInputDefinitionConfigSchema.safeParse(node[1]);
       if (!config.success) {
         throw new Error("Failed to parse floats config");
       }
@@ -92,40 +128,21 @@ function parseInputDefinition(node: [string | string[] | number[], unknown]) {
       };
     })
     .with("COMBO", () => {
-      const stringArrayComboConfigSchema = z.object({
-        options: z.array(z.string()),
-        default: z.string().nullish(),
-        tooltip: z.string().nullish(),
-      });
-      const numberArrayComboConfigSchema = z.object({
-        options: z.array(z.number()),
-        default: z.number().nullish(),
-        tooltip: z.string().nullish(),
-      });
-      const imageUploadComboConfigSchema = z.object({
-        image_upload: z.boolean(),
-        image_folder: z.string(),
-        remote: z.object({
-          route: z.string(),
-          refresh_button: z.boolean(),
-          control_after_refresh: z.string(),
-        }),
-      });
-      const asStringArray = stringArrayComboConfigSchema.safeParse(node[1]);
+      const asStringArray = stringArrayComboInputDefinitionConfigSchema.safeParse(node[1]);
       if (asStringArray.success) {
         return {
           kind: "STRING_ARRAY_COMBO" as const,
           config: asStringArray.data,
         };
       }
-      const asNumberArray = numberArrayComboConfigSchema.safeParse(node[1]);
+      const asNumberArray = numberArrayComboInputDefinitionConfigSchema.safeParse(node[1]);
       if (asNumberArray.success) {
         return {
           kind: "NUMBER_ARRAY_COMBO" as const,
           config: asNumberArray.data,
         };
       }
-      const asImageUpload = imageUploadComboConfigSchema.safeParse(node[1]);
+      const asImageUpload = imageUploadComboInputDefinitionConfigSchema.safeParse(node[1]);
       if (asImageUpload.success) {
         return {
           kind: "IMAGE_UPLOAD_COMBO" as const,
@@ -140,12 +157,7 @@ function parseInputDefinition(node: [string | string[] | number[], unknown]) {
       };
     })
     .with(P.string, (type) => {
-      const customConfigSchema = z
-        .object({
-          tooltip: z.string().optional(),
-        })
-        .nullish();
-      const config = customConfigSchema.safeParse(node[1]);
+      const config = customInputDefinitionConfigSchema.safeParse(node[1]);
       if (!config.success) {
         throw new Error("Failed to parse custom config");
       }
@@ -156,12 +168,7 @@ function parseInputDefinition(node: [string | string[] | number[], unknown]) {
       };
     })
     .with(P.array(P.string), (options) => {
-      const customConfigSchema = z
-        .object({
-          tooltip: z.string().optional(),
-        })
-        .nullish();
-      const config = customConfigSchema.safeParse(node[1]);
+      const config = stringArrayInputDefinitionConfigSchema.safeParse(node[1]);
       if (!config.success) {
         throw new Error("Failed to parse custom config");
       }
@@ -172,12 +179,7 @@ function parseInputDefinition(node: [string | string[] | number[], unknown]) {
       };
     })
     .with(P.array(P.number), (options) => {
-      const customConfigSchema = z
-        .object({
-          tooltip: z.string().optional(),
-        })
-        .nullish();
-      const config = customConfigSchema.safeParse(node[1]);
+      const config = numberArrayInputDefinitionConfigSchema.safeParse(node[1]);
       if (!config.success) {
         throw new Error("Failed to parse custom config");
       }
@@ -190,6 +192,73 @@ function parseInputDefinition(node: [string | string[] | number[], unknown]) {
     })
     .exhaustive();
   return parsed;
+}
+
+export const parsedInputDefinitionSchema = z.discriminatedUnion("kind", [
+  z.object({
+    kind: z.literal("BOOLEAN"),
+    config: booleanInputDefinitionConfigSchema,
+  }),
+  z.object({
+    kind: z.literal("STRING"),
+    config: stringInputDefinitionConfigSchema,
+  }),
+  z.object({
+    kind: z.literal("INT"),
+    config: intInputDefinitionConfigSchema,
+  }),
+  z.object({
+    kind: z.literal("FLOAT"),
+    config: floatInputDefinitionConfigSchema,
+  }),
+  z.object({
+    kind: z.literal("FLOATS"),
+    config: floatsInputDefinitionConfigSchema,
+  }),
+  z.object({
+    kind: z.literal("STRING_ARRAY_COMBO"),
+    config: stringArrayComboInputDefinitionConfigSchema,
+  }),
+  z.object({
+    kind: z.literal("NUMBER_ARRAY_COMBO"),
+    config: numberArrayComboInputDefinitionConfigSchema,
+  }),
+  z.object({
+    kind: z.literal("IMAGE_UPLOAD_COMBO"),
+    config: imageUploadComboInputDefinitionConfigSchema,
+  }),
+  z.object({
+    kind: z.literal("*"),
+  }),
+  z.object({
+    kind: z.literal("CUSTOM"),
+    config: customInputDefinitionConfigSchema,
+    type: z.string(),
+  }),
+  z.object({
+    kind: z.literal("STRING_ARRAY"),
+    options: z.array(z.string()),
+    config: stringArrayInputDefinitionConfigSchema,
+  }),
+  z.object({
+    kind: z.literal("NUMBER_ARRAY"),
+    options: z.array(z.number()),
+    config: numberArrayInputDefinitionConfigSchema,
+  }),
+])
+
+const __typing_test__ = () => {
+  const response: unknown = {};
+  const parsed = getNodesResponseSchema.parse(response);
+  const requiredInputs = Object.values(parsed.__typing_test__!.input.required!);
+  const optionalInputs = Object.values(parsed.__typing_test__!.input.optional!);
+  const schema = parsedInputDefinitionSchema.array()
+  type T = z.infer<typeof schema>;
+
+  // This should not compile if the output of getNodesResponseSchema is not
+  // compatible with the input of parsedInputDefinitionSchema
+  const _ensureRequiredInputsAreValid = requiredInputs satisfies T;
+  const _ensureOptionalInputsAreValid = optionalInputs satisfies T;
 }
 
 const inputDefinitionSchema = z

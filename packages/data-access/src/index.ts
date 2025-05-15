@@ -1,7 +1,7 @@
 
 import { drizzle } from 'drizzle-orm/libsql/node';
 import { drizzleSchema } from '@repo/database';
-import { comfyNodeDefinitionSchema } from '@repo/comfy-ui-api-client';
+import { parsedInputDefinitionSchema } from '@repo/comfy-ui-api-client';
 import { z } from 'zod';
 import { eq } from 'drizzle-orm';
 import { v4 as uuidv4 } from 'uuid';
@@ -91,7 +91,7 @@ export const jsonWorkflowShema = z.object({
         type: z.literal('comfy'),
         hidden: z.boolean().optional(),
         data: z.object({
-            definition: comfyNodeDefinitionSchema,
+            definition: parsedInputDefinitionSchema,
             state: z.object({
                 inputs: z.record(z.string(), inputStateSchema)
             }),
@@ -123,7 +123,7 @@ export async function getWorkflow(id: string) {
     };
 }
 
-export async function updateWorkflow(id: string, json: JsomComfyWorkflow) {
+export function updateWorkflow(id: string, json: JsomComfyWorkflow) {
     const validJson = jsonWorkflowShema.safeParse(json);
     if (!validJson.success) {
         throw new Error("Invalid json");

@@ -5,5 +5,8 @@ packages:
 onlyBuiltDependencies:
   - '@biomejs/biome'
   - '@parcel/watcher'
+  - '@prisma/client'
+  - '@prisma/engines'
   - esbuild
+  - prisma
   - sharp
