@@ -3,14 +3,14 @@ import {
   type OnConnect,
   type OnEdgesChange,
   type OnNodesChange,
-  ReactFlowInstance,
+  type ReactFlowInstance,
   applyEdgeChanges,
   applyNodeChanges,
   useReactFlow,
 } from "@xyflow/react";
 import { useCallback, useState } from "react";
 import { v4 as uuid } from "uuid";
-import { IComfyNode } from "./node-types";
+import type { IComfyNode } from "./node-types";
 import type { DBWorkflow } from "@repo/data-access";
 import { updateWorkflowAction } from "./server-actions/update-workflow-action";
 import { useMutation } from "@tanstack/react-query";
@@ -22,13 +22,13 @@ export function useFlowState(initialWorkflow: DBWorkflow) {
   const [reactFlowInstance, setReactFlowInstance] = useState<ReactFlowInstance<IComfyNode>>();
 
   const persistWorkflowMutation = useMutation({
-    mutationFn: async (json: unknown) => {
+    mutationFn: (json: unknown) => {
       return updateWorkflowAction({
         id: initialWorkflow.id,
         json,
       });
     },
-    onSuccess: (result) => {
+    onSuccess: (_result) => {
       console.log("saved workflow");
     }
   });
@@ -52,7 +52,7 @@ export function useFlowState(initialWorkflow: DBWorkflow) {
         }
       return newNodes;
     });
-  }, [reactFlowInstance]);
+  }, [reactFlowInstance, debouncedPersistWorkflow]);
 
   const onEdgesChange: OnEdgesChange = useCallback(
     (changes) =>
@@ -69,7 +69,7 @@ export function useFlowState(initialWorkflow: DBWorkflow) {
         }
         return newEdges;
       }),
-    [reactFlowInstance],
+    [reactFlowInstance, debouncedPersistWorkflow],
   );
 
   const onConnect: OnConnect = useCallback(

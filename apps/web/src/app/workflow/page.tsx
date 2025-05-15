@@ -5,7 +5,7 @@ import { createWorkflowAction } from "../../modules/workflow-drawer/server-actio
 
 export default function WorkflowPage() {
   const createWorkflowMutation = useMutation({
-    mutationFn: async () => {
+    mutationFn: () => {
       return createWorkflowAction();
     },
     onSuccess: (result) => {

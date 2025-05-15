@@ -38,7 +38,7 @@ function _Flow({ workflow }: Readonly<{ workflow: DBWorkflow }>) {
         state: {
           inputs: Object.fromEntries(
             [
-              ...Object.entries(nodeDefinition.input.required),
+              ...(nodeDefinition.input.required ? Object.entries(nodeDefinition.input.required) : []),
               ...(nodeDefinition.input.optional ? Object.entries(nodeDefinition.input.optional) : []),
             ].map(([key, value]) => [
               key,
@@ -57,12 +57,12 @@ function _Flow({ workflow }: Readonly<{ workflow: DBWorkflow }>) {
                 }))
                 .with({ kind: "STRING" }, (i) => ({
                   kind: i.kind,
-                  value: i.config.default ?? "",
+                  value: i.config?.default ?? "",
                 }))
                 .with({ kind: "INT" }, (i) => ({
                   kind: i.kind,
-                  value: i.config.default?.toString() ?? "",
-                  controlAfterGenerate: i.config.control_after_generate ? ("fixed" as const) : undefined,
+                  value: i.config?.default?.toString() ?? "",
+                  controlAfterGenerate: i.config?.control_after_generate ? ("fixed" as const) : undefined,
                 }))
                 .with({ kind: "FLOAT" }, (i) => ({
                   kind: i.kind,
@@ -124,7 +124,7 @@ function _Flow({ workflow }: Readonly<{ workflow: DBWorkflow }>) {
         throw new Error("Invalid target handle");
       }
       const sourceType = sourceNode.data.definition.output[sourceIndex];
-      const targetInput = targetNode.data.definition.input.required[targetName]
+      const targetInput = targetNode.data.definition.input.required?.[targetName]
         ?? targetNode.data.definition.input.optional?.[targetName];
       if (targetInput === undefined) {
         throw new Error("Target input not found");

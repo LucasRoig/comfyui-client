@@ -158,10 +158,10 @@ function Input(props: {
         if (!Number.isFinite(parsedValue)) {
           return;
         }
-        if (i.config.min !== undefined && i.config.min !== null && i.config.min && parsedValue < i.config.min) {
+        if (i.config?.min !== undefined && i.config.min !== null && i.config.min && parsedValue < i.config.min) {
           parsedValue = i.config.min;
         }
-        if (i.config.min !== undefined && i.config.min !== null && i.config.max && parsedValue > i.config.max) {
+        if (i.config?.min !== undefined && i.config.min !== null && i.config.max && parsedValue > i.config.max) {
           parsedValue = i.config.max;
         }
         props.onStateChange({
@@ -184,7 +184,7 @@ function Input(props: {
               onClose={(v) => updateValue(v)}
             />
           </div>
-          {i.config.control_after_generate ? (
+          {i.config?.control_after_generate ? (
             <div className="pl-1 pr-1 flex items-center gap-2 py-0.5 text-xs">
               <CommandPicker
                 name={`${i.name}_control_after_generate`}
@@ -377,7 +377,7 @@ function Input(props: {
           value: value,
         } as InputState);
       };
-      if (i.config.multiline) {
+      if (i.config?.multiline) {
         return (
           <>
             <div className="pl-1 pr-1 flex items-center gap-2 py-0.5 text-xs relative">
@@ -449,9 +449,12 @@ export function ComfyNode(props: NodeProps<IComfyNode>) {
   const nodeDefinition = props.data.definition;
   const nodeState = props.data.state;
   const sortedRequiredInputs = useMemo(() => {
-    const sortFn = sortInputs([...nodeDefinition.input_order.required, ...(nodeDefinition.input_order.optional ?? [])]);
+    const sortFn = sortInputs([
+      ...(nodeDefinition.input_order.required ?? []),
+      ...(nodeDefinition.input_order.optional ?? [])
+    ]);
     const allInputs = [
-      ...Object.values(nodeDefinition.input.required),
+      ...(nodeDefinition.input.required ? Object.values(nodeDefinition.input.required) : []),
       ...(nodeDefinition.input.optional ? Object.values(nodeDefinition.input.optional) : []),
     ].sort(sortFn);
     return allInputs;
