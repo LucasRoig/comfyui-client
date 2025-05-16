@@ -2,6 +2,7 @@
 import { CommandDialog, CommandEmpty, CommandInput, CommandItem, CommandList } from "@lro-ui/command";
 import { Checkbox, Textarea } from "@lro-ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@lro-ui/popover";
+import { Progress } from "@lro-ui/progress";
 import { cn } from "@lro-ui/utils";
 import type { ComfyNodeDefinition } from "@repo/comfy-ui-api-client";
 import { type NodeProps, Position, useReactFlow, useUpdateNodeInternals } from "@xyflow/react";
@@ -451,6 +452,9 @@ export function ComfyNode(props: NodeProps<IComfyNode>) {
   const isRunning = match(executionState)
     .with({ kind: "running" }, (s) => s.nodeId === props.id)
     .otherwise(() => false);
+  const progressValue = match(executionState)
+    .with({ kind: "running" }, (s) => (isRunning && s.progress ? (s.progress.value / s.progress.max) * 100 : 0))
+    .otherwise(() => 0);
 
   const nodeDefinition = props.data.definition;
   const nodeState = props.data.state;
@@ -482,6 +486,7 @@ export function ComfyNode(props: NodeProps<IComfyNode>) {
   return (
     <BaseNode className={cn("flex flex-col p-0", isRunning && "border-green-400")} selected={false}>
       <div className="border-b px-5 py-2 font-medium">{nodeDefinition.display_name}</div>
+      <Progress value={progressValue} className="rounded-none h-0.5 bg-transparent" indicatorClassName="bg-green-400" />
       {nodeDefinition.output.map((outputName, i) => (
         // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
         <div key={i} className="pl-1 pr-1 flex justify-end items-center gap-2 py-0.5 text-xs relative">
