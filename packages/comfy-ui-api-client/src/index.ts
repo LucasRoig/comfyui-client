@@ -9,6 +9,11 @@ export {
   comfyApiInputDefinitionSchema,
 } from "./api-routes/get-nodes";
 
+export {
+  postPromptRequestSchema,
+  type PostPromptRequest,
+} from "./api-routes/post-prompt";
+
 const statusMessageSchema = z.object({
   type: z.literal("status"),
   data: z.object({

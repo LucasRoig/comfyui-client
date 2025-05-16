@@ -1,3 +1,4 @@
+import type { PostPromptRequest } from "@repo/comfy-ui-api-client";
 import type { DBWorkflow } from "@repo/data-access";
 import { useMutation } from "@tanstack/react-query";
 import {
@@ -11,8 +12,11 @@ import {
   useReactFlow,
 } from "@xyflow/react";
 import { useCallback, useState } from "react";
+import { match } from "ts-pattern";
 import { v4 as uuid } from "uuid";
 import { useDebounce } from "../../@lib/use-debounce";
+import { useSessionId } from "../comfy-ui/comfy-ui-context";
+import { queueWorkflowAction } from "../comfy-ui/server-actions/queue-workflow-action";
 import type { IComfyNode } from "./node-types";
 import { updateWorkflowAction } from "./server-actions/update-workflow-action";
 
@@ -20,6 +24,64 @@ export function useFlowState(initialWorkflow: DBWorkflow) {
   const [nodes, setNodes] = useState<IComfyNode[]>(initialWorkflow.json.nodes);
   const [edges, setEdges] = useState<Edge[]>(initialWorkflow.json.edges);
   const [reactFlowInstance, setReactFlowInstance] = useState<ReactFlowInstance<IComfyNode>>();
+  const clientId = useSessionId();
+
+  const postPromptMutation = useMutation({
+    mutationFn: () => {
+      if (clientId === undefined) {
+        throw new Error("Client id is undefined");
+      }
+      const request: PostPromptRequest = {
+        client_id: clientId,
+        prompt: {},
+      };
+      for (const node of nodes) {
+        const incomingEdges = edges.filter((edge) => edge.target === node.id);
+        request.prompt[node.id] = {
+          class_type: node.data.definition.name,
+          inputs: {},
+        };
+        for (const [inputName] of [
+          ...Object.entries(node.data.definition.input.required ?? {}),
+          ...Object.entries(node.data.definition.input.optional ?? {}),
+        ]) {
+          const incomingEdge = incomingEdges.find((edge) => edge.targetHandle === `input_${inputName}`);
+          const state = node.data.state.inputs[inputName];
+          if (incomingEdge) {
+            const sourceOutputIndex = Number.parseInt(incomingEdge.sourceHandle!.replace("output_", ""));
+            if (Number.isNaN(sourceOutputIndex) || !Number.isFinite(sourceOutputIndex)) {
+              throw new Error(
+                `Invalid source output index, nodeName: ${node.data.definition.name}, nodeId: ${node.id}, inputName: ${inputName}`,
+              );
+            }
+            request.prompt[node.id]!.inputs[inputName] = [incomingEdge.source, sourceOutputIndex];
+          } else if (state) {
+            const value = match(state.kind)
+              .with("STRING", () => state.value)
+              .with("INT", () => Number.parseInt(state.value))
+              .with("FLOAT", () => Number.parseFloat(state.value))
+              .with("FLOATS", () => state.value)
+              .with("*", () => state.value)
+              .with("BOOLEAN", () => state.value)
+              .with("CUSTOM", () => state.value)
+              .with("NUMBER_ARRAY", () =>
+                state.value.includes(",") || state.value.includes(".")
+                  ? Number.parseFloat(state.value)
+                  : Number.parseInt(state.value),
+              )
+              .with("STRING_ARRAY", () => state.value)
+              .with("IMAGE_UPLOAD_COMBO", () => state.value)
+              .with("NUMBER_ARRAY_COMBO", () => state.value)
+              .with("STRING_ARRAY_COMBO", () => state.value)
+              .exhaustive();
+            request.prompt[node.id]!.inputs[inputName] = value;
+          }
+        }
+      }
+
+      return queueWorkflowAction(request);
+    },
+  });
 
   const persistWorkflowMutation = useMutation({
     mutationFn: (json: unknown) => {
@@ -90,5 +152,6 @@ export function useFlowState(initialWorkflow: DBWorkflow) {
     onEdgesChange,
     onConnect,
     setReactFlowInstance,
+    postPrompt: () => postPromptMutation.mutate(),
   };
 }

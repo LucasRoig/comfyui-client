@@ -1,7 +1,6 @@
 import type { KyInstance } from "ky";
 import { err, ok } from "neverthrow";
 import z from "zod";
-import { simpleWorkflow } from "../simple-workflow";
 
 const postPromptResponseSchema = z.object({
   prompt_id: z.string(),
@@ -9,17 +8,33 @@ const postPromptResponseSchema = z.object({
   node_errors: z.object(),
 });
 
-const postPromptRequestSchema = z.object({
+export const postPromptRequestSchema = z.object({
   client_id: z.string(),
+  prompt: z.record(
+    z.string(),
+    z.object({
+      //Record<nodeId, node>
+      inputs: z.record(
+        z.string(),
+        z.union([
+          z.string(),
+          z.number(),
+          z.boolean(),
+          z.tuple([z.string(), z.number()]), //For edge [nodeId, outputIndex]
+        ]),
+      ),
+      class_type: z.string(), //node type
+    }),
+  ),
 });
 
-type PostPromptRequest = z.infer<typeof postPromptRequestSchema>;
+export type PostPromptRequest = z.infer<typeof postPromptRequestSchema>;
 
 export const postPrompt = (api: KyInstance) => async (request: PostPromptRequest) => {
   try {
+    console.log(JSON.stringify(request));
     const response = await api.post("prompt", {
       json: {
-        ...simpleWorkflow,
         ...request,
       },
     });

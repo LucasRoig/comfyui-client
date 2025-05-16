@@ -1,25 +1,19 @@
-"use client";
-import { Button } from "@lro-ui/button";
-import { useMutation } from "@tanstack/react-query";
-import { createWorkflowAction } from "../../modules/workflow-drawer/server-actions/create-workflow-action";
+import { getWorkflows } from "@repo/data-access";
+import Link from "next/link";
+import { CreateWorkflowButton } from "../../modules/workflow-drawer/creat-workflow-button";
 
-export default function WorkflowPage() {
-  const createWorkflowMutation = useMutation({
-    mutationFn: () => {
-      return createWorkflowAction();
-    },
-    onSuccess: (result) => {
-      console.log(result?.data?.id);
-    },
-  });
-  const handleCreateWorkflow = () => {
-    createWorkflowMutation.mutate();
-  };
+export default async function WorkflowPage() {
+  const workflows = await getWorkflows();
   return (
     <div>
-      <Button onClick={handleCreateWorkflow} disabled={createWorkflowMutation.isPending}>
-        Create workflow
-      </Button>
+      <ul>
+        {workflows.map((workflow) => (
+          <li key={workflow.id}>
+            <Link href={`/workflow/${workflow.id}`}>{workflow.id}</Link>
+          </li>
+        ))}
+      </ul>
+      <CreateWorkflowButton />
     </div>
   );
 }

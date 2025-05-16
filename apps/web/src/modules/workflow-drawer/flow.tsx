@@ -1,6 +1,7 @@
 "use client";
 import { Background, type IsValidConnection, ReactFlow, ReactFlowProvider, useReactFlow } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
+import { Button } from "@lro-ui/button";
 import type { ComfyNodeDefinition } from "@repo/comfy-ui-api-client";
 import type { DBWorkflow } from "@repo/data-access";
 import { useCallback, useState } from "react";
@@ -25,7 +26,7 @@ export function Flow({ workflow }: Readonly<{ workflow: DBWorkflow }>) {
 
 function _Flow({ workflow }: Readonly<{ workflow: DBWorkflow }>) {
   const [isNodePickerOpen, setIsNodePickerOpen] = useState(false);
-  const { nodes, edges, onNodesChange, onEdgesChange, addNodes, onConnect, setReactFlowInstance } =
+  const { nodes, edges, onNodesChange, onEdgesChange, addNodes, onConnect, setReactFlowInstance, postPrompt } =
     useFlowState(workflow);
   const { getNodes, getEdges } = useReactFlow();
 
@@ -141,6 +142,7 @@ function _Flow({ workflow }: Readonly<{ workflow: DBWorkflow }>) {
 
   return (
     <div className="w-full h-full">
+      <Button onClick={postPrompt}>Post prompt</Button>
       <NodePickerCommand isOpen={isNodePickerOpen} setIsOpen={setIsNodePickerOpen} onSelect={handleInsertNode} />
       <ReactFlow<IComfyNode>
         deleteKeyCode="Delete"
