@@ -2,10 +2,12 @@
 import { CommandDialog, CommandEmpty, CommandInput, CommandItem, CommandList } from "@lro-ui/command";
 import { Checkbox, Textarea } from "@lro-ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@lro-ui/popover";
+import { cn } from "@lro-ui/utils";
 import type { ComfyNodeDefinition } from "@repo/comfy-ui-api-client";
 import { type NodeProps, Position, useReactFlow, useUpdateNodeInternals } from "@xyflow/react";
 import { useId, useMemo, useState } from "react";
 import { P, match } from "ts-pattern";
+import { useExecutionState } from "../comfy-ui/comfy-ui-context";
 import { BaseNode } from "./base-node";
 import { CustomHandle } from "./custom-handle";
 import type { IComfyNode, InputState } from "./node-types";
@@ -445,6 +447,10 @@ function Input(props: {
 export function ComfyNode(props: NodeProps<IComfyNode>) {
   const updateNodeInternals = useUpdateNodeInternals();
   const { updateNodeData } = useReactFlow();
+  const executionState = useExecutionState();
+  const isRunning = match(executionState)
+    .with({ kind: "running" }, (s) => s.nodeId === props.id)
+    .otherwise(() => false);
 
   const nodeDefinition = props.data.definition;
   const nodeState = props.data.state;
@@ -474,7 +480,7 @@ export function ComfyNode(props: NodeProps<IComfyNode>) {
   };
 
   return (
-    <BaseNode className="flex flex-col p-0" selected={false}>
+    <BaseNode className={cn("flex flex-col p-0", isRunning && "border-green-400")} selected={false}>
       <div className="border-b px-5 py-2 font-medium">{nodeDefinition.display_name}</div>
       {nodeDefinition.output.map((outputName, i) => (
         // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>

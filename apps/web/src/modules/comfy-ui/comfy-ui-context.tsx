@@ -3,15 +3,19 @@ import { toast } from "@lro-ui/sonner";
 import {
   ComfyUIWebSocket,
   type ComfyUIWebSocketLog,
+  type WebSocketExecutedMessage,
+  type WebSocketExecutingMessage,
   type WebSocketProgressMessage,
   type WebSocketStatusMessage,
 } from "@repo/comfy-ui-api-client";
 import { createContext, useContext, useRef } from "react";
 import { create, useStore } from "zustand";
 import { devtools } from "zustand/middleware";
+import { newExecutionState, onExecutedMessage, onExecutingMessage, onProgressMessage } from "./execution-state";
 import { useInvalidateQueueState } from "./useQueueState";
 
 const initialState = {
+  executionState: newExecutionState(),
   webSocketLogs: [] as ComfyUIWebSocketLog[],
   sessionId: undefined as string | undefined,
   socketConnected: false,
@@ -22,6 +26,8 @@ type State = typeof initialState;
 type Actions = {
   onStatusMessage: (statusMessage: WebSocketStatusMessage) => void;
   onProgressMessage: (progressMessage: WebSocketProgressMessage) => void;
+  onExecutingMessage: (executingMessage: WebSocketExecutingMessage) => void;
+  onExecutedMessage: (executedMessage: WebSocketExecutedMessage) => void;
   onWebSocketClosed: () => void;
   onWebSocketLog: (log: ComfyUIWebSocketLog) => void;
 };
@@ -68,6 +74,28 @@ const createComfyUiStore = (_args: {} = {}) => {
               { type: "onWebsocketClosed" },
             );
           },
+          onExecutedMessage: (message) => {
+            set(
+              (currentState) => {
+                return {
+                  executionState: onExecutedMessage(currentState.executionState, message),
+                };
+              },
+              undefined,
+              { type: "onExecutedMessage", message },
+            );
+          },
+          onExecutingMessage: (message) => {
+            set(
+              (currentState) => {
+                return {
+                  executionState: onExecutingMessage(currentState.executionState, message),
+                };
+              },
+              undefined,
+              { type: "onExecutingMessage", message },
+            );
+          },
           onProgressMessage: (message) => {
             set(
               (currentState) => {
@@ -76,6 +104,7 @@ const createComfyUiStore = (_args: {} = {}) => {
                     ...currentState.progressMap,
                     [message.data.prompt_id]: message.data,
                   },
+                  executionState: onProgressMessage(currentState.executionState, message),
                 };
               },
               undefined,
@@ -126,6 +155,12 @@ export function ComfyUiContextProvider({ children, wsUrl }: Readonly<{ children:
         onProgressMessage: (msg) => {
           storeActions.onProgressMessage(msg);
         },
+        onExecutingMessage: (msg) => {
+          storeActions.onExecutingMessage(msg);
+        },
+        onExecutedMessage: (msg) => {
+          storeActions.onExecutedMessage(msg);
+        },
         onClose: () => {
           storeActions.onWebSocketClosed();
         },
@@ -159,4 +194,8 @@ export const useProgressMap = () => {
 
 export const useSessionId = () => {
   return useComfyUiStore((state) => state.sessionId);
+};
+
+export const useExecutionState = () => {
+  return useComfyUiStore((state) => state.executionState);
 };

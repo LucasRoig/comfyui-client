@@ -36,12 +36,47 @@ const progressMessageSchema = z.object({
   }),
 });
 
+const executingMessageSchema = z.object({
+  type: z.literal("executing"),
+  data: z.object({
+    prompt_id: z.string(),
+    node: z.string(),
+    display_node: z.string(),
+  }),
+});
+
+const executedMessageSchema = z.object({
+  type: z.literal("executed"),
+  data: z.object({
+    display_node: z.string(),
+    prompt_id: z.string(),
+    node: z.string(),
+    output: z
+      .object({
+        images: z
+          .array(
+            z.object({
+              filename: z.string(),
+              subfolder: z.string(),
+              type: z.string(),
+            }),
+          )
+          .optional(),
+      })
+      .optional(),
+  }),
+});
+
 export type WebSocketStatusMessage = z.infer<typeof statusMessageSchema>;
 export type WebSocketProgressMessage = z.infer<typeof progressMessageSchema>;
+export type WebSocketExecutingMessage = z.infer<typeof executingMessageSchema>;
+export type WebSocketExecutedMessage = z.infer<typeof executedMessageSchema>;
 
 type ComfyUIWebSocketListener = {
   onStatusMessage?: (statusMessage: WebSocketStatusMessage) => void;
   onProgressMessage?: (progressMessage: WebSocketProgressMessage) => void;
+  onExecutingMessage?: (executingMessage: WebSocketExecutingMessage) => void;
+  onExecutedMessage?: (executedMessage: WebSocketExecutedMessage) => void;
   onClose?: () => void;
   onLog?: (log: ComfyUIWebSocketLog) => void;
 };
@@ -141,6 +176,30 @@ export class ComfyUIWebSocket {
             }
           });
         }
+        const executingMessage = executingMessageSchema.safeParse(asJson);
+        if (executingMessage.success) {
+          if (debugWWebsocket) {
+            console.log("WS: Reveived executing message", executingMessage.data);
+          }
+          this.listeners.forEach((listener) => {
+            if (listener.onExecutingMessage) {
+              listener.onExecutingMessage(executingMessage.data);
+            }
+          });
+        }
+
+        const executedMessage = executedMessageSchema.safeParse(asJson);
+        if (executedMessage.success) {
+          if (debugWWebsocket) {
+            console.log("WS: Reveived executed message", executedMessage.data);
+          }
+          this.listeners.forEach((listener) => {
+            if (listener.onExecutedMessage) {
+              listener.onExecutedMessage(executedMessage.data);
+            }
+          });
+        }
+
         const progressMessage = progressMessageSchema.safeParse(asJson);
         if (progressMessage.success) {
           if (debugWWebsocket) {
