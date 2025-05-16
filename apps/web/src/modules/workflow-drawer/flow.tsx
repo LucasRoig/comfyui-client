@@ -2,6 +2,7 @@
 import { Background, type IsValidConnection, ReactFlow, ReactFlowProvider, useReactFlow } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import type { ComfyNodeDefinition } from "@repo/comfy-ui-api-client";
+import type { DBWorkflow } from "@repo/data-access";
 import { useCallback, useState } from "react";
 import { match } from "ts-pattern";
 import { v4 as uuidv4 } from "uuid";
@@ -9,7 +10,6 @@ import { ComfyNode } from "./comfy-node";
 import { NodePickerCommand } from "./node-picker-command";
 import type { IComfyNode } from "./node-types";
 import { useFlowState } from "./use-flow-state";
-import type { DBWorkflow } from "@repo/data-access";
 
 const nodeTypes = {
   comfy: ComfyNode,
@@ -25,7 +25,8 @@ export function Flow({ workflow }: Readonly<{ workflow: DBWorkflow }>) {
 
 function _Flow({ workflow }: Readonly<{ workflow: DBWorkflow }>) {
   const [isNodePickerOpen, setIsNodePickerOpen] = useState(false);
-  const { nodes, edges, onNodesChange, onEdgesChange, addNodes, onConnect, setReactFlowInstance } = useFlowState(workflow);
+  const { nodes, edges, onNodesChange, onEdgesChange, addNodes, onConnect, setReactFlowInstance } =
+    useFlowState(workflow);
   const { getNodes, getEdges } = useReactFlow();
 
   const handleInsertNode = (nodeDefinition: ComfyNodeDefinition) => {
@@ -124,13 +125,14 @@ function _Flow({ workflow }: Readonly<{ workflow: DBWorkflow }>) {
         throw new Error("Invalid target handle");
       }
       const sourceType = sourceNode.data.definition.output[sourceIndex];
-      const targetInput = targetNode.data.definition.input.required?.[targetName]
-        ?? targetNode.data.definition.input.optional?.[targetName];
+      const targetInput =
+        targetNode.data.definition.input.required?.[targetName] ??
+        targetNode.data.definition.input.optional?.[targetName];
       if (targetInput === undefined) {
         throw new Error("Target input not found");
       }
       const targetType = match(targetInput)
-        .with({ kind: "CUSTOM"}, (i) => i.type)
+        .with({ kind: "CUSTOM" }, (i) => i.type)
         .otherwise(() => targetInput.kind);
       return sourceType === targetType;
     },

@@ -9,13 +9,17 @@ export default function WorkflowPage() {
       return createWorkflowAction();
     },
     onSuccess: (result) => {
-      console.log(result?.data?.id)
-    }
-  })
+      console.log(result?.data?.id);
+    },
+  });
   const handleCreateWorkflow = () => {
     createWorkflowMutation.mutate();
-  }
-  return <div>
-    <Button onClick={handleCreateWorkflow} disabled={createWorkflowMutation.isPending}>Create workflow</Button>
-  </div>;
+  };
+  return (
+    <div>
+      <Button onClick={handleCreateWorkflow} disabled={createWorkflowMutation.isPending}>
+        Create workflow
+      </Button>
+    </div>
+  );
 }

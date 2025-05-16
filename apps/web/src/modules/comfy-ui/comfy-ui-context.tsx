@@ -110,7 +110,7 @@ type ComfyUiStore = ReturnType<typeof createComfyUiStore>;
 
 const ComfyUiContext = createContext<ComfyUiStore | undefined>(undefined);
 
-export function ComfyUiContextProvider({ children, wsUrl }: Readonly<{ children: React.ReactNode, wsUrl: string }>) {
+export function ComfyUiContextProvider({ children, wsUrl }: Readonly<{ children: React.ReactNode; wsUrl: string }>) {
   const store = useRef(createComfyUiStore());
   const storeActions = useStore(store.current, (state) => state.actions);
   const websocketRef = useRef<ComfyUIWebSocket | null>(null);

@@ -1,27 +1,31 @@
 import type { KyInstance } from "ky";
 import { P, match } from "ts-pattern";
-import z, { keyof } from "zod";
+import z from "zod";
 
 const booleanInputDefinitionConfigSchema = z.object({
   default: z.boolean().nullish(),
   tooltip: z.string().optional(),
 });
 
-const stringInputDefinitionConfigSchema = z.object({
-  multiline: z.boolean().nullish(),
-  dynamicPrompts: z.boolean().nullish(),
-  tooltip: z.string().nullish(),
-  default: z.string().nullish(),
-}).nullish();
+const stringInputDefinitionConfigSchema = z
+  .object({
+    multiline: z.boolean().nullish(),
+    dynamicPrompts: z.boolean().nullish(),
+    tooltip: z.string().nullish(),
+    default: z.string().nullish(),
+  })
+  .nullish();
 
-const intInputDefinitionConfigSchema = z.object({
-  default: z.number().nullish(),
-  min: z.number().optional(),
-  max: z.number().optional(),
-  step: z.number().optional(),
-  control_after_generate: z.boolean().optional(),
-  tooltip: z.string().optional(),
-}).nullish();
+const intInputDefinitionConfigSchema = z
+  .object({
+    default: z.number().nullish(),
+    min: z.number().optional(),
+    max: z.number().optional(),
+    step: z.number().optional(),
+    control_after_generate: z.boolean().optional(),
+    tooltip: z.string().optional(),
+  })
+  .nullish();
 
 const floatInputDefinitionConfigSchema = z.object({
   default: z.number().nullish(),
@@ -61,17 +65,23 @@ const imageUploadComboInputDefinitionConfigSchema = z.object({
   }),
 });
 
-const customInputDefinitionConfigSchema = z.object({
-  tooltip: z.string().optional(),
-}).nullish();
+const customInputDefinitionConfigSchema = z
+  .object({
+    tooltip: z.string().optional(),
+  })
+  .nullish();
 
-const stringArrayInputDefinitionConfigSchema = z.object({
-  tooltip: z.string().optional(),
-}).nullish();
+const stringArrayInputDefinitionConfigSchema = z
+  .object({
+    tooltip: z.string().optional(),
+  })
+  .nullish();
 
-const numberArrayInputDefinitionConfigSchema = z.object({
-  tooltip: z.string().optional(),
-}).nullish();
+const numberArrayInputDefinitionConfigSchema = z
+  .object({
+    tooltip: z.string().optional(),
+  })
+  .nullish();
 function parseInputDefinition(node: [string | string[] | number[], unknown]) {
   const parsed = match(node[0])
     .with("BOOLEAN", () => {
@@ -195,79 +205,92 @@ function parseInputDefinition(node: [string | string[] | number[], unknown]) {
 }
 
 export const parsedInputDefinitionSchema = z.discriminatedUnion("kind", [
-  z.object({
+  z.interface({
+    name: z.string(),
     kind: z.literal("BOOLEAN"),
     config: booleanInputDefinitionConfigSchema,
   }),
-  z.object({
+  z.interface({
+    name: z.string(),
     kind: z.literal("STRING"),
     config: stringInputDefinitionConfigSchema,
   }),
-  z.object({
+  z.interface({
+    name: z.string(),
     kind: z.literal("INT"),
     config: intInputDefinitionConfigSchema,
   }),
-  z.object({
+  z.interface({
+    name: z.string(),
     kind: z.literal("FLOAT"),
     config: floatInputDefinitionConfigSchema,
   }),
-  z.object({
+  z.interface({
+    name: z.string(),
     kind: z.literal("FLOATS"),
     config: floatsInputDefinitionConfigSchema,
   }),
-  z.object({
+  z.interface({
+    name: z.string(),
     kind: z.literal("STRING_ARRAY_COMBO"),
     config: stringArrayComboInputDefinitionConfigSchema,
   }),
-  z.object({
+  z.interface({
+    name: z.string(),
     kind: z.literal("NUMBER_ARRAY_COMBO"),
     config: numberArrayComboInputDefinitionConfigSchema,
   }),
-  z.object({
+  z.interface({
+    name: z.string(),
     kind: z.literal("IMAGE_UPLOAD_COMBO"),
     config: imageUploadComboInputDefinitionConfigSchema,
   }),
-  z.object({
+  z.interface({
+    name: z.string(),
     kind: z.literal("*"),
   }),
-  z.object({
+  z.interface({
+    name: z.string(),
     kind: z.literal("CUSTOM"),
     config: customInputDefinitionConfigSchema,
     type: z.string(),
   }),
-  z.object({
+  z.interface({
+    name: z.string(),
     kind: z.literal("STRING_ARRAY"),
     options: z.array(z.string()),
     config: stringArrayInputDefinitionConfigSchema,
   }),
-  z.object({
+  z.interface({
+    name: z.string(),
     kind: z.literal("NUMBER_ARRAY"),
     options: z.array(z.number()),
     config: numberArrayInputDefinitionConfigSchema,
   }),
-])
+]);
 
 const __typing_test__ = () => {
   const response: unknown = {};
   const parsed = getNodesResponseSchema.parse(response);
   const requiredInputs = Object.values(parsed.__typing_test__!.input.required!);
   const optionalInputs = Object.values(parsed.__typing_test__!.input.optional!);
-  const schema = parsedInputDefinitionSchema.array()
+  const schema = parsedInputDefinitionSchema.array();
   type T = z.infer<typeof schema>;
 
   // This should not compile if the output of getNodesResponseSchema is not
   // compatible with the input of parsedInputDefinitionSchema
   const _ensureRequiredInputsAreValid = requiredInputs satisfies T;
   const _ensureOptionalInputsAreValid = optionalInputs satisfies T;
-}
+};
 
-const inputDefinitionSchema = z
+export const comfyApiInputDefinitionSchema = z
   .tuple([z.union([z.string(), z.number().array(), z.string().array()]), z.unknown()])
   .transform(parseInputDefinition);
 
 export const comfyNodeDefinitionSchema = z.object({
   input: z.object({
-    required: z.record(z.string(), inputDefinitionSchema)
+    required: z
+      .record(z.string(), comfyApiInputDefinitionSchema)
       .optional()
       .transform((x) => {
         if (x === undefined) {
@@ -276,7 +299,7 @@ export const comfyNodeDefinitionSchema = z.object({
         return Object.fromEntries(Object.entries(x).map(([key, value]) => [key, { ...value, name: key }]));
       }),
     optional: z
-      .record(z.string(), inputDefinitionSchema)
+      .record(z.string(), comfyApiInputDefinitionSchema)
       .optional()
       .transform((x) => {
         if (x === undefined) {
@@ -284,7 +307,7 @@ export const comfyNodeDefinitionSchema = z.object({
         }
         return Object.fromEntries(Object.entries(x).map(([key, value]) => [key, { ...value, name: key }]));
       }),
-    hidden: z.record(z.string(), z.union([z.string(), inputDefinitionSchema])).optional(),
+    hidden: z.record(z.string(), z.union([z.string(), comfyApiInputDefinitionSchema])).optional(),
   }),
   input_order: z.object({
     required: z.array(z.string()).optional(),

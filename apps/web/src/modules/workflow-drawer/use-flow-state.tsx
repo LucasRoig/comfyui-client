@@ -1,3 +1,5 @@
+import type { DBWorkflow } from "@repo/data-access";
+import { useMutation } from "@tanstack/react-query";
 import {
   type Edge,
   type OnConnect,
@@ -10,11 +12,9 @@ import {
 } from "@xyflow/react";
 import { useCallback, useState } from "react";
 import { v4 as uuid } from "uuid";
-import type { IComfyNode } from "./node-types";
-import type { DBWorkflow } from "@repo/data-access";
-import { updateWorkflowAction } from "./server-actions/update-workflow-action";
-import { useMutation } from "@tanstack/react-query";
 import { useDebounce } from "../../@lib/use-debounce";
+import type { IComfyNode } from "./node-types";
+import { updateWorkflowAction } from "./server-actions/update-workflow-action";
 
 export function useFlowState(initialWorkflow: DBWorkflow) {
   const [nodes, setNodes] = useState<IComfyNode[]>(initialWorkflow.json.nodes);
@@ -30,29 +30,32 @@ export function useFlowState(initialWorkflow: DBWorkflow) {
     },
     onSuccess: (_result) => {
       console.log("saved workflow");
-    }
+    },
   });
 
   const debouncedPersistWorkflow = useDebounce(persistWorkflowMutation.mutate, 5000);
 
   const { getNodes: _getNodes, getEdges: _getEdges, addNodes, addEdges } = useReactFlow();
 
-  const onNodesChange: OnNodesChange<IComfyNode> = useCallback((changes) => {
-    setNodes((nds) => {
-      const newNodes = applyNodeChanges(changes, nds);
-      if (reactFlowInstance) {
+  const onNodesChange: OnNodesChange<IComfyNode> = useCallback(
+    (changes) => {
+      setNodes((nds) => {
+        const newNodes = applyNodeChanges(changes, nds);
+        if (reactFlowInstance) {
           const currentSchema = reactFlowInstance.toObject();
           console.log("ON NODES CHANGE", newNodes);
           debouncedPersistWorkflow({
             edges: currentSchema.edges,
             nodes: newNodes,
-          })
+          });
         } else {
           console.warn("reactFlowInstance is undefined");
         }
-      return newNodes;
-    });
-  }, [reactFlowInstance, debouncedPersistWorkflow]);
+        return newNodes;
+      });
+    },
+    [reactFlowInstance, debouncedPersistWorkflow],
+  );
 
   const onEdgesChange: OnEdgesChange = useCallback(
     (changes) =>
@@ -63,7 +66,7 @@ export function useFlowState(initialWorkflow: DBWorkflow) {
           debouncedPersistWorkflow({
             edges: newEdges,
             nodes: currentSchema.nodes,
-          })
+          });
         } else {
           console.warn("reactFlowInstance is undefined");
         }

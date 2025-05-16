@@ -451,7 +451,7 @@ export function ComfyNode(props: NodeProps<IComfyNode>) {
   const sortedRequiredInputs = useMemo(() => {
     const sortFn = sortInputs([
       ...(nodeDefinition.input_order.required ?? []),
-      ...(nodeDefinition.input_order.optional ?? [])
+      ...(nodeDefinition.input_order.optional ?? []),
     ]);
     const allInputs = [
       ...(nodeDefinition.input.required ? Object.values(nodeDefinition.input.required) : []),
