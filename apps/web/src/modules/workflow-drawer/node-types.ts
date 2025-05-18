@@ -57,4 +57,11 @@ export type IComfyNode = Node<{
   state: {
     inputs: Record<string, InputState>;
   };
+  executionOutput?: {
+    images?: {
+      filename: string;
+      subfolder: string;
+      type: string;
+    }[];
+  };
 }>;

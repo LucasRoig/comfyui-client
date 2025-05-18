@@ -10,12 +10,13 @@ import {
   applyEdgeChanges,
   applyNodeChanges,
   useReactFlow,
+  useUpdateNodeInternals,
 } from "@xyflow/react";
 import { useCallback, useState } from "react";
 import { match } from "ts-pattern";
 import { v4 as uuid } from "uuid";
 import { useDebounce } from "../../@lib/use-debounce";
-import { useSessionId } from "../comfy-ui/comfy-ui-context";
+import { useSessionId, useWebSocketMethods } from "../comfy-ui/comfy-ui-context";
 import { queueWorkflowAction } from "../comfy-ui/server-actions/queue-workflow-action";
 import type { IComfyNode } from "./node-types";
 import { updateWorkflowAction } from "./server-actions/update-workflow-action";
@@ -24,10 +25,14 @@ export function useFlowState(initialWorkflow: DBWorkflow) {
   const [nodes, setNodes] = useState<IComfyNode[]>(initialWorkflow.json.nodes);
   const [edges, setEdges] = useState<Edge[]>(initialWorkflow.json.edges);
   const [reactFlowInstance, setReactFlowInstance] = useState<ReactFlowInstance<IComfyNode>>();
+  const websocket = useWebSocketMethods();
   const clientId = useSessionId();
+  const { updateNodeData } = useReactFlow<IComfyNode>();
+  const updateNodeInternals = useUpdateNodeInternals();
 
   const postPromptMutation = useMutation({
-    mutationFn: () => {
+    throwOnError: true,
+    mutationFn: async () => {
       if (clientId === undefined) {
         throw new Error("Client id is undefined");
       }
@@ -79,7 +84,34 @@ export function useFlowState(initialWorkflow: DBWorkflow) {
         }
       }
 
-      return queueWorkflowAction(request);
+      const response = await queueWorkflowAction(request);
+      const promptId = response?.data?.prompt_id;
+      console.log("promptId is :", promptId);
+      if (promptId !== undefined) {
+        console.log("adding listener");
+        const listenerId = uuid();
+        websocket.addListener({
+          id: listenerId,
+          onExecutedMessage(executedMessage) {
+            if (executedMessage.data.prompt_id === promptId) {
+              console.log("executed", executedMessage);
+              updateNodeData(executedMessage.data.node, {
+                executionOutput: {
+                  images: executedMessage.data.output?.images,
+                },
+              });
+              updateNodeInternals(executedMessage.data.node);
+            }
+          },
+          onExecutionSuccessMessage(executionSuccessMessage) {
+            if (executionSuccessMessage.data.prompt_id === promptId) {
+              websocket.removeListener(listenerId);
+              console.log("removed listener", listenerId);
+            }
+          },
+        });
+        console.log("added listener", listenerId);
+      }
     },
   });
 

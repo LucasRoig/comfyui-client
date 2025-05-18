@@ -1,6 +1,6 @@
 import type {
-  WebSocketExecutedMessage,
   WebSocketExecutingMessage,
+  WebSocketExecutionSuccessMessage,
   WebSocketProgressMessage,
 } from "@repo/comfy-ui-api-client";
 import { match } from "ts-pattern";
@@ -63,7 +63,10 @@ export function onProgressMessage(currentState: ExecutionState, message: WebSock
     .exhaustive();
 }
 
-export function onExecutedMessage(_currentState: ExecutionState, _message: WebSocketExecutedMessage): ExecutionState {
+export function onExecutionSucessMessage(
+  _currentState: ExecutionState,
+  _message: WebSocketExecutionSuccessMessage,
+): ExecutionState {
   //end prompt execution
   return {
     kind: "idle",

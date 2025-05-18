@@ -3,15 +3,16 @@ import { toast } from "@lro-ui/sonner";
 import {
   ComfyUIWebSocket,
   type ComfyUIWebSocketLog,
-  type WebSocketExecutedMessage,
   type WebSocketExecutingMessage,
+  type WebSocketExecutionSuccessMessage,
   type WebSocketProgressMessage,
   type WebSocketStatusMessage,
 } from "@repo/comfy-ui-api-client";
 import { createContext, useContext, useRef } from "react";
+import { v4 as uuidv4 } from "uuid";
 import { create, useStore } from "zustand";
 import { devtools } from "zustand/middleware";
-import { newExecutionState, onExecutedMessage, onExecutingMessage, onProgressMessage } from "./execution-state";
+import { newExecutionState, onExecutingMessage, onExecutionSucessMessage, onProgressMessage } from "./execution-state";
 import { useInvalidateQueueState } from "./useQueueState";
 
 const initialState = {
@@ -27,7 +28,7 @@ type Actions = {
   onStatusMessage: (statusMessage: WebSocketStatusMessage) => void;
   onProgressMessage: (progressMessage: WebSocketProgressMessage) => void;
   onExecutingMessage: (executingMessage: WebSocketExecutingMessage) => void;
-  onExecutedMessage: (executedMessage: WebSocketExecutedMessage) => void;
+  onExecutionSucessMessage: (message: WebSocketExecutionSuccessMessage) => void;
   onWebSocketClosed: () => void;
   onWebSocketLog: (log: ComfyUIWebSocketLog) => void;
 };
@@ -74,11 +75,11 @@ const createComfyUiStore = (_args: {} = {}) => {
               { type: "onWebsocketClosed" },
             );
           },
-          onExecutedMessage: (message) => {
+          onExecutionSucessMessage: (message) => {
             set(
               (currentState) => {
                 return {
-                  executionState: onExecutedMessage(currentState.executionState, message),
+                  executionState: onExecutionSucessMessage(currentState.executionState, message),
                 };
               },
               undefined,
@@ -137,7 +138,14 @@ const createComfyUiStore = (_args: {} = {}) => {
 
 type ComfyUiStore = ReturnType<typeof createComfyUiStore>;
 
-const ComfyUiContext = createContext<ComfyUiStore | undefined>(undefined);
+const ComfyUiContext = createContext<
+  | {
+      store: ComfyUiStore;
+      addListener: ComfyUIWebSocket["addListener"];
+      removeListener: ComfyUIWebSocket["removeListener"];
+    }
+  | undefined
+>(undefined);
 
 export function ComfyUiContextProvider({ children, wsUrl }: Readonly<{ children: React.ReactNode; wsUrl: string }>) {
   const store = useRef(createComfyUiStore());
@@ -148,6 +156,7 @@ export function ComfyUiContextProvider({ children, wsUrl }: Readonly<{ children:
     websocketRef.current = new ComfyUIWebSocket({
       url: wsUrl,
       eventHandlers: {
+        id: uuidv4(),
         onStatusMessage: (msg) => {
           invalidateQueueState();
           storeActions.onStatusMessage(msg);
@@ -158,8 +167,8 @@ export function ComfyUiContextProvider({ children, wsUrl }: Readonly<{ children:
         onExecutingMessage: (msg) => {
           storeActions.onExecutingMessage(msg);
         },
-        onExecutedMessage: (msg) => {
-          storeActions.onExecutedMessage(msg);
+        onExecutionSuccessMessage: (msg) => {
+          storeActions.onExecutionSucessMessage(msg);
         },
         onClose: () => {
           storeActions.onWebSocketClosed();
@@ -169,16 +178,37 @@ export function ComfyUiContextProvider({ children, wsUrl }: Readonly<{ children:
     });
   }
 
-  return <ComfyUiContext.Provider value={store.current}>{children}</ComfyUiContext.Provider>;
+  return (
+    <ComfyUiContext.Provider
+      value={{
+        store: store.current,
+        addListener: websocketRef.current.addListener,
+        removeListener: websocketRef.current.removeListener,
+      }}
+    >
+      {children}
+    </ComfyUiContext.Provider>
+  );
 }
 
 function useComfyUiStore<T>(selector: (state: StoreState) => T): T {
-  const store = useContext(ComfyUiContext);
-  if (store === undefined) {
+  const context = useContext(ComfyUiContext);
+  if (context === undefined) {
     throw new Error("useComfyUiStore must be used within a ComfyUiContextProvider");
   }
-  return useStore(store, selector);
+  return useStore(context.store, selector);
 }
+
+export const useWebSocketMethods = () => {
+  const context = useContext(ComfyUiContext);
+  if (context === undefined) {
+    throw new Error("useWebSocketMethods must be used within a ComfyUiContextProvider");
+  }
+  return {
+    addListener: context.addListener,
+    removeListener: context.removeListener,
+  };
+};
 
 export const useIsSocketConnected = () => {
   return useComfyUiStore((state) => state.socketConnected);

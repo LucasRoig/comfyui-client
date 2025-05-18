@@ -447,7 +447,7 @@ function Input(props: {
 
 export function ComfyNode(props: NodeProps<IComfyNode>) {
   const updateNodeInternals = useUpdateNodeInternals();
-  const { updateNodeData } = useReactFlow();
+  const { updateNodeData } = useReactFlow<IComfyNode>();
   const executionState = useExecutionState();
   const isRunning = match(executionState)
     .with({ kind: "running" }, (s) => s.nodeId === props.id)
@@ -457,6 +457,7 @@ export function ComfyNode(props: NodeProps<IComfyNode>) {
     .otherwise(() => 0);
 
   const nodeDefinition = props.data.definition;
+  const executionOutput = props.data.executionOutput;
   const nodeState = props.data.state;
   const sortedRequiredInputs = useMemo(() => {
     const sortFn = sortInputs([
@@ -504,6 +505,11 @@ export function ComfyNode(props: NodeProps<IComfyNode>) {
           onStateChange={(state) => updateInputState(input.name, state)}
         />
       ))}
+      {executionOutput ? (
+        <div>
+          <img src={`http://localhost:8000/view?filename=${executionOutput.images?.[0]?.filename}`} alt="" />
+        </div>
+      ) : null}
     </BaseNode>
   );
 }

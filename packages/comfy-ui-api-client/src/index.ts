@@ -45,6 +45,14 @@ const executingMessageSchema = z.object({
   }),
 });
 
+const executionSuccessMessageSchema = z.object({
+  type: z.literal("execution_success"),
+  data: z.object({
+    prompt_id: z.string(),
+    timestamp: z.number(),
+  }),
+});
+
 const executedMessageSchema = z.object({
   type: z.literal("executed"),
   data: z.object({
@@ -71,12 +79,15 @@ export type WebSocketStatusMessage = z.infer<typeof statusMessageSchema>;
 export type WebSocketProgressMessage = z.infer<typeof progressMessageSchema>;
 export type WebSocketExecutingMessage = z.infer<typeof executingMessageSchema>;
 export type WebSocketExecutedMessage = z.infer<typeof executedMessageSchema>;
+export type WebSocketExecutionSuccessMessage = z.infer<typeof executionSuccessMessageSchema>;
 
 type ComfyUIWebSocketListener = {
+  id: string;
   onStatusMessage?: (statusMessage: WebSocketStatusMessage) => void;
   onProgressMessage?: (progressMessage: WebSocketProgressMessage) => void;
   onExecutingMessage?: (executingMessage: WebSocketExecutingMessage) => void;
   onExecutedMessage?: (executedMessage: WebSocketExecutedMessage) => void;
+  onExecutionSuccessMessage?: (executionSuccessMessage: WebSocketExecutionSuccessMessage) => void;
   onClose?: () => void;
   onLog?: (log: ComfyUIWebSocketLog) => void;
 };
@@ -105,14 +116,22 @@ export class ComfyUIWebSocket {
     this.connect();
   }
 
-  private sendLog(type: string, message?: string) {
+  public addListener = (listener: ComfyUIWebSocketListener) => {
+    this.listeners.push(listener);
+  };
+
+  public removeListener = (listenerId: string) => {
+    this.listeners = this.listeners.filter((l) => l.id !== listenerId);
+  };
+
+  private sendLog = (type: string, message?: string) => {
     const date = new Date();
     this.listeners.forEach((l) => {
       if (l.onLog) {
         l.onLog({ type, date, message });
       }
     });
-  }
+  };
 
   private connect() {
     if (debugWWebsocket) {
@@ -173,6 +192,17 @@ export class ComfyUIWebSocket {
           this.listeners.forEach((listener) => {
             if (listener.onStatusMessage) {
               listener.onStatusMessage(statusMessage.data);
+            }
+          });
+        }
+        const executionSuccessMessage = executionSuccessMessageSchema.safeParse(asJson);
+        if (executionSuccessMessage.success) {
+          if (debugWWebsocket) {
+            console.log("WS: Reveived execution success message", executionSuccessMessage.data);
+          }
+          this.listeners.forEach((listener) => {
+            if (listener.onExecutionSuccessMessage) {
+              listener.onExecutionSuccessMessage(executionSuccessMessage.data);
             }
           });
         }
