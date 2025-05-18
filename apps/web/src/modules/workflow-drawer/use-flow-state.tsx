@@ -19,6 +19,7 @@ import { useDebounce } from "../../@lib/use-debounce";
 import { useSessionId, useWebSocketMethods } from "../comfy-ui/comfy-ui-context";
 import { queueWorkflowAction } from "../comfy-ui/server-actions/queue-workflow-action";
 import type { IComfyNode } from "./node-types";
+import { downloadOutputAction } from "./server-actions/dowload-output-action";
 import { updateWorkflowAction } from "./server-actions/update-workflow-action";
 
 export function useFlowState(initialWorkflow: DBWorkflow) {
@@ -95,6 +96,11 @@ export function useFlowState(initialWorkflow: DBWorkflow) {
           onExecutedMessage(executedMessage) {
             if (executedMessage.data.prompt_id === promptId) {
               console.log("executed", executedMessage);
+              for (const image of executedMessage.data.output?.images ?? []) {
+                downloadOutputAction({
+                  filename: image.filename,
+                });
+              }
               updateNodeData(executedMessage.data.node, {
                 executionOutput: {
                   images: executedMessage.data.output?.images,

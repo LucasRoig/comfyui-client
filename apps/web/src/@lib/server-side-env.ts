@@ -4,6 +4,7 @@ const envSchema = z.object({
   COMFY_HTTP_URL: z.string().min(1),
   COMFY_WS_URL: z.string().min(1),
   DATABASE_URL: z.string().min(1),
+  WORKSPACE: z.string().min(1),
 });
 
 let env: z.infer<typeof envSchema> | undefined = undefined;
