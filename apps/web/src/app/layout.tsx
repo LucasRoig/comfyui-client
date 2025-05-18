@@ -3,6 +3,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import { Toaster } from "@lro-ui/sonner";
 import { Header } from "../@components/layout/header";
+import { getServerSideEnv } from "../@lib/server-side-env";
 import { ComfyUiContextProvider } from "../modules/comfy-ui/comfy-ui-context";
 import { Providers } from "./providers";
 
@@ -25,7 +26,7 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const wsUrl = process.env.COMFY_WS_URL!;
+  const wsUrl = getServerSideEnv().COMFY_WS_URL;
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} font-sans antialiased min-h-dvh text-foreground`}>
