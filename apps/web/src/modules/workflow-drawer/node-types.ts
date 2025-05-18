@@ -59,9 +59,11 @@ export type IComfyNode = Node<{
   };
   executionOutput?: {
     images?: {
-      filename: string;
-      subfolder: string;
-      type: string;
+      comfy: {
+        filename: string;
+        subfolder: string;
+        type: string;
+      };
     }[];
   };
 }>;

@@ -122,6 +122,21 @@ export const jsonWorkflowShema = z.object({
         state: z.object({
           inputs: z.record(z.string(), inputStateSchema),
         }),
+        executionOutput: z
+          .object({
+            images: z
+              .array(
+                z.object({
+                  comfy: z.object({
+                    filename: z.string(),
+                    subfolder: z.string(),
+                    type: z.string(),
+                  }),
+                }),
+              )
+              .optional(),
+          })
+          .optional(),
       }),
     }),
   ),
@@ -183,5 +198,28 @@ export async function createWorkflow() {
   return {
     ...wf,
     json: jsonWorkflowShema.parse(wf.json),
+  };
+}
+
+export async function createPrompt(data: { promptId: string; workflowId: string; json: JsomComfyWorkflow }) {
+  const validJson = jsonWorkflowShema.safeParse(data.json);
+  if (!validJson.success) {
+    throw new Error("Invalid json");
+  }
+  const prompts = await db
+    .insert(drizzleSchema.prompt)
+    .values({
+      id: data.promptId,
+      workflowId: data.workflowId,
+      json: validJson.data,
+    })
+    .returning();
+  const prompt = prompts[0];
+  if (!prompt) {
+    throw new Error("Failed to create prompt");
+  }
+  return {
+    ...prompt,
+    json: jsonWorkflowShema.parse(prompt.json),
   };
 }

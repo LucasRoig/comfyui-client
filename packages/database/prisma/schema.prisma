@@ -6,6 +6,16 @@ datasource db {
 model ComfyWorkflow {
     id String @id @default(uuid())
     json Json
+    prompts Prompt[]
 
     @@map("comfy_workflow")
+}
+
+model Prompt {
+    id String @id @default(uuid())
+    json Json
+    workflowId String @map("workflow_id")
+    workflow ComfyWorkflow @relation(fields: [workflowId], references: [id])
+
+    @@map("prompt")
 }

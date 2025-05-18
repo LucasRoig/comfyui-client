@@ -19,6 +19,7 @@ import { useDebounce } from "../../@lib/use-debounce";
 import { useSessionId, useWebSocketMethods } from "../comfy-ui/comfy-ui-context";
 import { queueWorkflowAction } from "../comfy-ui/server-actions/queue-workflow-action";
 import type { IComfyNode } from "./node-types";
+import { createPromptAction } from "./server-actions/create-prompt-action";
 import { downloadOutputAction } from "./server-actions/dowload-output-action";
 import { updateWorkflowAction } from "./server-actions/update-workflow-action";
 
@@ -103,7 +104,9 @@ export function useFlowState(initialWorkflow: DBWorkflow) {
               }
               updateNodeData(executedMessage.data.node, {
                 executionOutput: {
-                  images: executedMessage.data.output?.images,
+                  images: executedMessage.data.output?.images?.map((i) => ({
+                    comfy: i,
+                  })),
                 },
               });
               updateNodeInternals(executedMessage.data.node);
@@ -114,6 +117,14 @@ export function useFlowState(initialWorkflow: DBWorkflow) {
               websocket.removeListener(listenerId);
               console.log("removed listener", listenerId);
             }
+          },
+        });
+        createPromptAction({
+          promptId,
+          workflowId: initialWorkflow.id,
+          json: {
+            edges,
+            nodes,
           },
         });
         console.log("added listener", listenerId);

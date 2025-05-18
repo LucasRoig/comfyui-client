@@ -507,7 +507,7 @@ export function ComfyNode(props: NodeProps<IComfyNode>) {
       ))}
       {executionOutput ? (
         <div>
-          <img src={`http://localhost:8000/view?filename=${executionOutput.images?.[0]?.filename}`} alt="" />
+          <img src={`http://localhost:8000/view?filename=${executionOutput.images?.[0]?.comfy.filename}`} alt="" />
         </div>
       ) : null}
     </BaseNode>
