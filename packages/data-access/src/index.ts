@@ -223,3 +223,59 @@ export async function createPrompt(data: { promptId: string; workflowId: string;
     json: jsonWorkflowShema.parse(prompt.json),
   };
 }
+
+export async function addOutputImage(args: {
+  promptId: string;
+  nodeId: string;
+  image: {
+    filename: string;
+    relativePath: string;
+    uuid: string;
+  };
+  comfy: {
+    filename: string;
+    subfolder: string;
+    type: string;
+  };
+}) {
+  return db.transaction(async (trx) => {
+    const prompt = await trx.query.prompt.findFirst({
+      where: eq(drizzleSchema.prompt.id, args.promptId),
+    });
+    if (!prompt) {
+      throw new Error("Prompt not found");
+    }
+    const json = jsonWorkflowShema.parse(prompt.json);
+    const node = json.nodes.find((n) => n.id === args.nodeId);
+    if (!node) {
+      throw new Error("Node not found");
+    }
+    if (!node.data.executionOutput) {
+      node.data.executionOutput = {};
+    }
+    if (!node.data.executionOutput.images) {
+      node.data.executionOutput.images = [];
+    }
+    node.data.executionOutput.images.push({
+      comfy: args.comfy,
+    });
+    await trx.update(drizzleSchema.prompt).set({
+      json: json,
+    });
+    const outputImages = await trx
+      .insert(drizzleSchema.outputImage)
+      .values({
+        filename: args.image.filename,
+        relativePath: args.image.relativePath,
+        promptId: args.promptId,
+        id: args.image.uuid,
+        nodeId: args.nodeId,
+      })
+      .returning();
+    const outputImage = outputImages[0];
+    if (!outputImage) {
+      throw new Error("Failed to create output image");
+    }
+    return outputImage;
+  });
+}

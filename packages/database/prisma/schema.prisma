@@ -16,6 +16,18 @@ model Prompt {
     json Json
     workflowId String @map("workflow_id")
     workflow ComfyWorkflow @relation(fields: [workflowId], references: [id])
+    outputImages OutputImage[]
 
     @@map("prompt")
+}
+
+model OutputImage {
+    id String @id @default(uuid())
+    filename String
+    relativePath String @map("relative_path")
+    promptId String @map("prompt_id")
+    prompt Prompt @relation(fields: [promptId], references: [id])
+    nodeId String @map("node_id")
+
+    @@map("output_image")
 }

@@ -99,7 +99,13 @@ export function useFlowState(initialWorkflow: DBWorkflow) {
               console.log("executed", executedMessage);
               for (const image of executedMessage.data.output?.images ?? []) {
                 downloadOutputAction({
-                  filename: image.filename,
+                  comfy: {
+                    filename: image.filename,
+                    subfolder: image.subfolder,
+                    type: image.type,
+                  },
+                  nodeId: executedMessage.data.node,
+                  promptId,
                 });
               }
               updateNodeData(executedMessage.data.node, {
