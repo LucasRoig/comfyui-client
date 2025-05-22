@@ -1,29 +1,30 @@
-"use client";
-
 import { Button } from "@lro-ui/button";
-import { useSessionId } from "../modules/comfy-ui/comfy-ui-context";
-import { QueueState } from "../modules/comfy-ui/queue-state";
-import { queueWorkflowAction } from "../modules/comfy-ui/server-actions/queue-workflow-action";
+import { FolderOpen, PlusCircle } from "lucide-react";
 
 export default function Home() {
-  const sessionId = useSessionId();
   return (
-    <div>
-      Test
-      <Button
-        onClick={async () => {
-          if (!sessionId) {
-            throw new Error("No session id");
-          }
-          const response = await queueWorkflowAction({
-            sessionId,
-          });
-          console.log(response);
-        }}
-      >
-        Queue Workflow
-      </Button>
-      <QueueState />
+    <div className="flex items-center justify-center h-full">
+      <div className="flex flex-col w-[192px] ">
+        <Button>
+          <PlusCircle className="h-5 w-5" />
+          Create a project
+        </Button>
+        <OrDivider />
+        <Button>
+          <FolderOpen className="h-5 w-5" />
+          Open a project
+        </Button>
+      </div>
+    </div>
+  );
+}
+
+export function OrDivider() {
+  return (
+    <div className="relative my-4 flex items-center justify-center gap-2">
+      <span className="border-b grow" />
+      OR
+      <span className="border-b grow" />
     </div>
   );
 }
