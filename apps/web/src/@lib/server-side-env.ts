@@ -11,7 +11,12 @@ let env: z.infer<typeof envSchema> | undefined = undefined;
 
 export function getServerSideEnv() {
   if (env === undefined) {
-    env = envSchema.parse(process.env);
+    const parsedEnv = envSchema.safeParse(process.env);
+    if (parsedEnv.success) {
+      env = parsedEnv.data;
+    } else {
+      throw new Error(`Failed to parse environment variables : ${parsedEnv.error.message}`);
+    }
   }
   return env;
 }
