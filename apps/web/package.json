@@ -21,6 +21,7 @@
     "@lro-ui/sonner": "workspace:*",
     "@lro-ui/table": "workspace:*",
     "@lro-ui/utils": "workspace:*",
+    "@radix-ui/react-slot": "^1.2.3",
     "@redux-devtools/extension": "^3.3.0",
     "@repo/civit-api-client": "workspace:*",
     "@repo/comfy-ui-api-client": "workspace:*",
