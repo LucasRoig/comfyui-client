@@ -24,7 +24,8 @@ export function CreateProjectModal(props: CreateProjectModalProps) {
     defaultValues: {
       name: "",
     },
-    onSubmit: (event) => {
+    onSubmit: async (event) => {
+      await new Promise((resolve) => setTimeout(resolve, 5000));
       console.log(event.value);
     },
   });
@@ -66,9 +67,15 @@ export function CreateProjectModal(props: CreateProjectModalProps) {
           <ModalClose asChild>
             <Button variant="text">Cancel</Button>
           </ModalClose>
-          <Button type="submit" form="create-project-form">
-            Create Project
-          </Button>
+          <form.Subscribe selector={(state) => state.isSubmitting}>
+            {(isSubmitting) => {
+              return (
+                <Button type="submit" form="create-project-form" disabled={isSubmitting}>
+                  Create Project
+                </Button>
+              );
+            }}
+          </form.Subscribe>
         </ModalFooter>
       </ModalContent>
     </Modal>
