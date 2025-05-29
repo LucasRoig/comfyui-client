@@ -2,6 +2,7 @@
 import { Button } from "@lro-ui/button";
 import { Modal, ModalBody, ModalClose, ModalContent, ModalFooter, ModalHeader, ModalTitle } from "@lro-ui/modal";
 import { type AnyFieldApi, useForm } from "@tanstack/react-form";
+import z from "zod";
 
 type CreateProjectModalProps = {
   isOpen: boolean;
@@ -19,10 +20,17 @@ function FieldInfo({ field }: { field: AnyFieldApi }) {
   );
 }
 
+const formSchema = z.object({
+  name: z.string().min(3),
+});
+
 export function CreateProjectModal(props: CreateProjectModalProps) {
   const form = useForm({
     defaultValues: {
       name: "",
+    },
+    validators: {
+      onSubmit: formSchema,
     },
     onSubmit: async (event) => {
       await new Promise((resolve) => setTimeout(resolve, 5000));
