@@ -1,14 +1,12 @@
 import { Button } from "@lro-ui/button";
-import { FolderOpen, PlusCircle } from "lucide-react";
+import { FolderOpen } from "lucide-react";
+import { CreateProjectButton } from "./_components/create-project-button";
 
 export default function Home() {
   return (
     <div className="flex items-center justify-center h-full">
       <div className="flex flex-col w-[192px] ">
-        <Button>
-          <PlusCircle className="h-5 w-5" />
-          Create a project
-        </Button>
+        <CreateProjectButton />
         <OrDivider />
         <Button>
           <FolderOpen className="h-5 w-5" />
