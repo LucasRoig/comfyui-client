@@ -1,6 +1,6 @@
 import type { KyInstance } from "ky";
 import { err, ok } from "neverthrow";
-import z from "zod";
+import z from "zod/v4";
 
 const modelTypeEnum = z.union([
   z.literal("Checkpoint"),

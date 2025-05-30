@@ -1,5 +1,5 @@
 import ky from "ky";
-import z from "zod";
+import z from "zod/v4";
 import { getImage } from "./api-routes/get-image";
 import { getNodes } from "./api-routes/get-nodes";
 import { getQueue } from "./api-routes/get-queue";

@@ -5,11 +5,11 @@ import path from "node:path";
 import { createClient } from "@repo/comfy-ui-api-client";
 import { addOutputImage } from "@repo/data-access";
 import { v4 as uuidv4 } from "uuid";
-import z from "zod";
+import z from "zod/v4";
 import { actionClient } from "../../../@lib/safe-action";
 import { getServerSideEnv } from "../../../@lib/server-side-env";
 export const downloadOutputAction = actionClient
-  .schema(
+  .inputSchema(
     z.object({
       comfy: z.object({
         filename: z.string(),

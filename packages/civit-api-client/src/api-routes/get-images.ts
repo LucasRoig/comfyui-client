@@ -1,5 +1,5 @@
 import type { KyInstance } from "ky";
-import z from "zod";
+import z from "zod/v4";
 
 const endpoint = "api/v1/images";
 

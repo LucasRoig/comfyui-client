@@ -2,7 +2,7 @@
 import { Button } from "@lro-ui/button";
 import { Modal, ModalBody, ModalClose, ModalContent, ModalFooter, ModalHeader, ModalTitle } from "@lro-ui/modal";
 import { useMutation } from "@tanstack/react-query";
-import z from "zod";
+import z from "zod/v4";
 import { useAppForm } from "../../@components/form/form-hooks";
 import { mapNextSafeActionErrors } from "../../@components/form/form-utils";
 import { createProjectAction } from "./server-actions/create-project-action";

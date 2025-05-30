@@ -1,10 +1,10 @@
 "use server";
 
-import z from "zod";
+import z from "zod/v4";
 import { actionClient } from "../../../@lib/safe-action";
 
 export const createProjectAction = actionClient
-  .schema(
+  .inputSchema(
     z.object({
       name: z.string().min(5),
     }),

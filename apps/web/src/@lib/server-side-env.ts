@@ -1,4 +1,4 @@
-import z from "zod";
+import z from "zod/v4";
 
 const envSchema = z.object({
   COMFY_HTTP_URL: z.string().min(1),

@@ -1,11 +1,11 @@
 "use server"; // don't forget to add this!
 
 import { createPrompt, jsonWorkflowShema } from "@repo/data-access";
-import z from "zod";
+import z from "zod/v4";
 import { actionClient } from "../../../@lib/safe-action";
 
 export const createPromptAction = actionClient
-  .schema(
+  .inputSchema(
     z.object({
       promptId: z.string(),
       workflowId: z.string(),

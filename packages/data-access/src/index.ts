@@ -4,7 +4,7 @@ import { drizzleSchema } from "@repo/database";
 import { eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/libsql/node";
 import { v4 as uuidv4 } from "uuid";
-import { z } from "zod";
+import { z } from "zod/v4";
 
 const inputStateSchema = z.discriminatedUnion("kind", [
   z.object({
@@ -100,9 +100,9 @@ export const jsonWorkflowShema = z.object({
       hidden: z.boolean().optional(),
       data: z.object({
         definition: z.object({
-          input: z.interface({
-            required: z.record(z.string(), parsedInputDefinitionSchema).optional(),
-            optional: z.record(z.string(), parsedInputDefinitionSchema).optional(),
+          input: z.object({
+            required: z.record(z.string(), parsedInputDefinitionSchema).or(z.undefined()),
+            optional: z.record(z.string(), parsedInputDefinitionSchema).or(z.undefined()),
             hidden: z.record(z.string(), z.union([z.string(), comfyApiInputDefinitionSchema])).optional(),
           }),
           input_order: z.object({

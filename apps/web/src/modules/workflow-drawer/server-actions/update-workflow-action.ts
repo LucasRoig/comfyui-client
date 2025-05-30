@@ -1,11 +1,11 @@
 "use server"; // don't forget to add this!
 
 import { jsonWorkflowShema, updateWorkflow } from "@repo/data-access";
-import z from "zod";
+import z from "zod/v4";
 import { actionClient } from "../../../@lib/safe-action";
 
 export const updateWorkflowAction = actionClient
-  .schema(
+  .inputSchema(
     z.object({
       id: z.string(),
       json: z.unknown(),

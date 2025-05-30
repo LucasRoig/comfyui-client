@@ -1,6 +1,6 @@
 import type { KyInstance } from "ky";
 import { P, match } from "ts-pattern";
-import z from "zod";
+import z from "zod/v4";
 
 const booleanInputDefinitionConfigSchema = z.object({
   default: z.boolean().nullish(),
@@ -14,7 +14,8 @@ const stringInputDefinitionConfigSchema = z
     tooltip: z.string().nullish(),
     default: z.string().nullish(),
   })
-  .nullish();
+  .or(z.null())
+  .or(z.undefined());
 
 const intInputDefinitionConfigSchema = z
   .object({
@@ -25,7 +26,8 @@ const intInputDefinitionConfigSchema = z
     control_after_generate: z.boolean().optional(),
     tooltip: z.string().optional(),
   })
-  .nullish();
+  .or(z.null())
+  .or(z.undefined());
 
 const floatInputDefinitionConfigSchema = z.object({
   default: z.number().nullish(),
@@ -69,19 +71,23 @@ const customInputDefinitionConfigSchema = z
   .object({
     tooltip: z.string().optional(),
   })
-  .nullish();
+  .or(z.null())
+  .or(z.undefined());
 
 const stringArrayInputDefinitionConfigSchema = z
   .object({
     tooltip: z.string().optional(),
   })
-  .nullish();
+  .or(z.null())
+  .or(z.undefined());
 
 const numberArrayInputDefinitionConfigSchema = z
   .object({
     tooltip: z.string().optional(),
   })
-  .nullish();
+  .or(z.null())
+  .or(z.undefined());
+
 function parseInputDefinition(node: [string | string[] | number[], unknown]) {
   const parsed = match(node[0])
     .with("BOOLEAN", () => {
@@ -205,63 +211,63 @@ function parseInputDefinition(node: [string | string[] | number[], unknown]) {
 }
 
 export const parsedInputDefinitionSchema = z.discriminatedUnion("kind", [
-  z.interface({
+  z.object({
     name: z.string(),
     kind: z.literal("BOOLEAN"),
     config: booleanInputDefinitionConfigSchema,
   }),
-  z.interface({
+  z.object({
     name: z.string(),
     kind: z.literal("STRING"),
     config: stringInputDefinitionConfigSchema,
   }),
-  z.interface({
+  z.object({
     name: z.string(),
     kind: z.literal("INT"),
     config: intInputDefinitionConfigSchema,
   }),
-  z.interface({
+  z.object({
     name: z.string(),
     kind: z.literal("FLOAT"),
     config: floatInputDefinitionConfigSchema,
   }),
-  z.interface({
+  z.object({
     name: z.string(),
     kind: z.literal("FLOATS"),
     config: floatsInputDefinitionConfigSchema,
   }),
-  z.interface({
+  z.object({
     name: z.string(),
     kind: z.literal("STRING_ARRAY_COMBO"),
     config: stringArrayComboInputDefinitionConfigSchema,
   }),
-  z.interface({
+  z.object({
     name: z.string(),
     kind: z.literal("NUMBER_ARRAY_COMBO"),
     config: numberArrayComboInputDefinitionConfigSchema,
   }),
-  z.interface({
+  z.object({
     name: z.string(),
     kind: z.literal("IMAGE_UPLOAD_COMBO"),
     config: imageUploadComboInputDefinitionConfigSchema,
   }),
-  z.interface({
+  z.object({
     name: z.string(),
     kind: z.literal("*"),
   }),
-  z.interface({
+  z.object({
     name: z.string(),
     kind: z.literal("CUSTOM"),
     config: customInputDefinitionConfigSchema,
     type: z.string(),
   }),
-  z.interface({
+  z.object({
     name: z.string(),
     kind: z.literal("STRING_ARRAY"),
     options: z.array(z.string()),
     config: stringArrayInputDefinitionConfigSchema,
   }),
-  z.interface({
+  z.object({
     name: z.string(),
     kind: z.literal("NUMBER_ARRAY"),
     options: z.array(z.number()),
