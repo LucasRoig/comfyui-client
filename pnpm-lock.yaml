@@ -65,6 +65,9 @@ importers:
       '@repo/data-access':
         specifier: workspace:*
         version: link:../../packages/data-access
+      '@repo/database':
+        specifier: workspace:*
+        version: link:../../packages/database
       '@tailwindcss/postcss':
         specifier: ^4.0.14
         version: 4.1.4
@@ -83,6 +86,9 @@ importers:
       '@xyflow/react':
         specifier: ^12.6.0
         version: 12.6.0(@types/react@19.1.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      drizzle-orm:
+        specifier: ^0.43.1
+        version: 0.43.1(@libsql/client@0.15.5)(@prisma/client@5.10.2(prisma@6.7.0(typescript@5.8.2)))(prisma@6.7.0(typescript@5.8.2))
       lucide-react:
         specifier: ^0.485.0
         version: 0.485.0(react@19.1.0)

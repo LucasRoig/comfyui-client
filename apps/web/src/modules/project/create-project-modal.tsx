@@ -2,6 +2,7 @@
 import { Button } from "@lro-ui/button";
 import { Modal, ModalBody, ModalClose, ModalContent, ModalFooter, ModalHeader, ModalTitle } from "@lro-ui/modal";
 import { useMutation } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
 import z from "zod/v4";
 import { useAppForm } from "../../@components/form/form-hooks";
 import { mapNextSafeActionErrors } from "../../@components/form/form-utils";
@@ -17,6 +18,7 @@ const formSchema = z.object({
 });
 
 export function CreateProjectModal(props: CreateProjectModalProps) {
+  const router = useRouter();
   const createProjectMutation = useMutation({
     mutationFn: createProjectAction,
   });
@@ -30,15 +32,20 @@ export function CreateProjectModal(props: CreateProjectModalProps) {
     },
     onSubmit: async (event) => {
       createProjectMutation.mutate(event.value, {
-        onSuccess: (data) => {
-          if (data?.validationErrors) {
-            const fieldsErrors = mapNextSafeActionErrors(data.validationErrors);
+        onSuccess: (response) => {
+          if (response?.validationErrors) {
+            const fieldsErrors = mapNextSafeActionErrors(response.validationErrors);
             form.setErrorMap({
               onSubmit: {
                 form: "global error",
                 fields: fieldsErrors,
               },
             });
+            return;
+          }
+          if (response.data) {
+            props.onOpenChange(false);
+            router.push(`/projects/${response.data.id}`);
           }
         },
       });

@@ -3,6 +3,13 @@ datasource db {
     url = env("DB_FILE")
 }
 
+model Project {
+    id String @id @default(uuid())
+    name String
+
+    @@map("project")
+}
+
 model ComfyWorkflow {
     id String @id @default(uuid())
     json Json
