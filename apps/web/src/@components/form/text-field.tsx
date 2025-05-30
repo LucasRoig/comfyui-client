@@ -11,6 +11,7 @@ type TextFieldProps = {
 export function TextField(props: TextFieldProps) {
   const field = useFieldContext<string>();
   const isError = field.state.meta.isTouched && field.state.meta.isValid === false;
+  console.log(field.state);
   const errorBody = field.state.meta.errors
     .map((err) => err?.message)
     .filter((e) => e !== undefined)

@@ -1,8 +1,11 @@
 "use client";
 import { Button } from "@lro-ui/button";
 import { Modal, ModalBody, ModalClose, ModalContent, ModalFooter, ModalHeader, ModalTitle } from "@lro-ui/modal";
+import { useMutation } from "@tanstack/react-query";
 import z from "zod";
 import { useAppForm } from "../../@components/form/form-hooks";
+import { mapNextSafeActionErrors } from "../../@components/form/form-utils";
+import { createProjectAction } from "./server-actions/create-project-action";
 
 type CreateProjectModalProps = {
   isOpen: boolean;
@@ -14,6 +17,10 @@ const formSchema = z.object({
 });
 
 export function CreateProjectModal(props: CreateProjectModalProps) {
+  const createProjectMutation = useMutation({
+    mutationFn: createProjectAction,
+  });
+
   const form = useAppForm({
     defaultValues: {
       name: "",
@@ -22,8 +29,19 @@ export function CreateProjectModal(props: CreateProjectModalProps) {
       onSubmit: formSchema,
     },
     onSubmit: async (event) => {
-      await new Promise((resolve) => setTimeout(resolve, 5000));
-      console.log(event.value);
+      createProjectMutation.mutate(event.value, {
+        onSuccess: (data) => {
+          if (data?.validationErrors) {
+            const fieldsErrors = mapNextSafeActionErrors(data.validationErrors);
+            form.setErrorMap({
+              onSubmit: {
+                form: "global error",
+                fields: fieldsErrors,
+              },
+            });
+          }
+        },
+      });
     },
   });
   return (
