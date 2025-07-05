@@ -4,15 +4,32 @@ import { Button } from "@lro-ui/button";
 import { Command, CommandEmpty, CommandGroup, CommandItem, CommandList, CommandSeparator } from "@lro-ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "@lro-ui/popover";
 import { cn } from "@lro-ui/utils";
-import { ChevronsUpDown, PlusCircle } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { Check, ChevronsUpDown, PlusCircle } from "lucide-react";
 import { useState } from "react";
+import { listAllProjectsAction } from "./server-actions/list-all-projects-action";
+import { useRouter } from "next/navigation";
+import { useSelectedProject } from "./selected-project-context";
 
 type PopoverTriggerProps = React.ComponentProps<typeof PopoverTrigger>;
 
 type ProjectSwitcherProps = PopoverTriggerProps;
 
 export function ProjectSwitcher(props: ProjectSwitcherProps) {
+  const router = useRouter();
+  const selectedProject = useSelectedProject();
   const [open, setOpen] = useState(false);
+  const { data: projects } = useQuery({
+    queryKey: ["projects"],
+    queryFn: async () => {
+      const response = await listAllProjectsAction();
+      if (!response.data) {
+        throw response;
+      }
+      return response.data;
+    },
+    throwOnError: true,
+  })
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
@@ -24,7 +41,7 @@ export function ProjectSwitcher(props: ProjectSwitcherProps) {
           aria-label="Select a team"
           className={cn("w-[200px] justify-between", props.className)}
         >
-          No project selected
+          {selectedProject ? selectedProject.projectName : "No project selected"}
           <ChevronsUpDown className="ml-auto opacity-50" />
         </Button>
       </PopoverTrigger>
@@ -32,19 +49,19 @@ export function ProjectSwitcher(props: ProjectSwitcherProps) {
         <Command>
           <CommandList>
             <CommandEmpty>No profile found.</CommandEmpty>
-            {/* {profiles?.map((p) => (
+            {projects?.map((p) => (
               <CommandItem
                 key={p.id}
                 onSelect={() => {
-                  setSelectedProfile(p.id);
+                  router.push(`/projects/${p.id}`);
                   setOpen(false);
                 }}
                 className="text-sm"
               >
                 {p.name}
-                <Check className={cn("ml-auto", selectedProfile === p ? "opacity-100" : "opacity-0")} />
+                <Check className={cn("ml-auto", selectedProject?.projectId === p.id ? "opacity-100" : "opacity-0")} />
               </CommandItem>
-            ))} */}
+            ))}
           </CommandList>
           <CommandSeparator />
           <CommandList>
