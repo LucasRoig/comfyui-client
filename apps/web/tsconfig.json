@@ -7,6 +7,13 @@
       }
     ]
   },
-  "include": ["**/*.ts", "**/*.tsx", "next-env.d.ts", "next.config.js", ".next/types/**/*.ts", "src/@components/layout/sidebar"],
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    "next-env.d.ts",
+    "next.config.js",
+    ".next/types/**/*.ts",
+    "src/@components/layout/sidebar"
+  ],
   "exclude": ["node_modules"]
 }

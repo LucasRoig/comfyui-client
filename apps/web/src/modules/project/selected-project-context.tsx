@@ -25,11 +25,7 @@ export function SelectedProjectProvider({
 }) {
   const params = useParams<{ projectId: string }>();
 
-  const {
-    data: projects,
-    isLoading,
-    isError,
-  } = useQuery(orpc.project.findAllProject.queryOptions());
+  const { data: projects, isLoading, isError } = useQuery(orpc.project.findAllProject.queryOptions());
 
   const state = useMemo(() => {
     const selectedProject =

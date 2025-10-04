@@ -22,11 +22,7 @@ import { orpc } from "../../../orpc/link";
 export function ProjectSwitcher() {
   const router = useRouter();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const {
-    data: projects,
-    isLoading,
-    isError,
-  } = useQuery(orpc.project.findAllProject.queryOptions());
+  const { data: projects, isLoading, isError } = useQuery(orpc.project.findAllProject.queryOptions());
 
   const { isMobile } = useSidebar();
   const activeProjectState = useSelectedProject();

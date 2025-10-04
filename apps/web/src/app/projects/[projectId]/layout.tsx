@@ -1,7 +1,6 @@
 import { drizzleSchema } from "@repo/database";
 import { eq } from "drizzle-orm";
 import { database } from "../../../@lib/database";
-import { SelectedProjectProvider } from "../../../modules/project/selected-project-context";
 
 export default async function ProjectLayout({
   children,
@@ -17,11 +16,5 @@ export default async function ProjectLayout({
   if (!project) {
     throw new Error(`Project with ID ${projectId} not found`);
   }
-  return (
-    <>
-      <SelectedProjectProvider projectId={project.id} projectName={project.name}>
-        {children}
-      </SelectedProjectProvider>
-    </>
-  );
+  return <>{children}</>;
 }
