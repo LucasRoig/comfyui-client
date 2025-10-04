@@ -1,12 +1,12 @@
 "use client";
 import { Button } from "@lro-ui/button";
 import { Modal, ModalBody, ModalClose, ModalContent, ModalFooter, ModalHeader, ModalTitle } from "@lro-ui/modal";
-import { useMutation } from "@tanstack/react-query";
+import { toast } from "@lro-ui/sonner";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import z from "zod/v4";
 import { useAppForm } from "../../@components/form/form-hooks";
-import { mapNextSafeActionErrors } from "../../@components/form/form-utils";
-import { createProjectAction } from "./server-actions/create-project-action";
+import { orpc } from "../../orpc/link";
 
 type CreateProjectModalProps = {
   isOpen: boolean;
@@ -18,10 +18,9 @@ const formSchema = z.object({
 });
 
 export function CreateProjectModal(props: CreateProjectModalProps) {
+  const queryClient = useQueryClient();
   const router = useRouter();
-  const createProjectMutation = useMutation({
-    mutationFn: createProjectAction,
-  });
+  const createProjectMutation = useMutation(orpc.project.createProject.mutationOptions());
 
   const form = useAppForm({
     defaultValues: {
@@ -33,20 +32,26 @@ export function CreateProjectModal(props: CreateProjectModalProps) {
     onSubmit: async (event) => {
       createProjectMutation.mutate(event.value, {
         onSuccess: (response) => {
-          if (response?.validationErrors) {
-            const fieldsErrors = mapNextSafeActionErrors(response.validationErrors);
-            form.setErrorMap({
-              onSubmit: {
-                form: "global error",
-                fields: fieldsErrors,
-              },
-            });
-            return;
-          }
-          if (response.data) {
-            props.onOpenChange(false);
-            router.push(`/projects/${response.data.id}`);
-          }
+          props.onOpenChange(false);
+          router.push(`/projects/${response.id}`);
+          queryClient.invalidateQueries({
+            queryKey: orpc.project.key(),
+          });
+          // if (response?.validationErrors) {
+          //   const fieldsErrors = mapNextSafeActionErrors(response.validationErrors);
+          //   form.setErrorMap({
+          //     onSubmit: {
+          //       form: "global error",
+          //       fields: fieldsErrors,
+          //     },
+          //   });
+          //   return;
+          // }
+          // if (response.data) {
+          // }
+        },
+        onError: (error) => {
+          toast.error(error.message);
         },
       });
     },

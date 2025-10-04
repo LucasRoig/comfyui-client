@@ -17,4 +17,5 @@ export const link = new RPCLink({
 });
 
 const client: RouterClient<typeof orpcRouter> = createORPCClient(link);
+// const safeClient = createSafeClient(client)
 export const orpc = createTanstackQueryUtils(client);
