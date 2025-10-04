@@ -2,7 +2,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
 import { createContext, useContext, useMemo } from "react";
-import { listAllProjectsAction } from "./server-actions/list-all-projects-action";
+import { orpc } from "../../orpc/link";
 
 export const SelectedProjectContext = createContext<
   | {
@@ -29,17 +29,7 @@ export function SelectedProjectProvider({
     data: projects,
     isLoading,
     isError,
-  } = useQuery({
-    queryKey: ["projects"],
-    queryFn: async () => {
-      const response = await listAllProjectsAction();
-      if (!response.data) {
-        throw response;
-      }
-      return response.data;
-    },
-    throwOnError: true,
-  });
+  } = useQuery(orpc.project.findAllProject.queryOptions());
 
   const state = useMemo(() => {
     const selectedProject =

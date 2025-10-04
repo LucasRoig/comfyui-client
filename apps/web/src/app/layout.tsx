@@ -3,7 +3,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import { SidebarInset, SidebarProvider } from "@lro-ui/sidebar";
 import { Toaster } from "@lro-ui/sonner";
-import { AppSidebar } from "../@components/layout/sidebar.tsx/app-sidebar";
+import { AppSidebar } from "../@components/layout/sidebar/app-sidebar";
 import { getServerSideEnv } from "../@lib/server-side-env";
 import { ComfyUiContextProvider } from "../modules/comfy-ui/comfy-ui-context";
 import { Providers } from "./providers";

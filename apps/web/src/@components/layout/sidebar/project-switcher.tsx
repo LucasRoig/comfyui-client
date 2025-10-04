@@ -17,7 +17,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { CreateProjectModal } from "../../../modules/project/create-project-modal";
 import { useSelectedProject } from "../../../modules/project/selected-project-context";
-import { listAllProjectsAction } from "../../../modules/project/server-actions/list-all-projects-action";
+import { orpc } from "../../../orpc/link";
 
 export function ProjectSwitcher() {
   const router = useRouter();
@@ -26,17 +26,7 @@ export function ProjectSwitcher() {
     data: projects,
     isLoading,
     isError,
-  } = useQuery({
-    queryKey: ["projects"],
-    queryFn: async () => {
-      const response = await listAllProjectsAction();
-      if (!response.data) {
-        throw response;
-      }
-      return response.data;
-    },
-    throwOnError: true,
-  });
+  } = useQuery(orpc.project.findAllProject.queryOptions());
 
   const { isMobile } = useSidebar();
   const activeProjectState = useSelectedProject();
