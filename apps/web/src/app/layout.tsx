@@ -2,10 +2,11 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import { Toaster } from "@lro-ui/sonner";
-import { Header } from "../@components/layout/header";
 import { getServerSideEnv } from "../@lib/server-side-env";
 import { ComfyUiContextProvider } from "../modules/comfy-ui/comfy-ui-context";
 import { Providers } from "./providers";
+import { SidebarInset, SidebarProvider } from "@lro-ui/sidebar";
+import { AppSidebar } from "../@components/layout/sidebar.tsx/app-sidebar";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -22,10 +23,10 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({
-  children,
-}: Readonly<{
+  children
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   const wsUrl = getServerSideEnv().COMFY_WS_URL;
   return (
     <html lang="en">
@@ -33,12 +34,20 @@ export default function RootLayout({
         <Providers>
           <ComfyUiContextProvider wsUrl={wsUrl}>
             <Toaster />
-            <div className="flex flex-col min-h-dvh h-dvh">
+            <SidebarProvider>
+              <AppSidebar />
+              <SidebarInset>
+                <div className="flex flex-col min-h-dvh h-dvh">
+                  <main className="grow">{children}</main>
+                </div>
+              </SidebarInset>
+            </SidebarProvider>
+            {/* <div className="flex flex-col min-h-dvh h-dvh">
               <header className="w-full sticky top-0 z-10 bg-background h-[var(--header-height)] ">
                 <Header />
               </header>
               <main className="grow">{children}</main>
-            </div>
+            </div> */}
           </ComfyUiContextProvider>
         </Providers>
       </body>

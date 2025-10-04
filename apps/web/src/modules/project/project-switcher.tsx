@@ -19,6 +19,7 @@ export function ProjectSwitcher(props: ProjectSwitcherProps) {
   const router = useRouter();
   const selectedProject = useSelectedProject();
   const [open, setOpen] = useState(false);
+
   const { data: projects } = useQuery({
     queryKey: ["projects"],
     queryFn: async () => {
@@ -30,6 +31,7 @@ export function ProjectSwitcher(props: ProjectSwitcherProps) {
     },
     throwOnError: true,
   });
+
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
