@@ -1,6 +1,6 @@
-"use client"
+"use client";
 
-import { ChevronsUpDown, Plus } from "lucide-react"
+import { ChevronsUpDown, Plus } from "lucide-react";
 
 import {
   DropdownMenu,
@@ -9,25 +9,24 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@lro-ui/dropdown-menu"
-import {
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  useSidebar,
-} from "@lro-ui/sidebar"
-import { useQuery } from "@tanstack/react-query"
-import { listAllProjectsAction } from "../../../modules/project/server-actions/list-all-projects-action"
-import { Skeleton } from "@lro-ui/skeleton"
-import { useRouter } from "next/navigation"
-import { useSelectedProject } from "../../../modules/project/selected-project-context"
-import { CreateProjectModal } from "../../../modules/project/create-project-modal"
-import { useState } from "react"
+} from "@lro-ui/dropdown-menu";
+import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from "@lro-ui/sidebar";
+import { Skeleton } from "@lro-ui/skeleton";
+import { useQuery } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { CreateProjectModal } from "../../../modules/project/create-project-modal";
+import { useSelectedProject } from "../../../modules/project/selected-project-context";
+import { listAllProjectsAction } from "../../../modules/project/server-actions/list-all-projects-action";
 
 export function ProjectSwitcher() {
   const router = useRouter();
-  const [isModalOpen, setIsModalOpen] = useState(false)
-  const { data: projects, isLoading, isError } = useQuery({
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const {
+    data: projects,
+    isLoading,
+    isError,
+  } = useQuery({
     queryKey: ["projects"],
     queryFn: async () => {
       const response = await listAllProjectsAction();
@@ -39,7 +38,7 @@ export function ProjectSwitcher() {
     throwOnError: true,
   });
 
-  const { isMobile } = useSidebar()
+  const { isMobile } = useSidebar();
   const activeProjectState = useSelectedProject();
 
   return (
@@ -55,10 +54,11 @@ export function ProjectSwitcher() {
                 <activeTeam.logo className="size-4" />
               </div> */}
               <div className="grid flex-1 text-left text-sm leading-tight">
-                {activeProjectState?.selectedProject ?
+                {activeProjectState?.selectedProject ? (
                   <span className="truncate font-medium">{activeProjectState.selectedProject.name}</span>
-                  : <span className="font-medium">Select a project</span>
-                }
+                ) : (
+                  <span className="font-medium">Select a project</span>
+                )}
                 {/* <span className="truncate text-xs">{activeTeam.plan}</span> */}
               </div>
               <ChevronsUpDown className="ml-auto" />
@@ -70,10 +70,14 @@ export function ProjectSwitcher() {
             side={isMobile ? "bottom" : "right"}
             sideOffset={4}
           >
-            <DropdownMenuLabel className="text-muted-foreground text-xs">
-              Projects
-            </DropdownMenuLabel>
-            {isLoading ? <Skeleton /> : isError || !projects ? <div>error</div> : projects.length === 0 ? <div>No project</div> :
+            <DropdownMenuLabel className="text-muted-foreground text-xs">Projects</DropdownMenuLabel>
+            {isLoading ? (
+              <Skeleton />
+            ) : isError || !projects ? (
+              <div>error</div>
+            ) : projects.length === 0 ? (
+              <div>No project</div>
+            ) : (
               <>
                 {projects.map((project) => (
                   <DropdownMenuItem
@@ -89,7 +93,7 @@ export function ProjectSwitcher() {
                   </DropdownMenuItem>
                 ))}
               </>
-            }
+            )}
             <DropdownMenuSeparator />
             <DropdownMenuItem className="gap-2 p-2" onClick={() => setIsModalOpen(true)}>
               <div className="flex size-6 items-center justify-center rounded-md border bg-transparent">
@@ -99,8 +103,8 @@ export function ProjectSwitcher() {
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
-        <CreateProjectModal isOpen={isModalOpen} onOpenChange={setIsModalOpen}/>
+        <CreateProjectModal isOpen={isModalOpen} onOpenChange={setIsModalOpen} />
       </SidebarMenuItem>
     </SidebarMenu>
-  )
+  );
 }

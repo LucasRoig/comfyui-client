@@ -10,9 +10,7 @@ export function Providers({ children }: Readonly<{ children: React.ReactNode }>)
   return (
     <QueryClientProvider client={queryClient}>
       <ReactQueryDevtools initialIsOpen={false} />
-      <SelectedProjectProvider>
-        {children}
-      </SelectedProjectProvider>
+      <SelectedProjectProvider>{children}</SelectedProjectProvider>
     </QueryClientProvider>
   );
 }

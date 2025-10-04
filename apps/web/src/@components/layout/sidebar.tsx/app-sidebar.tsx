@@ -1,26 +1,12 @@
-"use client"
+"use client";
 
-import type * as React from "react"
-import {
-  BookOpen,
-  Bot,
-  Frame,
-  Map as MapIcon,
-  PieChart,
-  Settings2,
-  SquareTerminal,
-} from "lucide-react"
+import { BookOpen, Bot, Frame, Map as MapIcon, PieChart, Settings2, SquareTerminal } from "lucide-react";
+import type * as React from "react";
 
-import { NavMain } from "./nav-main"
-import { NavProjects } from "./nav-projects"
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarFooter,
-  SidebarHeader,
-  SidebarRail,
-} from "@lro-ui/sidebar"
-import { ProjectSwitcher } from "./project-switcher"
+import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarRail } from "@lro-ui/sidebar";
+import { NavMain } from "./nav-main";
+import { NavProjects } from "./nav-projects";
+import { ProjectSwitcher } from "./project-switcher";
 
 // This is sample data.
 const data = {
@@ -136,22 +122,20 @@ const data = {
       icon: MapIcon,
     },
   ],
-}
+};
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
-        <ProjectSwitcher/>
+        <ProjectSwitcher />
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />
         <NavProjects projects={data.projects} />
       </SidebarContent>
-      <SidebarFooter>
-        {/* <NavUser user={data.user} /> */}
-      </SidebarFooter>
+      <SidebarFooter>{/* <NavUser user={data.user} /> */}</SidebarFooter>
       <SidebarRail />
     </Sidebar>
-  )
+  );
 }
