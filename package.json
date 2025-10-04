@@ -8,10 +8,13 @@
     "fix": "pnpm biome check --write",
     "check-types": "turbo run check-types",
     "test": "turbo run test",
-    "coverage": "turbo run coverage"
+    "coverage": "turbo run coverage",
+    "knip": "knip"
   },
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
+    "@types/node": "^24.6.2",
+    "knip": "^5.64.1",
     "turbo": "^2.5.8",
     "typescript": "5.9.2"
   },
