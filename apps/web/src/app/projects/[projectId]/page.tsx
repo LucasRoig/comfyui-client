@@ -1,10 +1,10 @@
-import { SelectedProjectContext } from "../../../modules/project/selected-project-context";
-
 export default async function ProjectPage({ params }: Readonly<{ params: Promise<{ projectId: string }> }>) {
   const { projectId } = await params;
 
-  return <div>Project {projectId}
-    {/* <SelectedProjectContext.Consumer>
+  return (
+    <div>
+      Project {projectId}
+      {/* <SelectedProjectContext.Consumer>
       {(ctx) => {
         if (!ctx) {
           return null;
@@ -17,5 +17,6 @@ export default async function ProjectPage({ params }: Readonly<{ params: Promise
         );
       }}
     </SelectedProjectContext.Consumer> */}
-  </div>;
+    </div>
+  );
 }

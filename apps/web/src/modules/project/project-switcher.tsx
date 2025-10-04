@@ -6,10 +6,10 @@ import { Popover, PopoverContent, PopoverTrigger } from "@lro-ui/popover";
 import { cn } from "@lro-ui/utils";
 import { useQuery } from "@tanstack/react-query";
 import { Check, ChevronsUpDown, PlusCircle } from "lucide-react";
-import { useState } from "react";
-import { listAllProjectsAction } from "./server-actions/list-all-projects-action";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { useSelectedProject } from "./selected-project-context";
+import { listAllProjectsAction } from "./server-actions/list-all-projects-action";
 
 type PopoverTriggerProps = React.ComponentProps<typeof PopoverTrigger>;
 
@@ -29,7 +29,7 @@ export function ProjectSwitcher(props: ProjectSwitcherProps) {
       return response.data;
     },
     throwOnError: true,
-  })
+  });
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
@@ -38,7 +38,7 @@ export function ProjectSwitcher(props: ProjectSwitcherProps) {
           // biome-ignore lint/a11y/useSemanticElements: <explanation>
           role="combobox"
           aria-expanded={open}
-          aria-label="Select a team"
+          aria-label="Select a project"
           className={cn("w-[200px] justify-between", props.className)}
         >
           {selectedProject ? selectedProject.projectName : "No project selected"}
