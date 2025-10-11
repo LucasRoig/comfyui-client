@@ -1,6 +1,6 @@
 "use client";
 
-import { SquareTerminal } from "lucide-react";
+import { Files, SquareTerminal } from "lucide-react";
 import type * as React from "react";
 
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarRail } from "@lro-ui/sidebar";
@@ -16,10 +16,26 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const data = {
     navMain: [
       {
+        title: "Files",
+        url: "#",
+        icon: Files,
+        isActive: true,
+        items: [
+          {
+            title: "All files",
+            url: `/projects/${selectedProjectState?.selectedProject?.id}/files`,
+          },
+          {
+            title: "Import Tasks",
+            url: `/projects/${selectedProjectState?.selectedProject?.id}/import-tasks`,
+          },
+        ],
+      },
+      {
         title: "Main things",
         url: "#",
         icon: SquareTerminal,
-        isActive: true,
+        isActive: false,
         items: [
           {
             title: "Workflow",
