@@ -1,40 +1,53 @@
 datasource db {
     provider = "sqlite"
-    url = env("DB_FILE")
+    url      = env("DB_FILE")
 }
 
 model Project {
-    id String @id @default(uuid())
+    id   String @id @default(uuid())
     name String
+
+    InputImage InputImage[]
 
     @@map("project")
 }
 
+model InputImage {
+    id                String @id @default(uuid())
+    originalFileName  String @map("original_file_name")
+    originalDirectory String @map("original_directory")
+
+    projectId String  @map("project_id")
+    project   Project @relation(fields: [projectId], references: [id])
+
+    @@map("input_image")
+}
+
 model ComfyWorkflow {
-    id String @id @default(uuid())
-    json Json
+    id      String   @id @default(uuid())
+    json    Json
     prompts Prompt[]
 
     @@map("comfy_workflow")
 }
 
 model Prompt {
-    id String @id @default(uuid())
-    json Json
-    workflowId String @map("workflow_id")
-    workflow ComfyWorkflow @relation(fields: [workflowId], references: [id])
+    id           String        @id @default(uuid())
+    json         Json
+    workflowId   String        @map("workflow_id")
+    workflow     ComfyWorkflow @relation(fields: [workflowId], references: [id])
     outputImages OutputImage[]
 
     @@map("prompt")
 }
 
 model OutputImage {
-    id String @id @default(uuid())
-    filename String
+    id           String @id @default(uuid())
+    filename     String
     relativePath String @map("relative_path")
-    promptId String @map("prompt_id")
-    prompt Prompt @relation(fields: [promptId], references: [id])
-    nodeId String @map("node_id")
+    promptId     String @map("prompt_id")
+    prompt       Prompt @relation(fields: [promptId], references: [id])
+    nodeId       String @map("node_id")
 
     @@map("output_image")
 }

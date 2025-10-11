@@ -9,7 +9,7 @@
     "indentStyle": "space",
     "lineWidth": 120,
     "lineEnding": "lf",
-    "ignore": ["design-system/**", "packages/database/src/drizzle/**"]
+    "ignore": ["design-system/**"]
   },
   "linter": {
     "enabled": true,
@@ -47,8 +47,7 @@
       "**/generated/**",
       "**/.contentlayer/**",
       "**/coverage/**",
-      "design-system/**",
-      "packages/database/src/drizzle/**"
+      "design-system/**"
     ]
   }
 }

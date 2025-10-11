@@ -1,10 +1,11 @@
 import { comfyWorkflow } from "./comfy-workflow";
 import { comfyWorkflowRelations } from "./comfy-workflow-relations";
-import { promptRelations } from "./prompt-relations";
-import { prompt } from "./prompt";
+import { inputImage, inputImageRelations } from "./input-image";
 import { outputImage } from "./output-image";
 import { outputImageRelations } from "./output-image-relations";
-import { project } from "./project";
+import { project, projectRelations } from "./project";
+import { prompt } from "./prompt";
+import { promptRelations } from "./prompt-relations";
 
 export const schema = {
   comfyWorkflow,
@@ -14,4 +15,7 @@ export const schema = {
   outputImage,
   outputImageRelations,
   project,
-}
+  projectRelations,
+  inputImage,
+  inputImageRelations,
+};
