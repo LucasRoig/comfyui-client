@@ -1,5 +1,6 @@
 import { os } from "@orpc/server";
 import { drizzleSchema } from "@repo/database";
+import { asc, eq } from "drizzle-orm";
 import { v4 as uuid } from "uuid";
 import { z } from "zod/v4";
 import { database } from "../../../@lib/database";
@@ -33,7 +34,22 @@ const createProject = os
   })
   .callable();
 
+const getFilesInProject = os
+  .input(
+    z.object({
+      projectId: z.string(),
+    }),
+  )
+  .handler(({ input }) => {
+    return database.query.inputImage.findMany({
+      where: eq(drizzleSchema.inputImage.projectId, input.projectId),
+      orderBy: [asc(drizzleSchema.inputImage.originalPath)],
+    });
+  })
+  .callable();
+
 export const projectRouter = {
   findAllProject,
   createProject,
+  getFilesInProject,
 };
