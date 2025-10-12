@@ -26,8 +26,11 @@ export default function ImportTaskPage() {
       //uppy.setFileMeta(file.id, {projectId: 1})
     };
 
-    const onUpload = (_uploadID: string, _files: UppyFile<Meta, Body>[]) => {
-      uppy.setMeta({ projectId: projectInfo?.selectedProject?.id });
+    const onUpload = (uploadId: string, _files: UppyFile<Meta, Body>[]) => {
+      uppy.setMeta({
+        projectId: projectInfo?.selectedProject?.id,
+        uploadId,
+      });
     };
 
     uppy.on("file-added", onFileAdded);

@@ -45,6 +45,7 @@
     "@uppy/react": "^5.1.0",
     "@uppy/xhr-upload": "^5.0.1",
     "@xyflow/react": "^12.6.0",
+    "async-mutex": "^0.5.0",
     "drizzle-orm": "^0.43.1",
     "lucide-react": "^0.485.0",
     "neverthrow": "^8.2.0",

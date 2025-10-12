@@ -1,5 +1,6 @@
 import { comfyWorkflow } from "./comfy-workflow";
 import { comfyWorkflowRelations } from "./comfy-workflow-relations";
+import { importTask, importTaskRelations } from "./import-task";
 import { inputImage, inputImageRelations } from "./input-image";
 import { outputImage } from "./output-image";
 import { outputImageRelations } from "./output-image-relations";
@@ -18,4 +19,6 @@ export const schema = {
   projectRelations,
   inputImage,
   inputImageRelations,
+  importTask,
+  importTaskRelations,
 };
