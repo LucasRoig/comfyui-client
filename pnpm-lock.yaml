@@ -614,6 +614,12 @@ importers:
 
   design-system/components/table:
     dependencies:
+      '@lro-ui/button':
+        specifier: workspace:*
+        version: link:../button
+      '@lro-ui/input':
+        specifier: workspace:*
+        version: link:../input
       '@lro-ui/utils':
         specifier: workspace:*
         version: link:../../utils
