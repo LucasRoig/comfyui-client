@@ -192,6 +192,9 @@ importers:
 
   apps/web-react-router:
     dependencies:
+      '@lro-ui/button':
+        specifier: workspace:*
+        version: link:../../design-system/components/button
       '@orpc/client':
         specifier: ^1.10.1
         version: 1.10.1
@@ -219,6 +222,9 @@ importers:
       isbot:
         specifier: ^5.1.31
         version: 5.1.31
+      lucide-react:
+        specifier: ^0.485.0
+        version: 0.485.0(react@19.2.0)
       react:
         specifier: ^19.1.1
         version: 19.2.0
@@ -10922,6 +10928,10 @@ snapshots:
   lucide-react@0.485.0(react@19.1.0):
     dependencies:
       react: 19.1.0
+
+  lucide-react@0.485.0(react@19.2.0):
+    dependencies:
+      react: 19.2.0
 
   magic-string@0.30.21:
     dependencies:

@@ -33,6 +33,9 @@
     },
     "ignore": ["**/.*.js", "**/node_modules/"]
   },
+  "css": {
+    "parser": {}
+  },
   "javascript": {
     "globals": ["React", "JSX"]
   },

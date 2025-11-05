@@ -1,4 +1,4 @@
-import { isRouteErrorResponse, Links, Meta, Outlet, Scripts, ScrollRestoration } from "react-router";
+import { Links, Meta, Outlet, Scripts, ScrollRestoration, isRouteErrorResponse } from "react-router";
 
 import type { Route } from "./+types/root";
 import "./app.css";
@@ -13,7 +13,7 @@ export const links: Route.LinksFunction = () => [
   },
   {
     rel: "stylesheet",
-    href: "https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap",
+    href: "https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap",
   },
 ];
 
@@ -26,8 +26,10 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Meta />
         <Links />
       </head>
-      <body>
-        {children}
+      <body className="font-sans antialiased min-h-dvh text-foreground">
+        <div className="flex flex-col min-h-dvh h-dvh">
+          <main className="grow max-h-full overflow-auto flex flex-col p-4">{children}</main>
+        </div>
         <ScrollRestoration />
         <Scripts />
       </body>
@@ -36,7 +38,6 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
-
   return (
     <ReactQueryProvider>
       <Outlet />
