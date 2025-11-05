@@ -1,0 +1,21 @@
+{
+  "name": "@repo/api",
+  "version": "1.0.0",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "source": "./src/index.ts",
+  "type": "module",
+  "scripts": {
+    "build": "tsc --noEmit && tsup src/index.ts --format cjs",
+    "check-types": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@orpc/server": "^1.10.1",
+    "zod": "^3.25.41"
+  },
+  "devDependencies": {
+    "@repo/typescript-config": "workspace:*",
+    "tsup": "^8.4.0",
+    "typescript": "5.8.2"
+  }
+}

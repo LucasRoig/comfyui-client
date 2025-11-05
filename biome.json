@@ -40,7 +40,6 @@
     "ignoreUnknown": true,
     "ignore": [
       "**/.next/**",
-      "**/.vscode/**",
       "**/.turbo/**",
       "**/node_modules/**",
       "**/dist/**",
