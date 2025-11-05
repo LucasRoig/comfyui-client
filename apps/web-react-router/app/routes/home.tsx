@@ -3,6 +3,7 @@ import { call } from "@orpc/server";
 import { EllipsisVerticalIcon, PlusIcon } from "lucide-react";
 import { appRouter } from "~/.server";
 import type { Route } from "./+types/home";
+import { Link } from "react-router";
 
 export async function loader() {
   const projects = await call(appRouter.projects.list, {});
@@ -26,12 +27,12 @@ export default function Home(props: Route.ComponentProps) {
       </div>
       <div className="flex flex-col border bg-white rounded-md overflow-auto">
         {props.loaderData.projects.map((p) => (
-          <div className="px-4 py-2 cursor-pointer not-last:border-b flex items-center" key={p.id}>
+          <Link to={`/projects/${p.id}`} className="px-4 py-2 cursor-pointer not-last:border-b flex items-center" key={p.id}>
             <p>{p.name}</p>
-            <Button className="ml-auto" variant="text" size="small">
+            <Button className="ml-auto" variant="text" size="icon" onClick={(e) => {e.preventDefault()}}>
               <EllipsisVerticalIcon />
             </Button>
-          </div>
+          </Link>
         ))}
       </div>
     </div>
