@@ -1,9 +1,9 @@
-import type { Route } from "./+types/home";
-import { Welcome } from "../welcome/welcome";
-import { orpc } from "~/@lib/orpc-client";
+import { call } from "@orpc/server";
 import { useQuery } from "@tanstack/react-query";
 import { appRouter } from "~/.server";
-import { call } from "@orpc/server";
+import { orpc } from "~/@lib/orpc-client";
+import { Welcome } from "../welcome/welcome";
+import type { Route } from "./+types/home";
 
 export async function loader({}: Route.LoaderArgs) {
   const serverPing = await call(appRouter.ping, {});
@@ -16,13 +16,14 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export default function Home(props: Route.ComponentProps) {
-  props.loaderData.serverPing
+  props.loaderData.serverPing;
   const { data: clientPing } = useQuery(orpc.ping.queryOptions());
+  const { data: projects } = useQuery(orpc.projects.list.queryOptions());
 
   return (
     <>
-    <div>server: {props.loaderData.serverPing}</div>
-    <div>client: {clientPing}</div>
+      <div>server: {props.loaderData.serverPing}</div>
+      <div>client: {clientPing}</div>
       <Welcome />
     </>
   );
