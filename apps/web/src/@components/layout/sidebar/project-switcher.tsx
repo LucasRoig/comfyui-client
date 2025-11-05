@@ -1,7 +1,5 @@
 "use client";
 
-import { ChevronsUpDown, Plus } from "lucide-react";
-
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,6 +11,7 @@ import {
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from "@lro-ui/sidebar";
 import { Skeleton } from "@lro-ui/skeleton";
 import { useQuery } from "@tanstack/react-query";
+import { ChevronsUpDown, Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { CreateProjectModal } from "../../../modules/project/create-project-modal";

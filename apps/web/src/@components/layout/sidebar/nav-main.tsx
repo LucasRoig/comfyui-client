@@ -1,7 +1,5 @@
 "use client";
 
-import { ChevronRight, type LucideIcon } from "lucide-react";
-
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@lro-ui/collapsible";
 import {
   SidebarGroup,
@@ -13,6 +11,7 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
 } from "@lro-ui/sidebar";
+import { ChevronRight, type LucideIcon } from "lucide-react";
 import Link from "next/link";
 
 export function NavMain({

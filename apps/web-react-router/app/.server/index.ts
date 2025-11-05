@@ -1,1 +1,1 @@
-export { appRouter, type RouterInputs, type RouterOutputs } from "@repo/api"
+export { appRouter, type RouterInputs, type RouterOutputs } from "@repo/api";

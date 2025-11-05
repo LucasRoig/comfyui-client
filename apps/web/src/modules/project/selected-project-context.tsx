@@ -18,11 +18,7 @@ export const SelectedProjectContext = createContext<
   | undefined
 >(undefined);
 
-export function SelectedProjectProvider({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export function SelectedProjectProvider({ children }: { children: React.ReactNode }) {
   const params = useParams<{ projectId: string }>();
 
   const { data: projects, isLoading, isError } = useQuery(orpc.project.findAllProject.queryOptions());

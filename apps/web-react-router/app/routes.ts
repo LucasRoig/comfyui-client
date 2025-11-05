@@ -1,6 +1,3 @@
-import { type RouteConfig, index, route } from "@react-router/dev/routes";
+import { index, type RouteConfig, route } from "@react-router/dev/routes";
 
-export default [
-  index("routes/home.tsx"),
-  route("/api/orpc/*", "routes/api/orpc.ts")
-] satisfies RouteConfig;
+export default [index("routes/home.tsx"), route("/api/orpc/*", "routes/api/orpc.ts")] satisfies RouteConfig;

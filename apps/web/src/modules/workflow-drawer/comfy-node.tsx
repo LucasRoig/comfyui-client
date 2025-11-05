@@ -7,7 +7,7 @@ import { cn } from "@lro-ui/utils";
 import type { ComfyNodeDefinition } from "@repo/comfy-ui-api-client";
 import { type NodeProps, Position, useReactFlow, useUpdateNodeInternals } from "@xyflow/react";
 import { useId, useMemo, useState } from "react";
-import { P, match } from "ts-pattern";
+import { match, P } from "ts-pattern";
 import { useExecutionState } from "../comfy-ui/comfy-ui-context";
 import { BaseNode } from "./base-node";
 import { CustomHandle } from "./custom-handle";

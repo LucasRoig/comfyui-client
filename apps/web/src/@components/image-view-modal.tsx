@@ -12,7 +12,11 @@ export default function ImageViewModal({
   image,
   isOpen,
   onOpenChange,
-}: { image?: Image; isOpen: boolean; onOpenChange: (open: boolean) => void }) {
+}: {
+  image?: Image;
+  isOpen: boolean;
+  onOpenChange: (open: boolean) => void;
+}) {
   const meta = useMemo(() => {
     let m = undefined as Record<string, string> | undefined;
     if (image?.meta) {

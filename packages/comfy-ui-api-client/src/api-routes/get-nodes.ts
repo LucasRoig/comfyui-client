@@ -1,5 +1,5 @@
 import type { KyInstance } from "ky";
-import { P, match } from "ts-pattern";
+import { match, P } from "ts-pattern";
 import z from "zod/v4";
 
 const booleanInputDefinitionConfigSchema = z.object({

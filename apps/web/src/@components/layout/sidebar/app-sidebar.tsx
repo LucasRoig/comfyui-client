@@ -1,9 +1,8 @@
 "use client";
 
+import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarRail } from "@lro-ui/sidebar";
 import { Files, SquareTerminal } from "lucide-react";
 import type * as React from "react";
-
-import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarRail } from "@lro-ui/sidebar";
 import { QueueLengthIndicator } from "../../../modules/comfy-ui/queue-length-indicator";
 import { SocketConnectedIndicator } from "../../../modules/comfy-ui/socket-connected-indicator";
 import { useSelectedProject } from "../../../modules/project/selected-project-context";

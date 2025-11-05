@@ -1,4 +1,4 @@
-import { P, match } from "ts-pattern";
+import { match, P } from "ts-pattern";
 
 /*
 * Map the validation errors from NextSafeAction to the format expected by the form library

@@ -4,15 +4,16 @@ import { getImage } from "./api-routes/get-image";
 import { getNodes } from "./api-routes/get-nodes";
 import { getQueue } from "./api-routes/get-queue";
 import { postPrompt } from "./api-routes/post-prompt";
+
 export {
   type ComfyNodeDefinition,
-  parsedInputDefinitionSchema,
   comfyApiInputDefinitionSchema,
+  parsedInputDefinitionSchema,
 } from "./api-routes/get-nodes";
 
 export {
-  postPromptRequestSchema,
   type PostPromptRequest,
+  postPromptRequestSchema,
 } from "./api-routes/post-prompt";
 
 const statusMessageSchema = z.object({

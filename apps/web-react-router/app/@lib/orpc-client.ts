@@ -6,11 +6,11 @@ import type { appRouter } from "../.server";
 
 export const link = new RPCLink({
   url: () => {
-    if (typeof window === 'undefined') {
-      throw new Error('RPCLink is not allowed on the server side.')
+    if (typeof window === "undefined") {
+      throw new Error("RPCLink is not allowed on the server side.");
     }
-    return `${window.location.origin}/api/orpc`
-  }
+    return `${window.location.origin}/api/orpc`;
+  },
 });
 
 const client: RouterClient<typeof appRouter> = createORPCClient(link);

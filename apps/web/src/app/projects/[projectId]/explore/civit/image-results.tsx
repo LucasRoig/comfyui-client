@@ -2,7 +2,7 @@
 
 import { Button } from "@lro-ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@lro-ui/input";
-import { type GetImagesResponse, createCivitClient } from "@repo/civit-api-client";
+import { createCivitClient, type GetImagesResponse } from "@repo/civit-api-client";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import ImageViewModal from "../../../../../@components/image-view-modal";
@@ -78,7 +78,12 @@ function SelectFilter<T extends string>({
   choices,
   value,
   onValueChange,
-}: { label: string; choices: readonly T[]; value: T; onValueChange: (value: T) => void }) {
+}: {
+  label: string;
+  choices: readonly T[];
+  value: T;
+  onValueChange: (value: T) => void;
+}) {
   return (
     <div className="flex items-center gap-2">
       <div className="whitespace-nowrap">{label}</div>

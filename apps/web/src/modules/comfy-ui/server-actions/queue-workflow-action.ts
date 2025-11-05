@@ -1,7 +1,6 @@
 "use server"; // don't forget to add this!
 
-import { createClient } from "@repo/comfy-ui-api-client";
-import { postPromptRequestSchema } from "@repo/comfy-ui-api-client";
+import { createClient, postPromptRequestSchema } from "@repo/comfy-ui-api-client";
 import { actionClient } from "../../../@lib/safe-action";
 import { getServerSideEnv } from "../../../@lib/server-side-env";
 

@@ -1,4 +1,4 @@
-import { os, type InferRouterInputs, type InferRouterOutputs } from "@orpc/server";
+import { type InferRouterInputs, type InferRouterOutputs, os } from "@orpc/server";
 import { listProjectProcedure } from "./use-case/project/list-projects";
 
 export const appRouter = os.router({

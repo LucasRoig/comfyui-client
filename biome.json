@@ -1,7 +1,17 @@
 {
-  "$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
-  "organizeImports": {
-    "enabled": true
+  "$schema": "https://biomejs.dev/schemas/2.3.3/schema.json",
+  "vcs": {
+    "enabled": false,
+    "clientKind": "git",
+    "useIgnoreFile": false
+  },
+  "assist": {
+    "enabled": true,
+    "actions": {
+      "source": {
+        "organizeImports": "on"
+      }
+    }
   },
   "formatter": {
     "enabled": true,
@@ -9,7 +19,7 @@
     "indentStyle": "space",
     "lineWidth": 120,
     "lineEnding": "lf",
-    "ignore": ["design-system/**"]
+    "includes": ["**", "!design-system"]
   },
   "linter": {
     "enabled": true,
@@ -17,39 +27,45 @@
       "recommended": true,
       "correctness": {
         "noUnusedVariables": "error",
-        "noUnusedImports": "info"
+        "noUnusedImports": "info",
+        "noNestedComponentDefinitions": "off",
+        "useExhaustiveDependencies": "warn"
       },
       "style": {
         "noUselessElse": "off",
-        "noNonNullAssertion": "warn"
+        "noNonNullAssertion": "warn",
+        "noParameterAssign": "off"
       },
       "complexity": {
         "noForEach": "off"
       },
       "suspicious": {
-        "noConsoleLog": "warn",
-        "useAwait": "error"
+        "useAwait": "error",
+        "noUnknownAtRules": "off"
       }
     },
-    "ignore": ["**/.*.js", "**/node_modules/"]
-  },
-  "css": {
-    "parser": {}
+    "includes": ["!**/.*.js", "!**/node_modules"]
   },
   "javascript": {
     "globals": ["React", "JSX"]
   },
+  "css": {
+    "parser": {
+      "tailwindDirectives": true
+    }
+  },
   "files": {
-    "ignoreUnknown": true,
-    "ignore": [
-      "**/.next/**",
-      "**/.turbo/**",
-      "**/node_modules/**",
-      "**/dist/**",
-      "**/generated/**",
-      "**/.contentlayer/**",
-      "**/coverage/**",
-      "design-system/**"
+    "ignoreUnknown": false,
+    "includes": [
+      "**",
+      "!**/.next",
+      "!**/.turbo",
+      "!**/node_modules",
+      "!**/dist",
+      "!**/generated",
+      "!**/.contentlayer",
+      "!**/coverage",
+      "!design-system"
     ]
   }
 }
