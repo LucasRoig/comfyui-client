@@ -2,6 +2,7 @@ import { isRouteErrorResponse, Links, Meta, Outlet, Scripts, ScrollRestoration }
 
 import type { Route } from "./+types/root";
 import "./app.css";
+import { Toaster } from "@lro-ui/sonner";
 import { ReactQueryProvider } from "./@lib/react-query-provider";
 
 export const links: Route.LinksFunction = () => [
@@ -30,6 +31,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <div className="flex flex-col min-h-dvh h-dvh">
           <main className="grow max-h-full overflow-auto flex flex-col p-4">{children}</main>
         </div>
+        <Toaster />
         <ScrollRestoration />
         <Scripts />
       </body>
