@@ -6,7 +6,7 @@ export const AppRoutes = {
     dashboard: (id: string) => `/projects/${id}/dashboard`,
     allFiles: (id: string) => `/projects/${id}/files`,
     importTasks: (id: string) => `/projects/${id}/import-tasks`,
-    workflows: (id: string) => `/projects/${id}/workflow`,
+    workflows: (id: string) => `/projects/${id}/workflows`,
     exploreCivit: (id: string) => `/projects/${id}/explore/civit`,
   },
 };
@@ -15,6 +15,12 @@ export default [
   index("routes/home.tsx"),
   route("/api/orpc/*", "routes/api/orpc.ts"),
   ...prefix("projects", [
-    layout("routes/projects/project-layout.tsx", [route(":id/dashboard", "routes/projects/project-dashboard.tsx")]),
+    layout("routes/projects/project-layout.tsx", [
+      route(":id/dashboard", "routes/projects/project-dashboard.tsx"),
+      route(":id/files", "routes/projects/files/project-all-files.tsx"),
+      route(":id/import-tasks", "routes/projects/files/project-import-tasks.tsx"),
+      route(":id/workflows", "routes/projects/other/project-workflows.tsx"),
+      route(":id/explore/civit", "routes/projects/other/project-explore-civit.tsx"),
+    ]),
   ]),
 ] satisfies RouteConfig;
