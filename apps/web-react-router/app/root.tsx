@@ -29,7 +29,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
       </head>
       <body className="font-sans antialiased min-h-dvh text-foreground">
         <div className="flex flex-col min-h-dvh h-dvh">
-          <main className="grow max-h-full overflow-auto flex flex-col p-4">{children}</main>
+          <main className="grow max-h-full overflow-auto flex flex-col">{children}</main>
         </div>
         <Toaster />
         <ScrollRestoration />

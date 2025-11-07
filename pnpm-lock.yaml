@@ -195,12 +195,24 @@ importers:
       '@lro-ui/button':
         specifier: workspace:*
         version: link:../../design-system/components/button
+      '@lro-ui/collapsible':
+        specifier: workspace:*
+        version: link:../../design-system/components/collapsible
+      '@lro-ui/dropdown-menu':
+        specifier: workspace:*
+        version: link:../../design-system/components/dropdown-menu
       '@lro-ui/input':
         specifier: workspace:*
         version: link:../../design-system/components/input
       '@lro-ui/modal':
         specifier: workspace:*
         version: link:../../design-system/components/modal
+      '@lro-ui/sidebar':
+        specifier: workspace:*
+        version: link:../../design-system/components/sidebar
+      '@lro-ui/skeleton':
+        specifier: workspace:*
+        version: link:../../design-system/components/skeleton
       '@lro-ui/sonner':
         specifier: workspace:*
         version: link:../../design-system/components/sonner

@@ -5,7 +5,7 @@ import { useState } from "react";
 import { Link } from "react-router";
 import { appRouter } from "~/.server";
 import { CreateProjectModal } from "~/modules/projects/create-project-modal";
-import { Routes } from "~/routes";
+import { AppRoutes } from "~/routes";
 import type { Route } from "./+types/home";
 
 export async function loader() {
@@ -33,7 +33,7 @@ export default function Home(props: Route.ComponentProps) {
       <div className="flex flex-col border bg-white rounded-md overflow-auto">
         {props.loaderData.projects.map((p) => (
           <Link
-            to={Routes.project.view(p.id)}
+            to={AppRoutes.project.dashboard(p.id)}
             className="px-4 py-2 cursor-pointer not-last:border-b flex items-center"
             key={p.id}
           >

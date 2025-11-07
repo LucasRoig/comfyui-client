@@ -10,8 +10,12 @@
   },
   "dependencies": {
     "@lro-ui/button": "workspace:*",
+    "@lro-ui/collapsible": "workspace:*",
+    "@lro-ui/dropdown-menu": "workspace:*",
+    "@lro-ui/skeleton": "workspace:*",
     "@lro-ui/input": "workspace:*",
     "@lro-ui/modal": "workspace:*",
+    "@lro-ui/sidebar": "workspace:*",
     "@lro-ui/sonner": "workspace:*",
     "@lro-ui/utils": "workspace:*",
     "@orpc/client": "^1.10.1",

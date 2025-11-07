@@ -5,7 +5,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router";
 import z from "zod";
 import { orpc } from "~/@lib/orpc-client";
-import { Routes } from "~/routes";
+import { AppRoutes } from "~/routes";
 import { useAppForm } from "../../@components/form/form-hooks";
 
 type CreateProjectModalProps = {
@@ -33,7 +33,7 @@ export function CreateProjectModal(props: CreateProjectModalProps) {
       createProjectMutation.mutate(event.value, {
         onSuccess: (response) => {
           props.onOpenChange(false);
-          navigate(Routes.project.view(response.id));
+          navigate(AppRoutes.project.dashboard(response.id));
           queryClient.invalidateQueries({
             queryKey: orpc.projects.key(),
           });
