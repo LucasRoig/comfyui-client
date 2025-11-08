@@ -12,7 +12,7 @@ type DTO = z.infer<typeof dtoSchema>;
 
 export const listTemplateProcedure = os.input(dtoSchema).handler(async ({ input }) => {
   const uc = new ListTemplatesUseCase(database);
-  const result = (await uc.execute(input)).mapErr((err) => new ORPCError("INTERNAL_SERVER_ERROR"));
+  const result = await uc.execute(input).mapErr((err) => new ORPCError("INTERNAL_SERVER_ERROR"));
   if (result.isErr()) {
     throw result.error;
   } else {
@@ -23,7 +23,7 @@ export const listTemplateProcedure = os.input(dtoSchema).handler(async ({ input 
 class ListTemplatesUseCase {
   public constructor(private db: AppDatabase) { }
 
-  public async execute(input: DTO) {
+  public execute(input: DTO) {
     return ResultAsync.fromPromise(
       this.db.query.templates.findMany({
         where: eq(drizzleSchema.templates.projectId, input.projectId),
