@@ -1,15 +1,18 @@
-import { os } from "@orpc/server";
+import { ORPCError, os } from "@orpc/server";
 import { type AppDatabase, database } from "../../database";
+import { DbUtils } from "../../db-utils";
+import { ResultUtils } from "../../result-utils";
 
-export const listProjectProcedure = os.handler(() => {
+export const listProjectProcedure = os.handler(async () => {
   const useCase = new ListProjectUseCase(database);
-  return useCase.execute();
+  const result = await useCase.execute().mapErr(e => new ORPCError("INTERNAL_SERVER_ERROR"));
+  return ResultUtils.unwrapOrThrow(result);
 });
 
 class ListProjectUseCase {
-  public constructor(private db: AppDatabase) {}
+  public constructor(private db: AppDatabase) { }
 
   public execute() {
-    return this.db.query.project.findMany();
+    return DbUtils.execute(this.db.query.project.findMany());
   }
 }

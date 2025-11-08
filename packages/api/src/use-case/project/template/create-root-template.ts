@@ -1,11 +1,13 @@
 import { ORPCError, os } from "@orpc/server";
 import { drizzleSchema } from "@repo/database";
 import { eq } from "drizzle-orm";
-import { err, ok, ResultAsync } from "neverthrow";
+import { ok } from "neverthrow";
 import { match } from "ts-pattern";
 import { v4 as uuid } from "uuid";
 import z from "zod";
 import { type AppDatabase, database } from "../../../database";
+import { DbUtils } from "../../../db-utils";
+import { ResultUtils } from "../../../result-utils";
 
 const dtoSchema = z.object({
   projectId: z.string(),
@@ -27,79 +29,46 @@ export const createRootTemplateProcedure = os.input(dtoSchema).handler(async ({ 
       .exhaustive(),
   );
 
-  if (result.isErr()) {
-    throw result.error;
-  } else {
-    return result.value;
-  }
+  return ResultUtils.unwrapOrThrow(result);
 });
 
 class CreateRootTemplateUseCase {
   public constructor(private db: AppDatabase) { }
 
   public execute(input: z.infer<typeof dtoSchema>) {
-    return ResultAsync.fromPromise(
+    return DbUtils.execute(
       this.db.query.project.findFirst({
         where: eq(drizzleSchema.project.id, input.projectId),
-      }),
-      (e) => ({
-        kind: "DATABASE_ERROR" as const,
-        cause: e,
-      }),
-    )
-      .andThen((project) => {
-        if (!project) {
-          return err({ kind: "PROJECT_NOT_FOUND" as const });
-        }
-        return ok(project);
       })
-      .andThen((project) =>
-        ResultAsync.fromPromise(
-          this.db.query.templates.findFirst({
-            where: eq(drizzleSchema.templates.projectId, input.projectId),
-          }),
-          (e) => ({
-            kind: "DATABASE_ERROR" as const,
-            cause: e,
-          }),
-        ),
-      )
-      .andThen((template) => {
-        if (template !== undefined) {
-          return err({ kind: "PROJECT_ALREADY_HAS_TEMPLATES" as const });
-        }
-        return ok();
-      })
-      .andThen(() =>
-        ResultAsync.fromPromise(
-          this.db
-            .insert(drizzleSchema.templates)
-            .values({
-              id: uuid(),
-              name: "Root template",
-              projectId: input.projectId,
-              isRoot: true,
-              parentId: undefined,
-            })
-            .returning(),
-          (e) => ({
-            kind: "DATABASE_ERROR" as const,
-            cause: e,
-          }),
-        ),
-      )
-      .andThen((insertResult) => {
-        if (insertResult.length > 1) {
-          return err({
-            kind: "DB_RETURNED_TOO_MANY_VALUES" as const,
-          });
-        } else if (!insertResult[0]) {
-          return err({
-            kind: "DB_RETURNED_ZERO_VALUES" as const,
-          });
-        } else {
-          return ok(insertResult[0]);
-        }
-      });
+    ).andThen((project) => {
+      if (!project) {
+        return ResultUtils.simpleError("PROJECT_NOT_FOUND")
+      }
+      return ok();
+    }).andThen(() =>
+      DbUtils.execute(
+        this.db.query.templates.findFirst({
+          where: eq(drizzleSchema.templates.projectId, input.projectId),
+        })
+      ),
+    ).andThen((template) => {
+      if (template !== undefined) {
+        return ResultUtils.simpleError("PROJECT_ALREADY_HAS_TEMPLATES");
+      }
+      return ok();
+    }).andThen(() =>
+      DbUtils.execute(
+        this.db
+          .insert(drizzleSchema.templates)
+          .values({
+            id: uuid(),
+            name: "Root template",
+            projectId: input.projectId,
+            isRoot: true,
+            parentId: undefined,
+          })
+          .returning()
+      ),
+    ).andThen(DbUtils.expectOneValue);
   }
 }
