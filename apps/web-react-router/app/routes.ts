@@ -8,6 +8,7 @@ export const AppRoutes = {
     importTasks: (id: string) => `/projects/${id}/import-tasks`,
     workflows: (id: string) => `/projects/${id}/workflows`,
     exploreCivit: (id: string) => `/projects/${id}/explore/civit`,
+    templates: (id: string) => `/projects/${id}/templates`,
   },
 };
 
@@ -21,6 +22,7 @@ export default [
       route(":id/import-tasks", "routes/projects/files/project-import-tasks.tsx"),
       route(":id/workflows", "routes/projects/other/project-workflows.tsx"),
       route(":id/explore/civit", "routes/projects/other/project-explore-civit.tsx"),
+      route(":id/templates", "routes/projects/project-templates.tsx"),
     ]),
   ]),
 ] satisfies RouteConfig;

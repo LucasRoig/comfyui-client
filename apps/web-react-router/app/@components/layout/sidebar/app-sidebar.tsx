@@ -2,7 +2,7 @@
 
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarRail } from "@lro-ui/sidebar";
 import type { RouterOutputs } from "@repo/api";
-import { Files, SquareTerminal } from "lucide-react";
+import { Files, LayoutTemplateIcon, SquareTerminal } from "lucide-react";
 import type * as React from "react";
 import { AppRoutes } from "~/routes";
 import { NavMain } from "./nav-main";
@@ -17,6 +17,11 @@ type AppSidebarProps = {
 export function AppSidebar({ allProjects, currentProject, ...props }: AppSidebarProps) {
   const data = {
     navMain: [
+      {
+        title: "Templates",
+        url: AppRoutes.project.templates(currentProject.id),
+        icon: LayoutTemplateIcon,
+      },
       {
         title: "Files",
         url: "#",
