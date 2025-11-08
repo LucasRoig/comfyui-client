@@ -1,66 +1,86 @@
 datasource db {
-    provider = "sqlite"
-    url      = env("DB_FILE")
+  provider = "sqlite"
+  url      = env("DB_FILE")
 }
 
 model Project {
-    id   String @id @default(uuid())
-    name String
+  id   String @id @default(uuid())
+  name String
 
-    InputImage InputImage[]
+  InputImage InputImage[]
+  templates  Template[]
 
-    @@map("project")
+  @@map("project")
+}
+
+model Template {
+  id     String  @id @default(uuid())
+  name   String
+  isRoot Boolean @default(false) @map("is_root")
+
+  parentId String?    @map("parent_id")
+  parent   Template?  @relation("TemplateToTemplate", fields: [parentId], references: [id])
+  children Template[] @relation("TemplateToTemplate")
+
+  projectId   String       @map("project_id")
+  project     Project      @relation(fields: [projectId], references: [id])
+  inputImages InputImage[]
+
+  @@map("template")
 }
 
 model ImportTask {
-    id String @id
+  id String @id
 
-    InputImage InputImage[]
+  InputImage InputImage[]
 
-    @@map("import_task")
+  @@map("import_task")
 }
 
 model InputImage {
-    id                String @id @default(uuid())
-    originalFileName  String @map("original_file_name")
-    originalPath String @map("original_path")
-    type              String
+  id               String @id @default(uuid())
+  originalFileName String @map("original_file_name")
+  originalPath     String @map("original_path")
+  type             String
 
-    projectId String  @map("project_id")
-    project   Project @relation(fields: [projectId], references: [id])
+  projectId String  @map("project_id")
+  project   Project @relation(fields: [projectId], references: [id])
 
-    importTaskId String     @map("import_task_id")
-    importTask   ImportTask @relation(fields: [importTaskId], references: [id])
+  importTaskId String     @map("import_task_id")
+  importTask   ImportTask @relation(fields: [importTaskId], references: [id])
 
-    @@unique([projectId, originalPath])
-    @@map("input_image")
+  templateId String   @map("template_id")
+  template   Template @relation(fields: [templateId], references: [id])
+
+  @@unique([projectId, originalPath])
+  @@map("input_image")
 }
 
 model ComfyWorkflow {
-    id      String   @id @default(uuid())
-    json    Json
-    prompts Prompt[]
+  id      String   @id @default(uuid())
+  json    Json
+  prompts Prompt[]
 
-    @@map("comfy_workflow")
+  @@map("comfy_workflow")
 }
 
 model Prompt {
-    id           String        @id @default(uuid())
-    json         Json
-    workflowId   String        @map("workflow_id")
-    workflow     ComfyWorkflow @relation(fields: [workflowId], references: [id])
-    outputImages OutputImage[]
+  id           String        @id @default(uuid())
+  json         Json
+  workflowId   String        @map("workflow_id")
+  workflow     ComfyWorkflow @relation(fields: [workflowId], references: [id])
+  outputImages OutputImage[]
 
-    @@map("prompt")
+  @@map("prompt")
 }
 
 model OutputImage {
-    id           String @id @default(uuid())
-    filename     String
-    relativePath String @map("relative_path")
-    promptId     String @map("prompt_id")
-    prompt       Prompt @relation(fields: [promptId], references: [id])
-    nodeId       String @map("node_id")
+  id           String @id @default(uuid())
+  filename     String
+  relativePath String @map("relative_path")
+  promptId     String @map("prompt_id")
+  prompt       Prompt @relation(fields: [promptId], references: [id])
+  nodeId       String @map("node_id")
 
-    @@map("output_image")
+  @@map("output_image")
 }

@@ -2,6 +2,7 @@ import { relations } from "drizzle-orm";
 import { sqliteTable, text, unique } from "drizzle-orm/sqlite-core";
 import { importTask } from "./import-task";
 import { project } from "./project";
+import { templates } from "./templates";
 
 export const inputImage = sqliteTable(
   "input_image",
@@ -11,6 +12,9 @@ export const inputImage = sqliteTable(
     originalPath: text("original_path").notNull(),
     type: text("type").notNull(),
 
+    templateId: text("template_id")
+      .notNull()
+      .references(() => templates.id),
     projectId: text("project_id")
       .notNull()
       .references(() => project.id),
@@ -32,4 +36,9 @@ export const inputImageRelations = relations(inputImage, (helpers) => ({
     fields: [inputImage.importTaskId],
     references: [importTask.id],
   }),
+  template: helpers.one(templates, {
+    relationName: "input_image_to_template",
+    fields: [inputImage.templateId],
+    references: [templates.id],
+  })
 }));
