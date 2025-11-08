@@ -2,11 +2,13 @@ packages:
   - apps/*
   - packages/*
   - design-system/**/*
+
 onlyBuiltDependencies:
   - '@biomejs/biome'
   - '@parcel/watcher'
   - '@prisma/client'
   - '@prisma/engines'
+  - better-sqlite3
   - esbuild
   - prisma
   - sharp
