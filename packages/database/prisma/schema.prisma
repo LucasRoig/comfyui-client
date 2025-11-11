@@ -26,6 +26,8 @@ model Template {
   project     Project      @relation(fields: [projectId], references: [id])
   inputImages InputImage[]
 
+  @@unique([projectId, name])
+  @@index([name])
   @@map("template")
 }
 

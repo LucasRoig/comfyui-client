@@ -17,7 +17,7 @@ export const listTemplateProcedure = os.input(dtoSchema).handler(async ({ input 
   return ResultUtils.unwrapOrThrow(result);
 });
 
-class ListTemplatesUseCase {
+export class ListTemplatesUseCase {
   public constructor(private db: AppDatabase) { }
 
   public execute(input: DTO) {

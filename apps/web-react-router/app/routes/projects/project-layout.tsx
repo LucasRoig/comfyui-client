@@ -23,7 +23,7 @@ export default function ProjectLayout(props: Route.ComponentProps) {
       <AppSidebar allProjects={props.loaderData.allProjects} currentProject={props.loaderData.currentProject} />
       <SidebarInset>
         <div className="flex flex-col min-h-dvh h-dvh">
-          <main className="grow">
+          <main className="grow p-4">
             <Outlet />
           </main>
         </div>
