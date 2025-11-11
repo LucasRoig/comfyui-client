@@ -8,6 +8,7 @@ import { ChevronRightIcon, PlusIcon } from "lucide-react";
 import { useState } from "react";
 import { useRevalidator } from "react-router";
 import { orpc } from "~/@lib/orpc-client";
+import { CreateChildTemplateModal } from "~/modules/projects/create-child-template-modal";
 import type { Route } from "./+types/project-templates";
 
 export async function loader(args: Route.LoaderArgs) {
@@ -32,34 +33,11 @@ function useCreateRootTemplateMutation() {
   );
 }
 
-function useCreateChildTemplateMutation() {
-  const queryClient = useQueryClient();
-  const revalidator = useRevalidator();
-  return useMutation(
-    orpc.projects.templates.createChild.mutationOptions({
-      onSuccess: () => {
-        queryClient.invalidateQueries({
-          queryKey: orpc.projects.templates.key(),
-        });
-        revalidator.revalidate();
-      },
-    }),
-  );
-}
-
 export default function ProjectTemplates(props: Route.ComponentProps) {
   const createRootTemplateMutation = useCreateRootTemplateMutation();
   const handleCreateRootTemplate = () => {
     createRootTemplateMutation.mutate({
       projectId: props.params.id,
-    });
-  };
-  const addChildMutation = useCreateChildTemplateMutation();
-  const handleAddChild = (name: string, parentId: string) => {
-    addChildMutation.mutate({
-      projectId: props.params.id,
-      name,
-      parentId,
     });
   };
   return (
@@ -68,7 +46,7 @@ export default function ProjectTemplates(props: Route.ComponentProps) {
       {props.loaderData.templatesTree === "EMPTY_TEMPLATE_LIST" ? (
         <Button onClick={handleCreateRootTemplate}>Create root template</Button>
       ) : (
-        <TemplateCollapse templateTree={props.loaderData.templatesTree} onAddChild={handleAddChild} />
+        <TemplateCollapse templateTree={props.loaderData.templatesTree} projectId={props.params.id} />
       )}
     </>
   );
@@ -76,11 +54,18 @@ export default function ProjectTemplates(props: Route.ComponentProps) {
 
 function TemplateCollapse(props: {
   templateTree: Exclude<Route.ComponentProps["loaderData"]["templatesTree"], string>;
-  onAddChild: (name: string, parentId: string) => void;
+  projectId: string;
 }) {
   const [isOpen, setIsOpen] = useState(props.templateTree.value.isRoot);
+  const [isCreateChildTemplateModalOpen, setIsCreateChildTemplateModalOpen] = useState(false);
   return (
     <Collapsible open={isOpen} onOpenChange={setIsOpen}>
+      <CreateChildTemplateModal
+        isOpen={isCreateChildTemplateModalOpen}
+        onOpenChange={setIsCreateChildTemplateModalOpen}
+        parentId={props.templateTree.value.id}
+        projectId={props.projectId}
+      />
       <div className="bg-white border rounded-md p-2 flex items-center">
         <CollapsibleTrigger asChild>
           <Button size="icon" variant="text">
@@ -88,7 +73,7 @@ function TemplateCollapse(props: {
           </Button>
         </CollapsibleTrigger>
         <div>{props.templateTree.value.name}</div>
-        <Button className="ml-auto" onClick={() => props.onAddChild("test4", props.templateTree.value.id)}>
+        <Button className="ml-auto" onClick={() => setIsCreateChildTemplateModalOpen(true)}>
           <PlusIcon />
           Add child
         </Button>
@@ -96,7 +81,7 @@ function TemplateCollapse(props: {
       <CollapsibleContent>
         <div className="ml-4 pl-2 pt-2 border-l flex flex-col gap-2">
           {props.templateTree.children.map((c) => (
-            <TemplateCollapse templateTree={c} onAddChild={props.onAddChild} />
+            <TemplateCollapse templateTree={c} projectId={props.projectId} />
           ))}
         </div>
       </CollapsibleContent>

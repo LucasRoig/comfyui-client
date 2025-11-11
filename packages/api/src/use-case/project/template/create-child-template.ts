@@ -23,7 +23,9 @@ export const createChildTemplateProcedure = os.input(dtoSchema).handler(async ({
       .with({ kind: "DB_RETURNED_TOO_MANY_VALUES" }, () => new ORPCError("INTERNAL_SERVER_ERROR"))
       .with({ kind: "DB_RETURNED_ZERO_VALUES" }, () => new ORPCError("INTERNAL_SERVER_ERROR"))
       .with({ kind: "PARENT_TEMPLATE_NOT_FOUND" }, () => new ORPCError("NOT_FOUND"))
-      .with({ kind: "TEMPLATE_WITH_SAME_NAME_ALREADY_EXISTS" }, () => new ORPCError("BAD_REQUEST"))
+      .with({ kind: "TEMPLATE_WITH_SAME_NAME_ALREADY_EXISTS" }, () => new ORPCError("BAD_REQUEST", {
+        message: "A template with this name already exists"
+      }))
       .exhaustive(),
   );
   return ResultUtils.unwrapOrThrow(result);
