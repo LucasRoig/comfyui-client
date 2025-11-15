@@ -13,7 +13,7 @@ type DTO = z.infer<typeof dtoSchema>;
 
 export const listTemplateProcedure = os.input(dtoSchema).handler(async ({ input }) => {
   const uc = new ListTemplatesUseCase(database);
-  const result = await uc.execute(input).mapErr((err) => new ORPCError("INTERNAL_SERVER_ERROR"));
+  const result = await uc.execute(input).orTee(e => console.error(e)).mapErr((err) => new ORPCError("INTERNAL_SERVER_ERROR"));
   return ResultUtils.unwrapOrThrow(result);
 });
 

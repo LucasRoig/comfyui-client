@@ -1,3 +1,4 @@
+import { toast } from "@lro-ui/sonner";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import type { ReactNode } from "react";
@@ -8,6 +9,11 @@ function makeQueryClient() {
       queries: {
         staleTime: 60 * 1000,
       },
+      mutations: {
+        onError: (e) => {
+          toast.error(e.name)
+        }
+      }
     },
   });
 }

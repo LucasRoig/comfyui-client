@@ -35,4 +35,5 @@ export const database = new Proxy(db, {
   },
 });
 
-export type AppDatabase = typeof database;
+type AppTransaction = Parameters<Parameters<typeof database["transaction"]>[0]>[0]
+export type AppDatabase = typeof database | AppTransaction;

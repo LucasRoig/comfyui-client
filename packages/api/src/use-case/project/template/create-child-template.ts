@@ -16,8 +16,9 @@ const dtoSchema = z.object({
 });
 
 export const createChildTemplateProcedure = os.input(dtoSchema).handler(async ({ input }) => {
+
   const uc = new CreateChildTemplateUseCase(database);
-  const result = await uc.execute(input).mapErr((e) =>
+  const result = await uc.execute(input).orTee(e => console.error(e)).mapErr((e) =>
     match(e)
       .with({ kind: "DATABASE_ERROR" }, () => new ORPCError("INTERNAL_SERVER_ERROR"))
       .with({ kind: "DB_RETURNED_TOO_MANY_VALUES" }, () => new ORPCError("INTERNAL_SERVER_ERROR"))

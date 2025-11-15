@@ -14,7 +14,7 @@ type CreateProjectDTO = z.infer<typeof createProjectDTOSchema>;
 
 export const createProjectProcedure = os.input(createProjectDTOSchema).handler(async ({ input }) => {
   const uc = new CreateProjectUseCase(database);
-  const result = (await uc.execute(input)).mapErr((err) =>
+  const result = (await uc.execute(input)).orTee(e => console.error(e)).mapErr((err) =>
     match(err).otherwise(() => new ORPCError("INTERNAL_SERVER_ERROR")),
   );
   return ResultUtils.unwrapOrThrow(result);

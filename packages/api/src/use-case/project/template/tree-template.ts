@@ -17,7 +17,7 @@ export type Tree<T> = {
 
 export const treeTemplateProcedure = os.input(dtoSchema).handler(async ({ input }) => {
   const uc = new TreeTemplateUseCase(new ListTemplatesUseCase(database));
-  const result = await uc.execute(input).mapErr((err) =>
+  const result = await uc.execute(input).orTee(e => console.error(e)).mapErr((err) =>
     match(err)
       .with({ kind: "DATABASE_ERROR" }, () => new ORPCError("INTERNAL_SERVER_ERROR"))
       .with({ kind: "NO_ROOT_FOUND" }, () => new ORPCError("INTERNAL_SERVER_ERROR")),

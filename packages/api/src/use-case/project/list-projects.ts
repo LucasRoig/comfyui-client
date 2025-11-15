@@ -5,7 +5,7 @@ import { ResultUtils } from "../../result-utils";
 
 export const listProjectProcedure = os.handler(async () => {
   const useCase = new ListProjectUseCase(database);
-  const result = await useCase.execute().mapErr(e => new ORPCError("INTERNAL_SERVER_ERROR"));
+  const result = await useCase.execute().orTee(e => console.error(e)).mapErr(e => new ORPCError("INTERNAL_SERVER_ERROR"));
   return ResultUtils.unwrapOrThrow(result);
 });
 
