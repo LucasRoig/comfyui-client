@@ -6,14 +6,15 @@ import { appRouter } from "@repo/api";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { ChevronRightIcon, PlusIcon } from "lucide-react";
 import { useState } from "react";
-import { useRevalidator } from "react-router";
+import { Link, useRevalidator } from "react-router";
 import { orpc } from "~/@lib/orpc-client";
 import { CreateChildTemplateModal } from "~/modules/projects/create-child-template-modal";
+import { AppRoutes } from "~/routes";
 import type { Route } from "./+types/project-templates";
 
 export async function loader(args: Route.LoaderArgs) {
   const templatesTree = await call(appRouter.projects.templates.tree, {
-    projectId: args.params.id,
+    projectId: args.params.projectId,
   });
   return { templatesTree };
 }
@@ -37,7 +38,7 @@ export default function ProjectTemplates(props: Route.ComponentProps) {
   const createRootTemplateMutation = useCreateRootTemplateMutation();
   const handleCreateRootTemplate = () => {
     createRootTemplateMutation.mutate({
-      projectId: props.params.id,
+      projectId: props.params.projectId,
     });
   };
   return (
@@ -46,7 +47,7 @@ export default function ProjectTemplates(props: Route.ComponentProps) {
       {props.loaderData.templatesTree === "EMPTY_TEMPLATE_LIST" ? (
         <Button onClick={handleCreateRootTemplate}>Create root template</Button>
       ) : (
-        <TemplateCollapse templateTree={props.loaderData.templatesTree} projectId={props.params.id} />
+        <TemplateCollapse templateTree={props.loaderData.templatesTree} projectId={props.params.projectId} />
       )}
     </>
   );
@@ -73,6 +74,15 @@ function TemplateCollapse(props: {
           </Button>
         </CollapsibleTrigger>
         <div>{props.templateTree.value.name}</div>
+        <Link
+          className="ml-2 text-blue-900 underline"
+          to={AppRoutes.project.editTemplate({
+            projectId: props.projectId,
+            templateId: props.templateTree.value.id,
+          })}
+        >
+          Edit
+        </Link>
         <Button className="ml-auto" onClick={() => setIsCreateChildTemplateModalOpen(true)}>
           <PlusIcon />
           Add child

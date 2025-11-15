@@ -7,9 +7,9 @@ import type { Route } from "./+types/project-layout";
 
 export async function loader(props: Route.LoaderArgs) {
   const allProjects = await call(appRouter.projects.list, {});
-  const currentProject = allProjects.find((p) => p.id === props.params.id);
+  const currentProject = allProjects.find((p) => p.id === props.params.projectId);
   if (!currentProject) {
-    throw new Error(`can't find project ${props.params.id}`);
+    throw new Error(`can't find project ${props.params.projectId}`);
   }
   return {
     allProjects,
