@@ -1,7 +1,6 @@
 import { ORPCError, os } from "@orpc/server";
 import { drizzleSchema } from "@repo/database";
 import { and, eq } from "drizzle-orm";
-import { ok } from "neverthrow";
 import { match } from "ts-pattern";
 import { v4 as uuid } from "uuid";
 import z from "zod";
@@ -39,41 +38,31 @@ export const createChildTemplateProcedure = os.input(dtoSchema).handler(async ({
 });
 
 class CreateChildTemplateUseCase {
-  public constructor(private db: AppDatabase) {}
+  public constructor(private db: AppDatabase) { }
 
   public execute(input: z.infer<typeof dtoSchema>) {
-    return DbUtils.execute(
+    return DbUtils.executeAndExpectDefined(
       this.db.query.templates.findFirst({
         where: and(
           eq(drizzleSchema.templates.id, input.parentId),
           eq(drizzleSchema.templates.projectId, input.projectId),
         ),
       }),
+      "PARENT_TEMPLATE_NOT_FOUND"
     )
-      .andThen((parentTemplate) => {
-        if (!parentTemplate) {
-          return ResultUtils.simpleError("PARENT_TEMPLATE_NOT_FOUND");
-        }
-        return ok();
-      })
       .andThen(() =>
-        DbUtils.execute(
+        DbUtils.executeAndExpectUndefined(
           this.db.query.templates.findFirst({
             where: and(
               eq(drizzleSchema.templates.projectId, input.projectId),
               eq(drizzleSchema.templates.name, input.name),
             ),
           }),
+          "TEMPLATE_WITH_SAME_NAME_ALREADY_EXISTS"
         ),
       )
-      .andThen((templateWithSameName) => {
-        if (templateWithSameName) {
-          return ResultUtils.simpleError("TEMPLATE_WITH_SAME_NAME_ALREADY_EXISTS");
-        }
-        return ok();
-      })
       .andThen(() =>
-        DbUtils.execute(
+        DbUtils.executeAndReturnOneRow(
           this.db
             .insert(drizzleSchema.templates)
             .values({
@@ -85,7 +74,6 @@ class CreateChildTemplateUseCase {
             })
             .returning(),
         ),
-      )
-      .andThen(DbUtils.expectOneValue);
+      );
   }
 }
