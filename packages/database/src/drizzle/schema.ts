@@ -7,7 +7,12 @@ import { outputImageRelations } from "./output-image-relations";
 import { project, projectRelations } from "./project";
 import { prompt } from "./prompt";
 import { promptRelations } from "./prompt-relations";
-import { templateField, templateInputImageFields, templateOutputImageFields, templateStringFields } from "./template-fields";
+import {
+  templateField,
+  templateInputImageFields,
+  templateOutputImageFields,
+  templateStringFields,
+} from "./template-fields";
 import { templates, templatesRelations } from "./templates";
 
 export const schema = {
@@ -28,5 +33,5 @@ export const schema = {
   templateField,
   templateStringFields,
   templateInputImageFields,
-  templateOutputImageFields
+  templateOutputImageFields,
 };

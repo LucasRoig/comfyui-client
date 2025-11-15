@@ -27,19 +27,22 @@ export function CreateChildTemplateModal(props: CreateTemplateModalProps) {
       onSubmit: formSchema,
     },
     onSubmit: async (event) => {
-      createTemplateMutation.mutate({
-        name: event.value.name,
-        parentId: props.parentId,
-        projectId: props.projectId
-      }, {
-        onSuccess: (response) => {
-          props.onOpenChange(false);
-          toast.success("Template created")
+      createTemplateMutation.mutate(
+        {
+          name: event.value.name,
+          parentId: props.parentId,
+          projectId: props.projectId,
         },
-        onError: (error) => {
-          toast.error(error.message);
+        {
+          onSuccess: (response) => {
+            props.onOpenChange(false);
+            toast.success("Template created");
+          },
+          onError: (error) => {
+            toast.error(error.message);
+          },
         },
-      });
+      );
     },
   });
   return (

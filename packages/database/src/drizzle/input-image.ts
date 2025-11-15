@@ -40,5 +40,5 @@ export const inputImageRelations = relations(inputImage, (helpers) => ({
     relationName: "input_image_to_template",
     fields: [inputImage.templateId],
     references: [templates.id],
-  })
+  }),
 }));

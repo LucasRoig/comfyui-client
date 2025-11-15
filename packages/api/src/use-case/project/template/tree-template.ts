@@ -17,16 +17,19 @@ export type Tree<T> = {
 
 export const treeTemplateProcedure = os.input(dtoSchema).handler(async ({ input }) => {
   const uc = new TreeTemplateUseCase(new ListTemplatesUseCase(database));
-  const result = await uc.execute(input).orTee(e => console.error(e)).mapErr((err) =>
-    match(err)
-      .with({ kind: "DATABASE_ERROR" }, () => new ORPCError("INTERNAL_SERVER_ERROR"))
-      .with({ kind: "NO_ROOT_FOUND" }, () => new ORPCError("INTERNAL_SERVER_ERROR")),
-  );
+  const result = await uc
+    .execute(input)
+    .orTee((e) => console.error(e))
+    .mapErr((err) =>
+      match(err)
+        .with({ kind: "DATABASE_ERROR" }, () => new ORPCError("INTERNAL_SERVER_ERROR"))
+        .with({ kind: "NO_ROOT_FOUND" }, () => new ORPCError("INTERNAL_SERVER_ERROR")),
+    );
   return ResultUtils.unwrapOrThrow(result);
 });
 
 class TreeTemplateUseCase {
-  public constructor(private listTemplateUseCase: ListTemplatesUseCase) { }
+  public constructor(private listTemplateUseCase: ListTemplatesUseCase) {}
 
   public execute(input: z.infer<typeof dtoSchema>) {
     return this.listTemplateUseCase.execute(input).andThen((templateList) => {
@@ -40,7 +43,7 @@ class TreeTemplateUseCase {
 
       const templatesByParent = Map.groupBy(templateList, (t) => t.parentId);
 
-      function makeTree(root: (typeof templateList)[number]): Tree<typeof templateList[number]> {
+      function makeTree(root: (typeof templateList)[number]): Tree<(typeof templateList)[number]> {
         const children = templatesByParent.get(root.id);
         if (children && children.length > 0) {
           return {

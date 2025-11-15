@@ -16,24 +16,30 @@ const dtoSchema = z.object({
 });
 
 export const createChildTemplateProcedure = os.input(dtoSchema).handler(async ({ input }) => {
-
   const uc = new CreateChildTemplateUseCase(database);
-  const result = await uc.execute(input).orTee(e => console.error(e)).mapErr((e) =>
-    match(e)
-      .with({ kind: "DATABASE_ERROR" }, () => new ORPCError("INTERNAL_SERVER_ERROR"))
-      .with({ kind: "DB_RETURNED_TOO_MANY_VALUES" }, () => new ORPCError("INTERNAL_SERVER_ERROR"))
-      .with({ kind: "DB_RETURNED_ZERO_VALUES" }, () => new ORPCError("INTERNAL_SERVER_ERROR"))
-      .with({ kind: "PARENT_TEMPLATE_NOT_FOUND" }, () => new ORPCError("NOT_FOUND"))
-      .with({ kind: "TEMPLATE_WITH_SAME_NAME_ALREADY_EXISTS" }, () => new ORPCError("BAD_REQUEST", {
-        message: "A template with this name already exists"
-      }))
-      .exhaustive(),
-  );
+  const result = await uc
+    .execute(input)
+    .orTee((e) => console.error(e))
+    .mapErr((e) =>
+      match(e)
+        .with({ kind: "DATABASE_ERROR" }, () => new ORPCError("INTERNAL_SERVER_ERROR"))
+        .with({ kind: "DB_RETURNED_TOO_MANY_VALUES" }, () => new ORPCError("INTERNAL_SERVER_ERROR"))
+        .with({ kind: "DB_RETURNED_ZERO_VALUES" }, () => new ORPCError("INTERNAL_SERVER_ERROR"))
+        .with({ kind: "PARENT_TEMPLATE_NOT_FOUND" }, () => new ORPCError("NOT_FOUND"))
+        .with(
+          { kind: "TEMPLATE_WITH_SAME_NAME_ALREADY_EXISTS" },
+          () =>
+            new ORPCError("BAD_REQUEST", {
+              message: "A template with this name already exists",
+            }),
+        )
+        .exhaustive(),
+    );
   return ResultUtils.unwrapOrThrow(result);
 });
 
 class CreateChildTemplateUseCase {
-  public constructor(private db: AppDatabase) { }
+  public constructor(private db: AppDatabase) {}
 
   public execute(input: z.infer<typeof dtoSchema>) {
     return DbUtils.execute(

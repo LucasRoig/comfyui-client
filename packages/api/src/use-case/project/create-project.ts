@@ -14,14 +14,14 @@ type CreateProjectDTO = z.infer<typeof createProjectDTOSchema>;
 
 export const createProjectProcedure = os.input(createProjectDTOSchema).handler(async ({ input }) => {
   const uc = new CreateProjectUseCase(database);
-  const result = (await uc.execute(input)).orTee(e => console.error(e)).mapErr((err) =>
-    match(err).otherwise(() => new ORPCError("INTERNAL_SERVER_ERROR")),
-  );
+  const result = (await uc.execute(input))
+    .orTee((e) => console.error(e))
+    .mapErr((err) => match(err).otherwise(() => new ORPCError("INTERNAL_SERVER_ERROR")));
   return ResultUtils.unwrapOrThrow(result);
 });
 
 class CreateProjectUseCase {
-  public constructor(private db: AppDatabase) { }
+  public constructor(private db: AppDatabase) {}
 
   public async execute(input: CreateProjectDTO) {
     return DbUtils.execute(
@@ -31,7 +31,7 @@ class CreateProjectUseCase {
           name: input.name,
           id: uuid(),
         })
-        .returning()
+        .returning(),
     ).andThen(DbUtils.expectOneValue);
   }
 }

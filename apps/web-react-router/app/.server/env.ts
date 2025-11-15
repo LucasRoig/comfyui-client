@@ -9,10 +9,8 @@ function mapEnv(env: z.infer<typeof envSchema>) {
     secrets: {
       DATABASE_URL: env.DATABASE_URL,
     },
-    server: {
-    },
-    client: {
-    },
+    server: {},
+    client: {},
   };
 }
 

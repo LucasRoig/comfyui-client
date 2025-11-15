@@ -11,9 +11,9 @@ function makeQueryClient() {
       },
       mutations: {
         onError: (e) => {
-          toast.error(e.name)
-        }
-      }
+          toast.error(e.name);
+        },
+      },
     },
   });
 }

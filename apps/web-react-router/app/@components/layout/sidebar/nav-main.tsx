@@ -17,7 +17,7 @@ import { Link } from "react-router";
 type SubItem = {
   title: string;
   url: string;
-}
+};
 
 type MainItem = {
   title: string;
@@ -25,21 +25,20 @@ type MainItem = {
   icon?: LucideIcon;
   isActive?: boolean;
   items?: SubItem[];
-}
+};
 
-export function NavMain({
-  items,
-}: {
-  items: MainItem[];
-}) {
+export function NavMain({ items }: { items: MainItem[] }) {
   return (
     <SidebarGroup>
       <SidebarGroupLabel>Group Label</SidebarGroupLabel>
       <SidebarMenu>
-        {items.map((item) => (item.items?.length ?
-          <CollapsibleItem key={item.title} item={item} /> :
-          <SingleMainItem key={item.title} item={item} />
-        ))}
+        {items.map((item) =>
+          item.items?.length ? (
+            <CollapsibleItem key={item.title} item={item} />
+          ) : (
+            <SingleMainItem key={item.title} item={item} />
+          ),
+        )}
       </SidebarMenu>
     </SidebarGroup>
   );
@@ -55,7 +54,7 @@ function SingleMainItem({ item }: { item: MainItem }) {
         </Link>
       </SidebarMenuButton>
     </SidebarMenuItem>
-  )
+  );
 }
 
 function CollapsibleItem({ item }: { item: MainItem }) {
@@ -84,5 +83,5 @@ function CollapsibleItem({ item }: { item: MainItem }) {
         </CollapsibleContent>
       </SidebarMenuItem>
     </Collapsible>
-  )
+  );
 }
