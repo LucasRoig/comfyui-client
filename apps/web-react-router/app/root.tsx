@@ -2,6 +2,8 @@ import { isRouteErrorResponse, Links, Meta, Outlet, Scripts, ScrollRestoration }
 
 import type { Route } from "./+types/root";
 import "./app.css";
+import "../../../node_modules/react-resizable/css/styles.css";
+import "../../../node_modules/react-grid-layout/css/styles.css";
 import { Toaster } from "@lro-ui/sonner";
 import { ReactQueryProvider } from "./@lib/react-query-provider";
 
