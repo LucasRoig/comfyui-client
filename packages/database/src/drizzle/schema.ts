@@ -9,8 +9,12 @@ import { prompt } from "./prompt";
 import { promptRelations } from "./prompt-relations";
 import {
   templateField,
+  templateFieldRelations,
   templateInputImageFields,
+  templateInputImageFieldsRelations,
   templateOutputImageFields,
+  templateOutputImageFieldsRelations,
+  templateStringFieldRelations,
   templateStringFields,
 } from "./template-fields";
 import { templates, templatesRelations } from "./templates";
@@ -31,7 +35,11 @@ export const schema = {
   templates,
   templatesRelations,
   templateField,
+  templateFieldRelations,
   templateStringFields,
+  templateStringFieldRelations,
   templateInputImageFields,
+  templateInputImageFieldsRelations,
   templateOutputImageFields,
+  templateOutputImageFieldsRelations,
 };
