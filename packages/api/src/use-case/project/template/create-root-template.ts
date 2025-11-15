@@ -51,14 +51,14 @@ class CreateRootTemplateUseCase {
 
   public execute(input: z.infer<typeof dtoSchema>) {
     return DbUtils.executeAndExpectDefined(
-      this.db.query.project.findFirst({
+      () => this.db.query.project.findFirst({
         where: eq(drizzleSchema.project.id, input.projectId),
       }),
       "PROJECT_NOT_FOUND"
     )
       .andThen(() =>
         DbUtils.executeAndExpectUndefined(
-          this.db.query.templates.findFirst({
+          () => this.db.query.templates.findFirst({
             where: eq(drizzleSchema.templates.projectId, input.projectId),
           }),
           "PROJECT_ALREADY_HAS_TEMPLATES"
@@ -66,7 +66,7 @@ class CreateRootTemplateUseCase {
       )
       .andThen(() =>
         DbUtils.executeAndReturnOneRow(
-          this.db
+          () => this.db
             .insert(drizzleSchema.templates)
             .values({
               id: uuid(),
@@ -80,7 +80,7 @@ class CreateRootTemplateUseCase {
       )
       .andThen((template) =>
         DbUtils.execute(
-          this.db
+          () => this.db
             .insert(drizzleSchema.templateField)
             .values([
               {
@@ -116,7 +116,7 @@ class CreateRootTemplateUseCase {
       })
       .andThen((templateAndFields) =>
         DbUtils.executeAndReturnOneRow(
-          this.db
+          () => this.db
             .insert(drizzleSchema.templateInputImageFields)
             .values({
               id: uuid(),
@@ -130,7 +130,7 @@ class CreateRootTemplateUseCase {
       )
       .andThen((templateAndFields) =>
         DbUtils.executeAndReturnOneRow(
-          this.db
+          () => this.db
             .insert(drizzleSchema.templateOutputImageFields)
             .values({
               id: uuid(),

@@ -25,7 +25,7 @@ class CreateProjectUseCase {
 
   public async execute(input: CreateProjectDTO) {
     return DbUtils.executeAndReturnOneRow(
-      this.db
+      () => this.db
         .insert(drizzleSchema.project)
         .values({
           name: input.name,
