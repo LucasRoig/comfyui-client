@@ -1,8 +1,8 @@
 import { toast } from "@lro-ui/sonner";
 import { call, ORPCError } from "@orpc/server";
-import { appRouter } from "@repo/api";
+import { appRouter, type RouterInputs } from "@repo/api";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import GridLayout from "react-grid-layout";
 import { data } from "react-router";
 import { orpc } from "~/@lib/orpc-client";
@@ -23,6 +23,9 @@ export async function loader(args: Route.LoaderArgs) {
 }
 
 export default function ProjectEditTemplatePage(props: Route.ComponentProps) {
+  const [layoutMap, setLayoutMap] = useState(
+    new Map(props.loaderData.template.fields.map((field) => [field.id, field])),
+  );
   const queryClient = useQueryClient();
   const updateTemplateMutation = useMutation(
     orpc.projects.templates.updateFields.mutationOptions({
@@ -35,27 +38,47 @@ export default function ProjectEditTemplatePage(props: Route.ComponentProps) {
     }),
   );
   const layout = useMemo(() => {
-    const fields = props.loaderData.template.fields;
-    return fields.map((f) => ({
+    return Array.from(layoutMap.values()).map((f) => ({
       i: f.id,
       x: f.x,
       y: f.y,
       w: f.width,
       h: f.height,
     }));
-  }, [props.loaderData.template.fields]);
+  }, [layoutMap]);
 
-  const handleLayoutChange = (layout: GridLayout.Layout[]) => {
-    updateTemplateMutation.mutate({
+  const handleLayoutChange = (layouts: GridLayout.Layout[]) => {
+    const newMap: typeof layoutMap = new Map();
+    const mutationPayload: RouterInputs["projects"]["templates"]["updateFields"] = {
       templateId: props.params.templateId,
-      fields: layout.map((f) => ({
-        height: f.h,
-        width: f.w,
-        id: f.i,
-        x: f.x,
-        y: f.y,
-      })),
-    });
+      fields: [],
+    };
+    for (const layout of layouts) {
+      const previousValue = layoutMap.get(layout.i);
+      if (!previousValue) {
+        throw new Error(`Can't find template in layout map. id = "${layout.i}"`);
+      }
+      const newValue = {
+        ...previousValue,
+        x: layout.x,
+        y: layout.y,
+        width: layout.w,
+        height: layout.h,
+      };
+      newMap.set(layout.i, newValue);
+      if (
+        newValue.x !== previousValue.x ||
+        newValue.y !== previousValue.y ||
+        newValue.width !== previousValue.width ||
+        newValue.height !== previousValue.height
+      ) {
+        mutationPayload.fields.push(newValue);
+      }
+    }
+    setLayoutMap(newMap);
+    if (mutationPayload.fields.length > 0) {
+      updateTemplateMutation.mutate(mutationPayload);
+    }
   };
 
   return (
