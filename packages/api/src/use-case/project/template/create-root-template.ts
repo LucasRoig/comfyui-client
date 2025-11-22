@@ -47,26 +47,28 @@ export const createRootTemplateProcedure = os.input(dtoSchema).handler(async ({ 
 });
 
 class CreateRootTemplateUseCase {
-  public constructor(private db: AppDatabase) { }
+  public constructor(private db: AppDatabase) {}
 
   public execute(input: z.infer<typeof dtoSchema>) {
     return DbUtils.executeAndExpectDefined(
-      () => this.db.query.project.findFirst({
-        where: eq(drizzleSchema.project.id, input.projectId),
-      }),
-      "PROJECT_NOT_FOUND"
+      () =>
+        this.db.query.project.findFirst({
+          where: eq(drizzleSchema.project.id, input.projectId),
+        }),
+      "PROJECT_NOT_FOUND",
     )
       .andThen(() =>
         DbUtils.executeAndExpectUndefined(
-          () => this.db.query.templates.findFirst({
-            where: eq(drizzleSchema.templates.projectId, input.projectId),
-          }),
-          "PROJECT_ALREADY_HAS_TEMPLATES"
+          () =>
+            this.db.query.templates.findFirst({
+              where: eq(drizzleSchema.templates.projectId, input.projectId),
+            }),
+          "PROJECT_ALREADY_HAS_TEMPLATES",
         ),
       )
       .andThen(() =>
-        DbUtils.executeAndReturnOneRow(
-          () => this.db
+        DbUtils.executeAndReturnOneRow(() =>
+          this.db
             .insert(drizzleSchema.templates)
             .values({
               id: uuid(),
@@ -79,26 +81,32 @@ class CreateRootTemplateUseCase {
         ),
       )
       .andThen((template) =>
-        DbUtils.execute(
-          () => this.db
+        DbUtils.execute(() =>
+          this.db
             .insert(drizzleSchema.templateField)
             .values([
               {
                 id: uuid(),
                 fieldId: "original_input_image",
                 fieldLabel: "Original Image",
-                position: "",
+                x: 0,
+                y: 0,
+                width: 1,
+                height: 1,
                 templateId: template.id,
               },
               {
                 id: uuid(),
                 fieldId: "output_image_0",
                 fieldLabel: "Output Image",
-                position: "",
+                x: 0,
+                y: 0,
+                width: 1,
+                height: 1,
                 templateId: template.id,
               },
             ])
-            .returning()
+            .returning(),
         ).map((res) => ({
           template,
           insertFieldResult: res,
@@ -115,32 +123,33 @@ class CreateRootTemplateUseCase {
         });
       })
       .andThen((templateAndFields) =>
-        DbUtils.executeAndReturnOneRow(
-          () => this.db
+        DbUtils.executeAndReturnOneRow(() =>
+          this.db
             .insert(drizzleSchema.templateInputImageFields)
             .values({
               id: uuid(),
               fieldId: templateAndFields.inputImageField.id,
             })
-            .returning()
+            .returning(),
         ).map((inputImageField) => ({
           ...templateAndFields,
           inputImageField,
-        }))
+        })),
       )
       .andThen((templateAndFields) =>
-        DbUtils.executeAndReturnOneRow(
-          () => this.db
+        DbUtils.executeAndReturnOneRow(() =>
+          this.db
             .insert(drizzleSchema.templateOutputImageFields)
             .values({
               id: uuid(),
               fieldId: templateAndFields.outputImageField.id,
             })
-            .returning()
+            .returning(),
         ).map((outputImageField) => ({
           ...templateAndFields,
-          outputImageField
-        }))
-      ).map(result => result.template)
+          outputImageField,
+        })),
+      )
+      .map((result) => result.template);
   }
 }

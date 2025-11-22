@@ -32,6 +32,6 @@ export const templatesRelations = relations(templates, (helpers) => ({
     relationName: "template_to_input_image",
   }),
   fields: helpers.many(templateField, {
-    relationName: "template_field_to_template"
-  })
+    relationName: "template_field_to_template",
+  }),
 }));

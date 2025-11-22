@@ -29,7 +29,7 @@ export const treeTemplateProcedure = os.input(dtoSchema).handler(async ({ input 
 });
 
 class TreeTemplateUseCase {
-  public constructor(private listTemplateUseCase: ListTemplatesUseCase) { }
+  public constructor(private listTemplateUseCase: ListTemplatesUseCase) {}
 
   public execute(input: z.infer<typeof dtoSchema>) {
     return this.listTemplateUseCase.execute(input).andThen((templateList) => {

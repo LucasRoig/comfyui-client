@@ -9,8 +9,8 @@ export const AppRoutes = {
     workflows: (projectId: string) => `/projects/${projectId}/workflows`,
     exploreCivit: (projectId: string) => `/projects/${projectId}/explore/civit`,
     templates: (projectId: string) => `/projects/${projectId}/templates`,
-    editTemplate: (args: { projectId: string, templateId: string }) =>
-      `/projects/${args.projectId}/templates/${args.templateId}/edit`
+    editTemplate: (args: { projectId: string; templateId: string }) =>
+      `/projects/${args.projectId}/templates/${args.templateId}/edit`,
   },
 };
 

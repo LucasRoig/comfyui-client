@@ -10,13 +10,9 @@ export const DbUtils = {
   executeIf: <T>(condition: boolean, promise: () => Promise<T>) =>
     condition ? DbUtils.execute(promise).andThen(() => okAsync()) : okAsync(),
   executeAndExpectDefined: <T, TError extends string>(promise: () => Promise<T | undefined | null>, error: TError) =>
-    DbUtils.execute(promise)
-      .andThen(r => r === null || r === undefined ? ResultUtils.simpleError(error) : ok(r))
-  ,
+    DbUtils.execute(promise).andThen((r) => (r === null || r === undefined ? ResultUtils.simpleError(error) : ok(r))),
   executeAndExpectUndefined: <T, TError extends string>(promise: () => Promise<T | undefined | null>, error: TError) =>
-    DbUtils.execute(promise)
-      .andThen(r => r !== null && r !== undefined ? ResultUtils.simpleError(error) : ok())
-  ,
+    DbUtils.execute(promise).andThen((r) => (r !== null && r !== undefined ? ResultUtils.simpleError(error) : ok())),
   executeAndReturnOneRow: <T>(promise: () => Promise<T[]>) => DbUtils.execute(promise).andThen(DbUtils.expectOneValue),
   expectOneValue: <T>(items: T[]) => {
     if (items.length > 1) {

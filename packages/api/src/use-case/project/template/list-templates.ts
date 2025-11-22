@@ -21,11 +21,11 @@ export const listTemplateProcedure = os.input(dtoSchema).handler(async ({ input 
 });
 
 export class ListTemplatesUseCase {
-  public constructor(private db: AppDatabase) { }
+  public constructor(private db: AppDatabase) {}
 
   public execute(input: DTO) {
-    return DbUtils.execute(
-      () => this.db.query.templates.findMany({
+    return DbUtils.execute(() =>
+      this.db.query.templates.findMany({
         where: eq(drizzleSchema.templates.projectId, input.projectId),
       }),
     );

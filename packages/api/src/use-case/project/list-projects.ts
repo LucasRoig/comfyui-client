@@ -13,7 +13,7 @@ export const listProjectProcedure = os.handler(async () => {
 });
 
 class ListProjectUseCase {
-  public constructor(private db: AppDatabase) { }
+  public constructor(private db: AppDatabase) {}
 
   public execute() {
     return DbUtils.execute(() => this.db.query.project.findMany());

@@ -1,12 +1,15 @@
 import { relations } from "drizzle-orm";
-import { type AnySQLiteColumn, sqliteTable, text } from "drizzle-orm/sqlite-core";
+import { type AnySQLiteColumn, integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { templates } from "./templates";
 
 export const templateField = sqliteTable("template_field", {
   id: text("id").primaryKey(),
   fieldId: text("field_id").notNull(),
   fieldLabel: text("field_label").notNull(),
-  position: text("position").notNull(),
+  x: integer("x").notNull(),
+  y: integer("y").notNull(),
+  width: integer("width").notNull(),
+  height: integer("height").notNull(),
 
   templateId: text("template_id")
     .notNull()
@@ -20,14 +23,14 @@ export const templateFieldRelations = relations(templateField, (helpers) => ({
     references: [templates.id],
   }),
   stringField: helpers.many(templateStringFields, {
-    relationName: "template_string_field_to_template_field"
+    relationName: "template_string_field_to_template_field",
   }),
   inputImageField: helpers.many(templateInputImageFields, {
-    relationName: "template_input_image_field_to_template_field"
+    relationName: "template_input_image_field_to_template_field",
   }),
   outputImageField: helpers.many(templateOutputImageFields, {
-    relationName: "template_output_image_field_to_template_field"
-  })
+    relationName: "template_output_image_field_to_template_field",
+  }),
 }));
 
 export const templateStringFields = sqliteTable("template_string_field", {

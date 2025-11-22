@@ -36,7 +36,10 @@ model TemplateField {
   id         String @id @default(uuid())
   fieldId    String @map("field_id")
   fieldLabel String @map("field_label")
-  position   String
+  x          Int
+  y          Int
+  width      Int
+  height     Int
 
   templateId               String                    @map("template_id")
   template                 Template                  @relation(fields: [templateId], references: [id], onDelete: Cascade)
