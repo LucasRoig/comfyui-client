@@ -1,0 +1,24 @@
+import * as projects from './projects';
+import * as templates from './templates';
+import * as templateFields from './template-fields';
+import * as templateStringFields from './template-string-fields';
+import * as templateInputImageFields from './template-input-image-fields';
+import * as templateOutputImageFields from './template-output-image-fields';
+import * as importTasks from './import-tasks';
+import * as inputImages from './input-images';
+import * as comfyWorkflows from './comfy-workflows';
+import * as prompts from './prompts';
+import * as outputImages from './output-images';
+import * as projectsRelations from './projects-relations';
+import * as templatesRelations from './templates-relations';
+import * as templateFieldsRelations from './template-fields-relations';
+import * as templateStringFieldsRelations from './template-string-fields-relations';
+import * as templateInputImageFieldsRelations from './template-input-image-fields-relations';
+import * as templateOutputImageFieldsRelations from './template-output-image-fields-relations';
+import * as importTasksRelations from './import-tasks-relations';
+import * as inputImagesRelations from './input-images-relations';
+import * as comfyWorkflowsRelations from './comfy-workflows-relations';
+import * as promptsRelations from './prompts-relations';
+import * as outputImagesRelations from './output-images-relations';
+
+export const schema = { ...projects, ...templates, ...templateFields, ...templateStringFields, ...templateInputImageFields, ...templateOutputImageFields, ...importTasks, ...inputImages, ...comfyWorkflows, ...prompts, ...outputImages, ...projectsRelations, ...templatesRelations, ...templateFieldsRelations, ...templateStringFieldsRelations, ...templateInputImageFieldsRelations, ...templateOutputImageFieldsRelations, ...importTasksRelations, ...inputImagesRelations, ...comfyWorkflowsRelations, ...promptsRelations, ...outputImagesRelations };

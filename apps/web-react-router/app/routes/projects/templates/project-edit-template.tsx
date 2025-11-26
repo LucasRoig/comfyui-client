@@ -24,7 +24,7 @@ export async function loader(args: Route.LoaderArgs) {
 
 export default function ProjectEditTemplatePage(props: Route.ComponentProps) {
   const [layoutMap, setLayoutMap] = useState(
-    new Map(props.loaderData.template.fields.map((field) => [field.id, field])),
+    new Map(props.loaderData.template.templateFields.map((field) => [field.id, field])),
   );
   const queryClient = useQueryClient();
   const updateTemplateMutation = useMutation(
@@ -90,7 +90,7 @@ export default function ProjectEditTemplatePage(props: Route.ComponentProps) {
       width={1200}
       onLayoutChange={handleLayoutChange}
     >
-      {props.loaderData.template.fields.map((f) => (
+      {props.loaderData.template.templateFields.map((f) => (
         <div key={f.id} className="border p-2">
           {f.fieldLabel}
         </div>

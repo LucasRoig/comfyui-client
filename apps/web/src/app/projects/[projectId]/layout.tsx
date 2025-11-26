@@ -10,8 +10,8 @@ export default async function ProjectLayout({
   params: Promise<{ projectId: string }>;
 }) {
   const { projectId } = await params;
-  const project = await database.query.project.findFirst({
-    where: eq(drizzleSchema.project.id, projectId),
+  const project = await database.query.projects.findFirst({
+    where: eq(drizzleSchema.projects.id, projectId),
   });
   if (!project) {
     throw new Error(`Project with ID ${projectId} not found`);

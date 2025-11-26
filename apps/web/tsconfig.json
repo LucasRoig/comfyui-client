@@ -5,7 +5,8 @@
       {
         "name": "next"
       }
-    ]
+    ],
+    "customConditions": ["vs-code-lsp"]
   },
   "include": [
     "**/*.ts",

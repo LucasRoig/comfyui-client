@@ -1074,6 +1074,9 @@ importers:
       prisma-generator-drizzle:
         specifier: ^0.7.6
         version: 0.7.6(prisma@6.7.0(typescript@5.8.2))
+      prisma-generator-drizzle-lro:
+        specifier: file:../../../prisma-generator-drizzle/packages/generator
+        version: file:../prisma-generator-drizzle/packages/generator(prisma@6.7.0(typescript@5.8.2))
       tsup:
         specifier: ^8.4.0
         version: 8.4.0(jiti@2.6.1)(postcss@8.5.6)(typescript@5.8.2)(yaml@2.7.1)
@@ -1278,6 +1281,18 @@ packages:
     engines: {node: '>=14.21.3'}
     cpu: [x64]
     os: [win32]
+
+  '@chevrotain/cst-dts-gen@10.5.0':
+    resolution: {integrity: sha512-lhmC/FyqQ2o7pGK4Om+hzuDrm9rhFYIJ/AXoQBeongmn870Xeb0L6oGEiuR8nohFNL5sMaQEJWCxr1oIVIVXrw==}
+
+  '@chevrotain/gast@10.5.0':
+    resolution: {integrity: sha512-pXdMJ9XeDAbgOWKuD1Fldz4ieCs6+nLNmyVhe2gZVqoO7v8HXuHYs5OV2EzUtbuai37TlOAQHrTDvxMnvMJz3A==}
+
+  '@chevrotain/types@10.5.0':
+    resolution: {integrity: sha512-f1MAia0x/pAVPWH/T73BJVyO2XU5tI4/iE7cnxb7tqdNTNhQI3Uq3XkqcoteTmD4t1aM0LbHCJOhgIDn07kl2A==}
+
+  '@chevrotain/utils@10.5.0':
+    resolution: {integrity: sha512-hBzuU5+JjB2cqNZyszkDHZgOSrUUT8V3dhgRl8Q9Gp6dAj/H5+KILGjbhDpc3Iy9qmqlm/akuOI2ut9VUtzJxQ==}
 
   '@content-collections/core@0.8.2':
     resolution: {integrity: sha512-62yVC3ne47YJ1KeCw5nk0H/G/xGBagcoWyMpVyTaCnDJhoIoTvmqBrsc+78Zk8s2Ssnb0Eo1Q4w3ZHwgL88pjg==}
@@ -1824,6 +1839,10 @@ packages:
 
   '@mjackson/node-fetch-server@0.2.0':
     resolution: {integrity: sha512-EMlH1e30yzmTpGLQjlFmaDAjyOeZhng1/XCd7DExR8PNAnG/G1tyruZxEoUe11ClnwGhGrtsdnyyUx1frSzjng==}
+
+  '@mrleebo/prisma-ast@0.12.1':
+    resolution: {integrity: sha512-JwqeCQ1U3fvccttHZq7Tk0m/TMC6WcFAQZdukypW3AzlJYKYTGNVd1ANU2GuhKnv4UQuOFj3oAl0LLG/gxFN1w==}
+    engines: {node: '>=16'}
 
   '@napi-rs/wasm-runtime@1.0.6':
     resolution: {integrity: sha512-DXj75ewm11LIWUk198QSKUTxjyRjsBwk09MuMk5DGK+GDUtyPhhEHOGP/Xwwj3DjQXXkivoBirmOnKrLfc0+9g==}
@@ -3986,6 +4005,9 @@ packages:
   checkpoint-client@1.1.21:
     resolution: {integrity: sha512-bcrcnJncn6uGhj06IIsWvUBPyJWK1ZezDbLCJ//IQEYXkUobhGvOOBlHe9K5x0ZMkAZGinPB4T+lTUmFz/acWQ==}
 
+  chevrotain@10.5.0:
+    resolution: {integrity: sha512-Pkv5rBY3+CsHOYfV5g/Vs5JY9WTHHDEKOlohI2XeygaZhUeqhAlldZ8Hz9cRmxu709bvS08YzxHdTPHhffc13A==}
+
   chokidar@4.0.3:
     resolution: {integrity: sha512-Qgzu8kfBvo+cA4962jnP1KkS6Dop5NS6g7R5LFYJr4b8Ub94PPQXUksCw9PvXoeXPRRddRNC5C1JQUR2SMGtnA==}
     engines: {node: '>= 14.16.0'}
@@ -5141,6 +5163,10 @@ packages:
     resolution: {integrity: sha512-utfs7Pr5uJyyvDETitgsaqSyjCb2qNRAtuqUeWIAKztsOYdcACf2KtARYXg2pSvhkt+9NfoaNY7fxjl6nuMjIQ==}
     engines: {node: '>= 12.0.0'}
 
+  lilconfig@2.1.0:
+    resolution: {integrity: sha512-utWOt/GHzuUxnLKxB6dk81RoOeoNeHgbrXiuGk4yyF5qlRz+iIVWu56E2fqGHFrXz0QNUhLB/8nKqvRH66JKGQ==}
+    engines: {node: '>=10'}
+
   lilconfig@3.1.3:
     resolution: {integrity: sha512-/vlFKAoH5Cgt3Ie+JLhRbwOsCQePABiU3tJ1egGvyQ+33R/vcwM2Zl2QR/LzjsBeItPt3oSVXapn+m4nQDvpzw==}
     engines: {node: '>=14'}
@@ -5824,6 +5850,11 @@ packages:
   prettysize@2.0.0:
     resolution: {integrity: sha512-VVtxR7sOh0VsG8o06Ttq5TrI1aiZKmC+ClSn4eBPaNf4SHr5lzbYW+kYGX3HocBL/MfpVrRfFZ9V3vCbLaiplg==}
 
+  prisma-generator-drizzle-lro@file:../prisma-generator-drizzle/packages/generator:
+    resolution: {directory: ../prisma-generator-drizzle/packages/generator, type: directory}
+    engines: {node: '>=14.0'}
+    hasBin: true
+
   prisma-generator-drizzle@0.7.6:
     resolution: {integrity: sha512-9q8OWotZIhUsFtFirPbCVsmAb8IN29id/HV5nod09sRhSr5LuOrfm+DuQ5u0AnHuq/nsA4sXCM5MLuO60S1dCg==}
     engines: {node: '>=14.0'}
@@ -6033,6 +6064,9 @@ packages:
 
   regex@6.0.1:
     resolution: {integrity: sha512-uorlqlzAKjKQZ5P+kTJr3eeJGSVroLKoHmquUj4zHWuR+hEyNqlXsSKlYYF5F4NI6nl7tWCs0apKJ0lmfsXAPA==}
+
+  regexp-to-ast@0.5.0:
+    resolution: {integrity: sha512-tlbJqcMHnPKI9zSrystikWKwHkBqu2a/Sgw01h3zFjvYrMxEDYHzzoMZnUrbIfpTFEsoRnnviOXNCzFiSc54Qw==}
 
   rehype-parse@9.0.1:
     resolution: {integrity: sha512-ksCzCD0Fgfh7trPDxr2rSylbwq9iYDkSn8TCDmEJ49ljEUBxDVCzCHv7QNzZOfODanX4+bWQ4WZqLCRWYLfhag==}
@@ -7142,6 +7176,21 @@ snapshots:
   '@biomejs/cli-win32-x64@2.3.3':
     optional: true
 
+  '@chevrotain/cst-dts-gen@10.5.0':
+    dependencies:
+      '@chevrotain/gast': 10.5.0
+      '@chevrotain/types': 10.5.0
+      lodash: 4.17.21
+
+  '@chevrotain/gast@10.5.0':
+    dependencies:
+      '@chevrotain/types': 10.5.0
+      lodash: 4.17.21
+
+  '@chevrotain/types@10.5.0': {}
+
+  '@chevrotain/utils@10.5.0': {}
+
   '@content-collections/core@0.8.2(typescript@5.8.2)':
     dependencies:
       '@parcel/watcher': 2.5.1
@@ -7616,6 +7665,11 @@ snapshots:
       - supports-color
 
   '@mjackson/node-fetch-server@0.2.0': {}
+
+  '@mrleebo/prisma-ast@0.12.1':
+    dependencies:
+      chevrotain: 10.5.0
+      lilconfig: 2.1.0
 
   '@napi-rs/wasm-runtime@1.0.6':
     dependencies:
@@ -9884,6 +9938,15 @@ snapshots:
     transitivePeerDependencies:
       - encoding
 
+  chevrotain@10.5.0:
+    dependencies:
+      '@chevrotain/cst-dts-gen': 10.5.0
+      '@chevrotain/gast': 10.5.0
+      '@chevrotain/types': 10.5.0
+      '@chevrotain/utils': 10.5.0
+      lodash: 4.17.21
+      regexp-to-ast: 0.5.0
+
   chokidar@4.0.3:
     dependencies:
       readdirp: 4.1.2
@@ -10962,6 +11025,8 @@ snapshots:
       lightningcss-win32-arm64-msvc: 1.30.2
       lightningcss-win32-x64-msvc: 1.30.2
 
+  lilconfig@2.1.0: {}
+
   lilconfig@3.1.3: {}
 
   lines-and-columns@1.2.4: {}
@@ -11826,6 +11891,21 @@ snapshots:
 
   prettysize@2.0.0: {}
 
+  prisma-generator-drizzle-lro@file:../prisma-generator-drizzle/packages/generator(prisma@6.7.0(typescript@5.8.2)):
+    dependencies:
+      '@mrleebo/prisma-ast': 0.12.1
+      '@prisma/client': 5.10.2(prisma@6.7.0(typescript@5.8.2))
+      '@prisma/generator-helper': 5.10.2
+      '@prisma/sdk': 4.0.0
+      fp-ts: 2.16.10
+      lodash: 4.17.21
+      pluralize: 8.0.0
+      valibot: 0.31.1
+    transitivePeerDependencies:
+      - encoding
+      - prisma
+      - supports-color
+
   prisma-generator-drizzle@0.7.6(prisma@6.7.0(typescript@5.8.2)):
     dependencies:
       '@prisma/client': 5.10.2(prisma@6.7.0(typescript@5.8.2))
@@ -12070,6 +12150,8 @@ snapshots:
   regex@6.0.1:
     dependencies:
       regex-utilities: 2.3.0
+
+  regexp-to-ast@0.5.0: {}
 
   rehype-parse@9.0.1:
     dependencies:

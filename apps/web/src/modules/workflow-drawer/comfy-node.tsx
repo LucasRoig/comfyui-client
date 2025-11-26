@@ -289,7 +289,7 @@ function Input(props: {
             <label htmlFor={checkboxId}>{props.input.name}</label>
             <Checkbox
               id={checkboxId}
-              value={props.state.value}
+              checked={props.state.value === "true"}
               onCheckedChange={(value) => props.onStateChange({ ...props.state, value: String(value) } as InputState)}
             />
           </div>

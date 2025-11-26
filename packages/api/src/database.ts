@@ -1,11 +1,13 @@
 import { type Client, createClient } from "@libsql/client";
-import { drizzleSchema } from "@repo/database";
+import { type AppDatabase, drizzleSchema } from "@repo/database";
 import { Mutex } from "async-mutex";
 import { drizzle } from "drizzle-orm/libsql";
 
+export type { AppDatabase } from "@repo/database";
+
 declare global {
   var sqliteClient: Client | undefined;
-  var drizzleClient: ReturnType<typeof drizzle<typeof drizzleSchema>> | undefined;
+  var drizzleClient: AppDatabase | undefined;
   var $transactionMutex: Mutex | undefined;
 }
 
@@ -34,6 +36,3 @@ export const database = new Proxy(db, {
     return Reflect.get(target, prop, receiver);
   },
 });
-
-type AppTransaction = Parameters<Parameters<(typeof database)["transaction"]>[0]>[0];
-export type AppDatabase = typeof database | AppTransaction;

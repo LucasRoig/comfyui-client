@@ -47,13 +47,13 @@ export const createRootTemplateProcedure = os.input(dtoSchema).handler(async ({ 
 });
 
 class CreateRootTemplateUseCase {
-  public constructor(private db: AppDatabase) {}
+  public constructor(private db: AppDatabase) { }
 
   public execute(input: z.infer<typeof dtoSchema>) {
     return DbUtils.executeAndExpectDefined(
       () =>
-        this.db.query.project.findFirst({
-          where: eq(drizzleSchema.project.id, input.projectId),
+        this.db.query.projects.findFirst({
+          where: eq(drizzleSchema.projects.id, input.projectId),
         }),
       "PROJECT_NOT_FOUND",
     )
@@ -83,7 +83,7 @@ class CreateRootTemplateUseCase {
       .andThen((template) =>
         DbUtils.execute(() =>
           this.db
-            .insert(drizzleSchema.templateField)
+            .insert(drizzleSchema.templateFields)
             .values([
               {
                 id: uuid(),

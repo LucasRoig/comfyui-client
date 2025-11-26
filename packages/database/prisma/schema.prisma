@@ -3,6 +3,11 @@ datasource db {
   url      = env("DB_FILE")
 }
 
+generator drizzle {
+  provider = "pnpm prisma-generator-drizzle-lro"
+  output   = "../src/drizzle-generated"
+}
+
 model Project {
   id   String @id @default(uuid())
   name String

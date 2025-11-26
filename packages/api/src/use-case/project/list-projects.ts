@@ -1,10 +1,14 @@
 import { ORPCError, os } from "@orpc/server";
-import { type AppDatabase, database } from "../../database";
+import { database } from "../../database";
 import { DbUtils } from "../../db-utils";
 import { ResultUtils } from "../../result-utils";
 
 export const listProjectProcedure = os.handler(async () => {
-  const useCase = new ListProjectUseCase(database);
+  const useCase = {
+    execute() {
+      return DbUtils.execute(() => database.query.projects.findMany());
+    },
+  };
   const result = await useCase
     .execute()
     .orTee((e) => console.error(e))
@@ -12,10 +16,10 @@ export const listProjectProcedure = os.handler(async () => {
   return ResultUtils.unwrapOrThrow(result);
 });
 
-class ListProjectUseCase {
-  public constructor(private db: AppDatabase) {}
+// class ListProjectUseCase {
+//   public constructor(private db: AppDatabase) {}
 
-  public execute() {
-    return DbUtils.execute(() => this.db.query.project.findMany());
-  }
-}
+//   public execute() {
+//     return DbUtils.execute(() => this.db.query.project.findMany());
+//   }
+// }

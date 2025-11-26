@@ -50,7 +50,7 @@ export const createChildTemplateProcedure = os.input(dtoSchema).handler(async ({
 });
 
 class CreateChildTemplateUseCase {
-  public constructor(private db: AppDatabase) {}
+  public constructor(private db: AppDatabase) { }
 
   public execute(input: z.infer<typeof dtoSchema>) {
     return DbUtils.executeAndExpectDefined(
@@ -61,10 +61,10 @@ class CreateChildTemplateUseCase {
             eq(drizzleSchema.templates.projectId, input.projectId),
           ),
           with: {
-            fields: {
+            templateFields: {
               with: {
-                inputImageField: true,
-                outputImageField: true,
+                templateInputImageFields: true,
+                templateOutputImageField: true,
                 stringField: true,
               },
             },
@@ -99,27 +99,27 @@ class CreateChildTemplateUseCase {
         ).map((childTemplate) => ({ childTemplate, parentTemplate })),
       )
       .andThen((templates) => {
-        type FullField = (typeof templates)["parentTemplate"]["fields"][number];
-        type BaseField = Omit<FullField, "stringField" | "inputImageField" | "outputImageField">;
-        const stringFields: Array<BaseField & { stringField: FullField["stringField"][number] }> = [];
-        const inputImageFields: Array<BaseField & { inputImageField: FullField["inputImageField"][number] }> = [];
-        const outputImageFields: Array<BaseField & { outputImageField: FullField["outputImageField"][number] }> = [];
-        for (const field of templates.parentTemplate.fields) {
-          const { inputImageField, outputImageField, stringField, ...rest } = field;
-          if (inputImageField[0]) {
+        type FullField = (typeof templates)["parentTemplate"]["templateFields"][number];
+        type BaseField = Omit<FullField, "stringField" | "templateInputImageFields" | "templateOutputImageField">;
+        const stringFields: Array<BaseField & { stringField: NonNullable<FullField["stringField"]> }> = [];
+        const inputImageFields: Array<BaseField & { inputImageField: NonNullable<FullField["templateInputImageFields"]> }> = [];
+        const outputImageFields: Array<BaseField & { outputImageField: NonNullable<FullField["templateOutputImageField"]> }> = [];
+        for (const field of templates.parentTemplate.templateFields) {
+          const { templateInputImageFields, templateOutputImageField, stringField, ...rest } = field;
+          if (templateInputImageFields) {
             inputImageFields.push({
               ...rest,
-              inputImageField: inputImageField[0],
+              inputImageField: templateInputImageFields,
             });
-          } else if (outputImageField[0]) {
+          } else if (templateOutputImageField) {
             outputImageFields.push({
               ...rest,
-              outputImageField: outputImageField[0],
+              outputImageField: templateOutputImageField,
             });
-          } else if (stringField[0]) {
+          } else if (stringField) {
             stringFields.push({
               ...rest,
-              stringField: stringField[0],
+              stringField: stringField,
             });
           } else {
             return err({ kind: "FIELD_WITH_NO_TYPE" as const, fieldId: field.id });
@@ -145,7 +145,7 @@ class CreateChildTemplateUseCase {
       .andThen((templates) =>
         DbUtils.execute(() =>
           this.db
-            .insert(drizzleSchema.templateField)
+            .insert(drizzleSchema.templateFields)
             .values(
               templates.insertFieldsPayload.map((f) => ({
                 id: uuid(),

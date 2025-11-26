@@ -49,10 +49,10 @@ export async function POST(request: NextRequest) {
   await database.run("PRAGMA busy_timeout = 10000;");
   const fileId = await database.transaction(async (tx) => {
     const imageId = v4();
-    const alreadyExists = await tx.query.inputImage.findFirst({
+    const alreadyExists = await tx.query.inputImages.findFirst({
       where: and(
-        eq(drizzleSchema.inputImage.projectId, formData.projectId),
-        eq(drizzleSchema.inputImage.originalPath, formData.relativePath),
+        eq(drizzleSchema.inputImages.projectId, formData.projectId),
+        eq(drizzleSchema.inputImages.originalPath, formData.relativePath),
       ),
     });
     if (alreadyExists) {
@@ -60,18 +60,19 @@ export async function POST(request: NextRequest) {
     }
 
     await tx
-      .insert(drizzleSchema.importTask)
+      .insert(drizzleSchema.importTasks)
       .values({
         id: formData.uploadId,
       })
       .onConflictDoNothing();
-    await tx.insert(drizzleSchema.inputImage).values({
+    await tx.insert(drizzleSchema.inputImages).values({
       id: imageId,
       importTaskId: formData.uploadId,
       originalPath: formData.relativePath,
       originalFileName: formData.name,
       projectId: formData.projectId,
       type: formData.type,
+      templateId: "TODO", // TODO
     });
 
     const fileExtension = path.extname(formData.name);

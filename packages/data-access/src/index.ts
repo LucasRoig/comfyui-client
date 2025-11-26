@@ -145,7 +145,7 @@ export const jsonWorkflowShema = z.object({
 type JsomComfyWorkflow = z.infer<typeof jsonWorkflowShema>;
 
 export async function getWorkflows() {
-  const wfs = await db.query.comfyWorkflow.findMany();
+  const wfs = await db.query.comfyWorkflows.findMany();
   return wfs.map((wf) => ({
     ...wf,
     json: jsonWorkflowShema.parse(wf.json),
@@ -154,8 +154,8 @@ export async function getWorkflows() {
 
 export type DBWorkflow = Awaited<ReturnType<typeof getWorkflow>>;
 export async function getWorkflow(id: string) {
-  const wf = await db.query.comfyWorkflow.findFirst({
-    where: eq(drizzleSchema.comfyWorkflow.id, id),
+  const wf = await db.query.comfyWorkflows.findFirst({
+    where: eq(drizzleSchema.comfyWorkflows.id, id),
   });
   if (!wf) {
     throw new Error("Workflow not found");
@@ -172,17 +172,17 @@ export async function updateWorkflow(id: string, json: JsomComfyWorkflow) {
     throw new Error("Invalid json");
   }
   await db
-    .update(drizzleSchema.comfyWorkflow)
+    .update(drizzleSchema.comfyWorkflows)
     .set({
       json: validJson.data,
     })
-    .where(eq(drizzleSchema.comfyWorkflow.id, id));
+    .where(eq(drizzleSchema.comfyWorkflows.id, id));
 }
 
 export async function createWorkflow() {
   const id = uuidv4();
   const wfs = await db
-    .insert(drizzleSchema.comfyWorkflow)
+    .insert(drizzleSchema.comfyWorkflows)
     .values({
       id: id,
       json: {
@@ -207,7 +207,7 @@ export async function createPrompt(data: { promptId: string; workflowId: string;
     throw new Error("Invalid json");
   }
   const prompts = await db
-    .insert(drizzleSchema.prompt)
+    .insert(drizzleSchema.prompts)
     .values({
       id: data.promptId,
       workflowId: data.workflowId,
@@ -239,8 +239,8 @@ export async function addOutputImage(args: {
   };
 }) {
   return db.transaction(async (trx) => {
-    const prompt = await trx.query.prompt.findFirst({
-      where: eq(drizzleSchema.prompt.id, args.promptId),
+    const prompt = await trx.query.prompts.findFirst({
+      where: eq(drizzleSchema.prompts.id, args.promptId),
     });
     if (!prompt) {
       throw new Error("Prompt not found");
@@ -259,11 +259,11 @@ export async function addOutputImage(args: {
     node.data.executionOutput.images.push({
       comfy: args.comfy,
     });
-    await trx.update(drizzleSchema.prompt).set({
+    await trx.update(drizzleSchema.prompts).set({
       json: json,
     });
     const outputImages = await trx
-      .insert(drizzleSchema.outputImage)
+      .insert(drizzleSchema.outputImages)
       .values({
         filename: args.image.filename,
         relativePath: args.image.relativePath,

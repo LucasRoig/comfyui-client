@@ -38,7 +38,7 @@ export const updateTemplateFieldsProcedure = os.input(dtoSchema).handler(async (
 });
 
 class UpdateTemplateFieldsUseCase {
-  public constructor(private db: AppDatabase) {}
+  public constructor(private db: AppDatabase) { }
 
   public execute(input: DTO) {
     if (input.fields.length === 0) {
@@ -53,9 +53,9 @@ class UpdateTemplateFieldsUseCase {
     )
       .andThen(() =>
         DbUtils.execute(() =>
-          this.db.query.templateField.findMany({
+          this.db.query.templateFields.findMany({
             where: inArray(
-              drizzleSchema.templateField.id,
+              drizzleSchema.templateFields.id,
               input.fields.map((f) => f.id),
             ),
           }),
@@ -77,10 +77,10 @@ class UpdateTemplateFieldsUseCase {
         widthChunks.push(sql`(case`);
         heightChunks.push(sql`(case`);
         for (const field of input.fields) {
-          xChunks.push(sql` when ${drizzleSchema.templateField.id} = ${field.id} then ${field.x} `);
-          yChunks.push(sql` when ${drizzleSchema.templateField.id} = ${field.id} then ${field.y} `);
-          widthChunks.push(sql` when ${drizzleSchema.templateField.id} = ${field.id} then ${field.width} `);
-          heightChunks.push(sql` when ${drizzleSchema.templateField.id} = ${field.id} then ${field.height} `);
+          xChunks.push(sql` when ${drizzleSchema.templateFields.id} = ${field.id} then ${field.x} `);
+          yChunks.push(sql` when ${drizzleSchema.templateFields.id} = ${field.id} then ${field.y} `);
+          widthChunks.push(sql` when ${drizzleSchema.templateFields.id} = ${field.id} then ${field.width} `);
+          heightChunks.push(sql` when ${drizzleSchema.templateFields.id} = ${field.id} then ${field.height} `);
           ids.push(field.id);
         }
         xChunks.push(sql`end)`);
@@ -98,14 +98,14 @@ class UpdateTemplateFieldsUseCase {
       .andThen(({ xSql, ySql, widthSql, heightSql, ids }) =>
         DbUtils.execute(() =>
           this.db
-            .update(drizzleSchema.templateField)
+            .update(drizzleSchema.templateFields)
             .set({
               x: xSql,
               y: ySql,
               width: widthSql,
               height: heightSql,
             })
-            .where(inArray(drizzleSchema.templateField.id, ids)),
+            .where(inArray(drizzleSchema.templateFields.id, ids)),
         ).map(() => void 0),
       );
   }

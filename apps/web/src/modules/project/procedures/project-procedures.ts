@@ -7,7 +7,7 @@ import { database } from "../../../@lib/database";
 
 const findAllProject = os
   .handler(async () => {
-    const projects = await database.query.project.findMany();
+    const projects = await database.query.projects.findMany();
     return projects;
   })
   .callable();
@@ -20,7 +20,7 @@ const createProject = os
   )
   .handler(async ({ input }) => {
     const insertResult = await database
-      .insert(drizzleSchema.project)
+      .insert(drizzleSchema.projects)
       .values({
         name: input.name,
         id: uuid(),
@@ -41,9 +41,9 @@ const getFilesInProject = os
     }),
   )
   .handler(({ input }) => {
-    return database.query.inputImage.findMany({
-      where: eq(drizzleSchema.inputImage.projectId, input.projectId),
-      orderBy: [asc(drizzleSchema.inputImage.originalPath)],
+    return database.query.inputImages.findMany({
+      where: eq(drizzleSchema.inputImages.projectId, input.projectId),
+      orderBy: [asc(drizzleSchema.inputImages.originalPath)],
     });
   })
   .callable();
