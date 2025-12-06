@@ -27,7 +27,7 @@ export const getTemplateByIdProcedure = os.input(dtoSchema).handler(async ({ inp
 });
 
 class GetTemplateByIdUseCase {
-  public constructor(private db: AppDatabase) { }
+  public constructor(private db: AppDatabase) {}
 
   public execute(input: DTO) {
     return DbUtils.executeAndExpectDefined(

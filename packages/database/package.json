@@ -11,7 +11,7 @@
     }
   },
   "scripts": {
-    "dev:tsc": "tsc -p tsconfig.build-types.json --watch",
+    "dev": "tsc -p tsconfig.build-types.json --watch",
     "build": "tsc -p tsconfig.build-types.json",
     "check-types": "tsc --noEmit"
   },

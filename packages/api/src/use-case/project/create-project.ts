@@ -21,7 +21,7 @@ export const createProjectProcedure = os.input(createProjectDTOSchema).handler(a
 });
 
 class CreateProjectUseCase {
-  public constructor(private db: AppDatabase) { }
+  public constructor(private db: AppDatabase) {}
 
   public async execute(input: CreateProjectDTO) {
     return DbUtils.executeAndReturnOneRow(() =>

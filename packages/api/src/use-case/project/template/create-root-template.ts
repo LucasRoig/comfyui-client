@@ -47,7 +47,7 @@ export const createRootTemplateProcedure = os.input(dtoSchema).handler(async ({ 
 });
 
 class CreateRootTemplateUseCase {
-  public constructor(private db: AppDatabase) { }
+  public constructor(private db: AppDatabase) {}
 
   public execute(input: z.infer<typeof dtoSchema>) {
     return DbUtils.executeAndExpectDefined(

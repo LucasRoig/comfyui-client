@@ -38,7 +38,7 @@ export const updateTemplateFieldsProcedure = os.input(dtoSchema).handler(async (
 });
 
 class UpdateTemplateFieldsUseCase {
-  public constructor(private db: AppDatabase) { }
+  public constructor(private db: AppDatabase) {}
 
   public execute(input: DTO) {
     if (input.fields.length === 0) {

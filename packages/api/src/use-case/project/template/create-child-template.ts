@@ -50,7 +50,7 @@ export const createChildTemplateProcedure = os.input(dtoSchema).handler(async ({
 });
 
 class CreateChildTemplateUseCase {
-  public constructor(private db: AppDatabase) { }
+  public constructor(private db: AppDatabase) {}
 
   public execute(input: z.infer<typeof dtoSchema>) {
     return DbUtils.executeAndExpectDefined(
@@ -102,8 +102,12 @@ class CreateChildTemplateUseCase {
         type FullField = (typeof templates)["parentTemplate"]["templateFields"][number];
         type BaseField = Omit<FullField, "stringField" | "templateInputImageFields" | "templateOutputImageField">;
         const stringFields: Array<BaseField & { stringField: NonNullable<FullField["stringField"]> }> = [];
-        const inputImageFields: Array<BaseField & { inputImageField: NonNullable<FullField["templateInputImageFields"]> }> = [];
-        const outputImageFields: Array<BaseField & { outputImageField: NonNullable<FullField["templateOutputImageField"]> }> = [];
+        const inputImageFields: Array<
+          BaseField & { inputImageField: NonNullable<FullField["templateInputImageFields"]> }
+        > = [];
+        const outputImageFields: Array<
+          BaseField & { outputImageField: NonNullable<FullField["templateOutputImageField"]> }
+        > = [];
         for (const field of templates.parentTemplate.templateFields) {
           const { templateInputImageFields, templateOutputImageField, stringField, ...rest } = field;
           if (templateInputImageFields) {
