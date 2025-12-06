@@ -65,7 +65,8 @@
       "!**/generated",
       "!**/.contentlayer",
       "!**/coverage",
-      "!design-system"
+      "!design-system",
+      "!packages/database/src/drizzle-generated"
     ]
   }
 }
