@@ -13,13 +13,13 @@
     "@repo/typescript-config": "workspace:*",
     "@repo/comfy-ui-api-client": "workspace:*",
     "@types/node": "^22.15.17",
-    "tsup": "^8.4.0",
+    "tsup": "^8.5.1",
     "typescript": "5.9.3"
   },
   "dependencies": {
     "@repo/database": "workspace:*",
-    "@libsql/client": "^0.15.5",
-    "drizzle-orm": "^0.43.1",
+    "@libsql/client": "^0.15.15",
+    "drizzle-orm": "^0.45.0",
     "zod": "^3.25.41",
     "uuid": "^11.1.0"
   }

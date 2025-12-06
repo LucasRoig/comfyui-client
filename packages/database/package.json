@@ -20,10 +20,10 @@
     "dotenv": "^17.2.3",
     "prisma": "^7.1.0",
     "prisma-generator-drizzle-lro": "file:../../../prisma-generator-drizzle/packages/generator",
-    "tsup": "^8.4.0",
+    "tsup": "^8.5.1",
     "typescript": "5.9.3"
   },
   "dependencies": {
-    "drizzle-orm": "^0.43.1"
+    "drizzle-orm": "^0.45.0"
   }
 }
