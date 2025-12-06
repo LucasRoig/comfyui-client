@@ -14,7 +14,7 @@
     "@repo/comfy-ui-api-client": "workspace:*",
     "@types/node": "^22.15.17",
     "tsup": "^8.4.0",
-    "typescript": "5.8.2"
+    "typescript": "5.9.3"
   },
   "dependencies": {
     "@repo/database": "workspace:*",
