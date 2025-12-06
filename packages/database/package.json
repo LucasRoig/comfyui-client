@@ -17,8 +17,8 @@
   },
   "devDependencies": {
     "@repo/typescript-config": "workspace:*",
-    "prisma": "^6.7.0",
-    "prisma-generator-drizzle": "^0.7.6",
+    "dotenv": "^17.2.3",
+    "prisma": "^7.1.0",
     "prisma-generator-drizzle-lro": "file:../../../prisma-generator-drizzle/packages/generator",
     "tsup": "^8.4.0",
     "typescript": "5.8.2"
