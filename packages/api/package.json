@@ -17,7 +17,7 @@
   },
   "dependencies": {
     "@libsql/client": "^0.15.5",
-    "@orpc/server": "^1.10.1",
+    "@orpc/server": "^1.12.2",
     "@repo/database": "workspace:*",
     "async-mutex": "^0.5.0",
     "drizzle-orm": "^0.43.1",
