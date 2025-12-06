@@ -1,3 +1,3 @@
 import { sqliteTable, text, integer } from 'drizzle-orm/sqlite-core';
 
-export const templateFields = sqliteTable('template_field', { id: text('id').primaryKey(), fieldId: text('fieldId').notNull(), fieldLabel: text('fieldLabel').notNull(), x: integer('x', { mode: 'number' }).notNull(), y: integer('y', { mode: 'number' }).notNull(), width: integer('width', { mode: 'number' }).notNull(), height: integer('height', { mode: 'number' }).notNull(), templateId: text('templateId').notNull() });
+export const templateFields = sqliteTable('template_field', { id: text('id').primaryKey(), fieldId: text('field_id').notNull(), fieldLabel: text('field_label').notNull(), x: integer('x', { mode: 'number' }).notNull(), y: integer('y', { mode: 'number' }).notNull(), width: integer('width', { mode: 'number' }).notNull(), height: integer('height', { mode: 'number' }).notNull(), templateId: text('template_id').notNull() });

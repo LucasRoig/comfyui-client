@@ -1,3 +1,3 @@
 import { sqliteTable, text } from 'drizzle-orm/sqlite-core';
 
-export const inputImages = sqliteTable('input_image', { id: text('id').primaryKey(), originalFileName: text('originalFileName').notNull(), originalPath: text('originalPath').notNull(), type: text('type').notNull(), projectId: text('projectId').notNull(), importTaskId: text('importTaskId').notNull(), templateId: text('templateId').notNull() });
+export const inputImages = sqliteTable('input_image', { id: text('id').primaryKey(), originalFileName: text('original_file_name').notNull(), originalPath: text('original_path').notNull(), type: text('type').notNull(), projectId: text('project_id').notNull(), importTaskId: text('import_task_id').notNull(), templateId: text('template_id').notNull() });
