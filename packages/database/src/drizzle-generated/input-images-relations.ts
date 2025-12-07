@@ -3,5 +3,7 @@ import { inputImages } from './input-images';
 import { projects } from './projects';
 import { importTasks } from './import-tasks';
 import { templates } from './templates';
+import { stringFieldValues } from './string-field-values';
+import { outputFieldValues } from './output-field-values';
 
-export const inputImagesRelations = relations(inputImages, (helpers) => ({ project: helpers.one(projects, { relationName: 'InputImageToProject', fields: [ inputImages.projectId ], references: [ projects.id ] }), importTask: helpers.one(importTasks, { relationName: 'ImportTaskToInputImage', fields: [ inputImages.importTaskId ], references: [ importTasks.id ] }), template: helpers.one(templates, { relationName: 'InputImageToTemplate', fields: [ inputImages.templateId ], references: [ templates.id ] }) }));
+export const inputImagesRelations = relations(inputImages, (helpers) => ({ project: helpers.one(projects, { relationName: 'InputImageToProject', fields: [ inputImages.projectId ], references: [ projects.id ] }), importTask: helpers.one(importTasks, { relationName: 'ImportTaskToInputImage', fields: [ inputImages.importTaskId ], references: [ importTasks.id ] }), template: helpers.one(templates, { relationName: 'InputImageToTemplate', fields: [ inputImages.templateId ], references: [ templates.id ] }), stringFieldValues: helpers.many(stringFieldValues, { relationName: 'InputImageToStringFieldValue' }), outputFieldValues: helpers.many(outputFieldValues, { relationName: 'InputImageToOutputFieldValue' }) }));

@@ -1,5 +1,6 @@
 import { relations } from 'drizzle-orm';
 import { templateOutputImageFields } from './template-output-image-fields';
 import { templateFields } from './template-fields';
+import { outputFieldValues } from './output-field-values';
 
-export const templateOutputImageFieldsRelations = relations(templateOutputImageFields, (helpers) => ({ field: helpers.one(templateFields, { relationName: 'TemplateFieldToTemplateOutputImageField', fields: [ templateOutputImageFields.fieldId ], references: [ templateFields.id ] }), parentField: helpers.one(templateOutputImageFields, { relationName: 'child_field', fields: [ templateOutputImageFields.parentFieldId ], references: [ templateOutputImageFields.id ] }), children: helpers.many(templateOutputImageFields, { relationName: 'child_field' }) }));
+export const templateOutputImageFieldsRelations = relations(templateOutputImageFields, (helpers) => ({ field: helpers.one(templateFields, { relationName: 'TemplateFieldToTemplateOutputImageField', fields: [ templateOutputImageFields.fieldId ], references: [ templateFields.id ] }), parentField: helpers.one(templateOutputImageFields, { relationName: 'child_field', fields: [ templateOutputImageFields.parentFieldId ], references: [ templateOutputImageFields.id ] }), children: helpers.many(templateOutputImageFields, { relationName: 'child_field' }), outputFieldValues: helpers.many(outputFieldValues, { relationName: 'OutputFieldValueToTemplateOutputImageField' }) }));

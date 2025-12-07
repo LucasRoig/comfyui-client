@@ -1,5 +1,6 @@
 import { relations } from 'drizzle-orm';
 import { outputImages } from './output-images';
 import { prompts } from './prompts';
+import { outputFieldValues } from './output-field-values';
 
-export const outputImagesRelations = relations(outputImages, (helpers) => ({ prompt: helpers.one(prompts, { relationName: 'OutputImageToPrompt', fields: [ outputImages.promptId ], references: [ prompts.id ] }) }));
+export const outputImagesRelations = relations(outputImages, (helpers) => ({ prompt: helpers.one(prompts, { relationName: 'OutputImageToPrompt', fields: [ outputImages.promptId ], references: [ prompts.id ] }), outputFieldValues: helpers.many(outputFieldValues, { relationName: 'OutputFieldValueToOutputImage' }) }));

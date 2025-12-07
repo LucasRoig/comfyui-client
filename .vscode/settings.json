@@ -27,5 +27,8 @@
   },
   "typescript.tsserver.maxTsServerMemory": 4096,
   "files.autoSave": "onFocusChange",
-  "prisma.pinToPrisma6": false
+  "prisma.pinToPrisma6": false,
+  "[prisma]": {
+    "editor.defaultFormatter": "Prisma.prisma"
+  }
 }

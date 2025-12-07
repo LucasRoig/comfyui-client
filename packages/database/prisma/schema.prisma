@@ -69,12 +69,26 @@ model TemplateStringField {
   fieldId String        @map("field_id")
   field   TemplateField @relation(fields: [fieldId], references: [id], onDelete: Cascade)
 
-  parentFieldId String?               @map("parent_field_id")
-  parentField   TemplateStringField?  @relation("child_field", fields: [parentFieldId], references: [id])
-  children      TemplateStringField[] @relation("child_field")
+  parentFieldId     String?               @map("parent_field_id")
+  parentField       TemplateStringField?  @relation("child_field", fields: [parentFieldId], references: [id])
+  children          TemplateStringField[] @relation("child_field")
+  stringFieldValues StringFieldValue[]
 
   @@unique([fieldId])
   @@map("template_string_field")
+}
+
+model StringFieldValue {
+  id    String @id @default(uuid())
+  value String @default("")
+
+  templateFieldId String              @map("template_field_id")
+  templatefield   TemplateStringField @relation(fields: [templateFieldId], references: [id])
+  inputImageId    String              @map("input_image_id")
+  inputImage      InputImage          @relation(fields: [inputImageId], references: [id])
+
+  @@unique([templateFieldId, inputImageId])
+  @@map("string_field_value")
 }
 
 model TemplateInputImageField {
@@ -97,12 +111,27 @@ model TemplateOutputImageField {
   fieldId String        @map("field_id")
   field   TemplateField @relation(fields: [fieldId], references: [id])
 
-  parentFieldId String?                    @map("parent_field_id")
-  parentField   TemplateOutputImageField?  @relation("child_field", fields: [parentFieldId], references: [id])
-  children      TemplateOutputImageField[] @relation("child_field")
+  parentFieldId     String?                    @map("parent_field_id")
+  parentField       TemplateOutputImageField?  @relation("child_field", fields: [parentFieldId], references: [id])
+  children          TemplateOutputImageField[] @relation("child_field")
+  outputFieldValues OutputFieldValue[]
 
   @@unique([fieldId])
   @@map("template_output_image_field")
+}
+
+model OutputFieldValue {
+  id            String       @id @default(uuid())
+  outputImageId String?      @map("output_image_id")
+  outputImage   OutputImage? @relation(fields: [outputImageId], references: [id])
+
+  templateFieldId String                   @map("template_field_id")
+  templatefield   TemplateOutputImageField @relation(fields: [templateFieldId], references: [id])
+  inputImageId    String                   @map("input_image_id")
+  inputImage      InputImage               @relation(fields: [inputImageId], references: [id])
+
+  @@unique([templateFieldId, inputImageId])
+  @@map("output_field_value")
 }
 
 model ImportTask {
@@ -125,8 +154,10 @@ model InputImage {
   importTaskId String     @map("import_task_id")
   importTask   ImportTask @relation(fields: [importTaskId], references: [id])
 
-  templateId String   @map("template_id")
-  template   Template @relation(fields: [templateId], references: [id])
+  templateId        String             @map("template_id")
+  template          Template           @relation(fields: [templateId], references: [id])
+  stringFieldValues StringFieldValue[]
+  outputFieldValues OutputFieldValue[]
 
   @@unique([projectId, originalPath])
   @@map("input_image")
@@ -151,12 +182,13 @@ model Prompt {
 }
 
 model OutputImage {
-  id           String @id @default(uuid())
-  filename     String
-  relativePath String @map("relative_path")
-  promptId     String @map("prompt_id")
-  prompt       Prompt @relation(fields: [promptId], references: [id])
-  nodeId       String @map("node_id")
+  id                String             @id @default(uuid())
+  filename          String
+  relativePath      String             @map("relative_path")
+  promptId          String             @map("prompt_id")
+  prompt            Prompt             @relation(fields: [promptId], references: [id])
+  nodeId            String             @map("node_id")
+  outputFieldValues OutputFieldValue[]
 
   @@map("output_image")
 }
