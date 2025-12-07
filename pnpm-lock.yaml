@@ -249,6 +249,18 @@ importers:
       '@tanstack/react-query-devtools':
         specifier: ^5.90.12
         version: 5.91.1(@tanstack/react-query@5.90.12(react@19.2.0))(react@19.2.0)
+      '@uppy/core':
+        specifier: ^5.1.0
+        version: 5.1.0
+      '@uppy/dashboard':
+        specifier: ^5.0.2
+        version: 5.0.2(@uppy/core@5.1.0)
+      '@uppy/react':
+        specifier: ^5.1.0
+        version: 5.1.0(@uppy/core@5.1.0)(@uppy/dashboard@5.0.2(@uppy/core@5.1.0))(@uppy/screen-capture@5.0.1(@uppy/core@5.1.0))(@uppy/webcam@5.0.1(@uppy/core@5.1.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
+      '@uppy/xhr-upload':
+        specifier: ^5.0.1
+        version: 5.0.1(@uppy/core@5.1.0)
       isbot:
         specifier: ^5.1.31
         version: 5.1.31

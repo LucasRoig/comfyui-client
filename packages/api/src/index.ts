@@ -10,6 +10,7 @@ import { treeTemplateProcedure } from "./use-case/project/template/tree-template
 import { updateTemplateFieldsProcedure } from "./use-case/project/template/update-template-fields";
 
 export { createProjectDTOSchema } from "./use-case/project/create-project";
+export { uploadImageFileHttpHandler } from "./use-case/upload-image-file";
 
 export const appRouter = os.router({
   ping: os.handler(() => "pong"),

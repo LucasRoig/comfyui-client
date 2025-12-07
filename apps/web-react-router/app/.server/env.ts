@@ -2,6 +2,7 @@ import z from "zod";
 
 const envSchema = z.object({
   DATABASE_URL: z.string().min(1),
+  WORKSPACE: z.string().min(1),
 });
 
 function mapEnv(env: z.infer<typeof envSchema>) {
@@ -9,7 +10,9 @@ function mapEnv(env: z.infer<typeof envSchema>) {
     secrets: {
       DATABASE_URL: env.DATABASE_URL,
     },
-    server: {},
+    server: {
+      WORKSPACE: env.WORKSPACE,
+    },
     client: {},
   };
 }

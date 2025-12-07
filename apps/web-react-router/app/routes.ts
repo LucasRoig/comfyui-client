@@ -1,6 +1,9 @@
 import { index, layout, prefix, type RouteConfig, route } from "@react-router/dev/routes";
 
 export const AppRoutes = {
+  api: {
+    uploadFile: "/api/upload-file",
+  },
   project: {
     list: "/",
     dashboard: (projectId: string) => `/projects/${projectId}/dashboard`,
@@ -17,6 +20,7 @@ export const AppRoutes = {
 export default [
   index("routes/home.tsx"),
   route("/api/orpc/*", "routes/api/orpc.ts"),
+  route("/api/upload-file", "routes/api/upload-file.ts"),
   ...prefix("projects", [
     layout("routes/projects/project-layout.tsx", [
       route(":projectId/dashboard", "routes/projects/project-dashboard.tsx"),
