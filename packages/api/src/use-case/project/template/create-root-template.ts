@@ -94,6 +94,7 @@ class CreateRootTemplateUseCase {
                 width: 1,
                 height: 1,
                 templateId: template.id,
+                kind: "InputImage",
               },
               {
                 id: uuid(),
@@ -104,6 +105,7 @@ class CreateRootTemplateUseCase {
                 width: 1,
                 height: 1,
                 templateId: template.id,
+                kind: "OutputImage",
               },
             ])
             .returning(),

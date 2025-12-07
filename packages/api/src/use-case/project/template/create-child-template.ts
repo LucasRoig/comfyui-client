@@ -160,6 +160,7 @@ class CreateChildTemplateUseCase {
                 y: f.y,
                 width: f.width,
                 height: f.height,
+                kind: f.kind,
               })),
             )
             .returning(),

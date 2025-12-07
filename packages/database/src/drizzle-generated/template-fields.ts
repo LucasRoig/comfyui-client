@@ -1,3 +1,4 @@
 import { sqliteTable, text, integer } from 'drizzle-orm/sqlite-core';
+import { FieldKindEnum } from './field-kind-enum';
 
-export const templateFields = sqliteTable('template_field', { id: text('id').primaryKey(), fieldId: text('field_id').notNull(), fieldLabel: text('field_label').notNull(), x: integer('x', { mode: 'number' }).notNull(), y: integer('y', { mode: 'number' }).notNull(), width: integer('width', { mode: 'number' }).notNull(), height: integer('height', { mode: 'number' }).notNull(), templateId: text('template_id').notNull() });
+export const templateFields = sqliteTable('template_field', { id: text('id').primaryKey(), fieldId: text('field_id').notNull(), fieldLabel: text('field_label').notNull(), x: integer('x', { mode: 'number' }).notNull(), y: integer('y', { mode: 'number' }).notNull(), width: integer('width', { mode: 'number' }).notNull(), height: integer('height', { mode: 'number' }).notNull(), templateId: text('template_id').notNull(), kind: text('kind').$type<FieldKindEnum>().notNull() });

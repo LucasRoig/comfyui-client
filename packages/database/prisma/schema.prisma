@@ -36,6 +36,12 @@ model Template {
   @@map("template")
 }
 
+enum FieldKind {
+  String
+  InputImage
+  OutputImage
+}
+
 model TemplateField {
   id         String @id @default(uuid())
   fieldId    String @map("field_id")
@@ -47,6 +53,7 @@ model TemplateField {
 
   templateId               String                    @map("template_id")
   template                 Template                  @relation(fields: [templateId], references: [id], onDelete: Cascade)
+  kind                     FieldKind
   stringField              TemplateStringField?
   templateInputImageFields TemplateInputImageField?
   templateOutputImageField TemplateOutputImageField?

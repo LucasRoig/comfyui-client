@@ -1,3 +1,4 @@
+export type { FieldKindEnum } from "./drizzle-generated/field-kind-enum";
 export { schema as drizzleSchema } from "./drizzle-generated/schema";
 
 import { LibSQLDatabase } from "drizzle-orm/libsql";
