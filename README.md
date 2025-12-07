@@ -15,3 +15,10 @@
 * Run migrations `pnpm db:migrate dev`
 * Copy web-app env file `cp apps/web-react-router/.env.local.sample apps/web-react-router/.env.local`
 * Configure database path in the env file
+
+## TODO
+* Files list
+* Files details
+* Check file details view is updated when a field is moved inside a template
+* Add fields to templates and create values inside files
+* Modify file template and create / delete values accordingly

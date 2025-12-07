@@ -3,7 +3,7 @@ import { writeFile as fsWriteFile, mkdir } from "node:fs/promises";
 import path from "node:path";
 import { type AppDatabase, drizzleSchema } from "@repo/database";
 import { and, eq } from "drizzle-orm";
-import { err, ok, ResultAsync } from "neverthrow";
+import { err, errAsync, ok, ResultAsync } from "neverthrow";
 import { match } from "ts-pattern";
 import { v4 } from "uuid";
 import z, { ZodError } from "zod";
@@ -78,6 +78,7 @@ export async function uploadImageFileHttpHandler(request: Request, env: Env) {
             .with({ kind: "DB_RETURNED_TOO_MANY_VALUES" }, (e) => new HttpError(500, e.kind))
             .with({ kind: "DB_RETURNED_ZERO_VALUES" }, (e) => new HttpError(500, e.kind))
             .with({ kind: "WRITE_FILE_ERROR" }, (e) => new HttpError(500, e.kind))
+            .with({ kind: "INVALID_TEMPLATE_FIELD" }, (e) => new HttpError(500, e.kind))
             .exhaustive(),
         );
       return ResultUtils.unwrapOrThrow(result);
@@ -143,6 +144,14 @@ class UploadImageFileUseCase {
                 eq(drizzleSchema.templates.projectId, formData.projectId),
                 eq(drizzleSchema.templates.isRoot, true),
               ),
+              with: {
+                templateFields: {
+                  with: {
+                    stringField: true,
+                    templateOutputImageField: true,
+                  },
+                },
+              },
             }),
           "NO_ROOT_TEMPLATE",
         ),
@@ -171,8 +180,60 @@ class UploadImageFileUseCase {
               templateId: rootTemplate.id,
             })
             .returning(),
-        ),
+        ).map((insertedImage) => ({
+          insertedImage,
+          rootTemplate,
+        })),
       )
+      .andThen(({ rootTemplate, insertedImage }) => {
+        const stringFieldsIds: string[] = [];
+        const outputImageFieldsIds: string[] = [];
+        for (const field of rootTemplate.templateFields) {
+          const error = match(field)
+            .with({ kind: "InputImage" }, () => void 0) //no value for this field
+            .with({ kind: "String" }, (f) => {
+              if (!f.stringField) {
+                return {
+                  kind: "INVALID_TEMPLATE_FIELD" as const,
+                  cause: `In template ${rootTemplate.id}, template field ${f.fieldId} has kind ${f.kind} but string_field_id is null`,
+                };
+              }
+              stringFieldsIds.push(f.stringField.id);
+            })
+            .with({ kind: "OutputImage" }, (f) => {
+              if (!f.templateOutputImageField) {
+                return {
+                  kind: "INVALID_TEMPLATE_FIELD" as const,
+                  cause: `In template ${rootTemplate.id}, template field ${f.fieldId} has kind ${f.kind} but templateOutputImageField is null`,
+                };
+              }
+              outputImageFieldsIds.push(f.templateOutputImageField.id);
+            })
+            .exhaustive();
+          if (error) {
+            return errAsync(error);
+          }
+        }
+        return DbUtils.executeIf(stringFieldsIds.length > 0, () =>
+          this.db.insert(drizzleSchema.stringFieldValues).values(
+            stringFieldsIds.map((templateFieldId) => ({
+              id: v4(),
+              templateFieldId: templateFieldId,
+              inputImageId: insertedImage.id,
+            })),
+          ),
+        ).andThen(() =>
+          DbUtils.executeIf(outputImageFieldsIds.length > 0, () =>
+            this.db.insert(drizzleSchema.outputFieldValues).values(
+              outputImageFieldsIds.map((templateFieldId) => ({
+                id: v4(),
+                templateFieldId: templateFieldId,
+                inputImageId: insertedImage.id,
+              })),
+            ),
+          ),
+        );
+      })
       .andThen(() => writeFile())
       .map(() => ({ fileId: imageId }))
       .orElse((e) => {
