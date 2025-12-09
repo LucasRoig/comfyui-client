@@ -1,0 +1,40 @@
+{
+  "UseCase": {
+    "prefix": "!uc",
+    "body": [
+      "import { ORPCError, os } from \"@orpc/server\";",
+      "import { match } from \"ts-pattern\";",
+      "import z from \"zod\";",
+      "import { type AppDatabase, database } from \"@/database\";",
+      "import { ResultUtils } from \"@/result-utils\";",
+      "",
+      "const inputRequestSchema = z.object({",
+      "\t${1}",
+      "});",
+      "type InputRequest = z.infer<typeof inputRequestSchema>;",
+      "",
+      "export const ${2}Procedure = os.input(inputRequestSchema).handler(async ({ input }) => {",
+      "\tconst uc = new ${2/(.*)/${1:/pascalcase}/}UseCase(database);",
+      "\tconst result = (await uc.execute(input))",
+      "\t\t.orTee((e) => console.error(e))",
+      "\t\t.mapErr((err) =>",
+      "\t\t\tmatch(err)",
+      "\t\t\t\t.with({ kind: \"DATABASE_ERROR\" }, () => new ORPCError(\"INTERNAL_SERVER_ERROR\"))",
+      "\t\t\t\t.with({ kind: \"DB_RETURNED_TOO_MANY_VALUES\" }, () => new ORPCError(\"INTERNAL_SERVER_ERROR\"))",
+      "\t\t\t\t.with({ kind: \"DB_RETURNED_ZERO_VALUES\" }, () => new ORPCError(\"INTERNAL_SERVER_ERROR\"))",
+      "\t\t\t\t.exhaustive(),",
+      "\t\t);",
+      "\treturn ResultUtils.unwrapOrThrow(result);",
+      "});",
+      "",
+      "class ${2/(.*)/${1:/pascalcase}/}UseCase {",
+      "\tpublic constructor(private db: AppDatabase) {}",
+      "",
+      "\tpublic async execute(input: InputRequest) {",
+      "\t\t$0",
+      "\t}",
+      "}"
+    ],
+    "description": "Create a Use Case file"
+  }
+}
