@@ -1,5 +1,6 @@
 import { type InferRouterInputs, type InferRouterOutputs, os } from "@orpc/server";
 import { createProjectProcedure } from "./use-case/project/create-project";
+import { listFilesProcedure } from "./use-case/project/files/list-files";
 import { listProjectProcedure } from "./use-case/project/list-projects";
 import { createChildTemplateProcedure } from "./use-case/project/template/create-child-template";
 import { createRootTemplateProcedure } from "./use-case/project/template/create-root-template";
@@ -17,6 +18,9 @@ export const appRouter = os.router({
   projects: {
     list: listProjectProcedure,
     create: createProjectProcedure,
+    files: {
+      list: listFilesProcedure,
+    },
     templates: {
       list: listTemplateProcedure,
       tree: treeTemplateProcedure,

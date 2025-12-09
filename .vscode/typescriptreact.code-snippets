@@ -1,0 +1,7 @@
+{
+  "React Router Loader": {
+    "prefix": "!loader",
+    "body": ["export async function loader(args: Route.LoaderArgs) {", "\t${0}", "\treturn {}", "}"],
+    "description": "Insert react router loader function"
+  }
+}
